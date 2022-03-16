@@ -7,12 +7,10 @@ import "./Interfaces/ILendingLogic.sol";
 import "./Interfaces/IPieRegistry.sol";
 import "./Interfaces/IPie.sol";
 import "./Interfaces/IERC20Metadata.sol";
-import "./Interfaces/IPollyToken.sol";
 import "./Interfaces/IBentoBoxV1.sol";
 import "./OpenZeppelin/SafeERC20.sol";
 import "./OpenZeppelin/Context.sol";
 import "./OpenZeppelin/Ownable.sol";
-import "hardhat/console.sol";
 
 contract UniPieRecipeV2 is IRecipe, Ownable {
     using SafeERC20 for IERC20;
@@ -21,11 +19,6 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
     IUniRouter immutable sushiRouter;
     ILendingRegistry immutable lendingRegistry;
     IPieRegistry immutable pieRegistry;
-    
-    uint256 public baoFee = 0;
-    address public baoAddress = 0xc81278a52AD0e1485B7C3cDF79079220Ddd68b7D;
-    address public feeRecipient = 0x000000000000000000000000000000000000dEaD;
-    
 
     event HopUpdated(address indexed _token, address indexed _hop);
 
@@ -60,6 +53,33 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         _bentoBox.call{ value: 0 }(abi.encodeWithSelector(IBentoBoxV1.setMasterContractApproval.selector,address(this),_masterKontract,true,0,0x0000000000000000000000000000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000000000000000000000000000));
     }
 
+    function toPie(address _pie, uint256 _outputAmount) external payable {
+        uint256 calculatedSpend = getPrice(address(WETH), _pie, _outputAmount);
+        // console.log("calculated spend", calculatedSpend);
+
+        // convert to WETH
+        address(WETH).call{value: msg.value}("");
+        
+        // bake pie
+        uint256 outputAmount = _bake(address(WETH), _pie, msg.value, _outputAmount);
+
+        // transfer output
+        IERC20(_pie).safeTransfer(_msgSender(), outputAmount);
+
+        // if any WETH left convert it into ETH and send it back
+        uint256 wethBalance = WETH.balanceOf(address(this));
+        if(wethBalance != 0) {
+            // console.log("returning WETH");
+            // console.log(wethBalance);
+            IWETH(address(WETH)).withdraw(wethBalance);
+            payable(msg.sender).transfer(wethBalance);
+        }
+    }
+
+    function calcToPie(address _pie, uint256 _poolAmount) external returns(uint256) {
+        return getPrice(address(WETH), _pie, _poolAmount);
+    }
+
     function bake(
         address _inputToken,
         address _outputToken,
@@ -76,18 +96,6 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         outputAmount = _bake(_inputToken, _outputToken, _maxInput, mintAmount);
 
         uint256 remainingInputBalance = inputToken.balanceOf(address(this));
-        
-        uint256 feeAmount = ((_maxInput - remainingInputBalance) * baoFee) / (1e18 + 1);
-        
-        if(remainingInputBalance > 0 && feeAmount != 0) {
-            IPollyToken baoToken = IPollyToken(baoAddress);
-            WETH.approve(address(sushiRouter), 0);
-            WETH.approve(address(sushiRouter), type(uint256).max);
-            address[] memory route = getRoute(address(WETH), baoAddress, address(0));
-            uint256 estimatedAmount = sushiRouter.getAmountsOut(feeAmount, route)[1];
-            sushiRouter.swapExactTokensForTokens(feeAmount, estimatedAmount, route, address(this), block.timestamp + 1);
-            baoToken.burn(baoToken.balanceOf(address(this)));
-        }
         
         if(remainingInputBalance > 0) {
             inputToken.transfer(_msgSender(), inputToken.balanceOf(address(this)));
@@ -107,7 +115,6 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
     }
 
     function swap(address _inputToken, address _outputToken, uint256 _outputAmount) internal {
-        console.log("Buying", _outputToken, "with", _inputToken);
 
         if(_inputToken == _outputToken) {
             return;
@@ -122,7 +129,6 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         }
 
         if(pieRegistry.inRegistry(_outputToken)) {
-            // console.log("Swapping to PIE", _outputToken);
             swapPie(_outputToken, _outputAmount);
             return;
         }
@@ -159,9 +165,6 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
             IERC20 token = IERC20(tokens[i]);
             token.approve(_pie, 0);
             token.approve(_pie, amounts[i]+1);
-            //console.log("BentoBalance: ",IBentoBoxV1(0x0319000133d3AdA02600f0875d2cf03D442C3367).balanceOf(0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174,address(this)));
-            //console.log("TokenBalance: ",token.balanceOf(address(this)));
-            console.log("Token Amount: ",amounts[i]);
             require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
         }
         pie.joinPool(_outputAmount);
@@ -213,19 +216,6 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
   
     function saveEth(address payable _to, uint256 _amount) external onlyOwner {
         _to.call{value: _amount}("");
-    }
-    
-    function setBaoFee(uint256 _newFee) external onlyOwner{
-        require(_newFee <= 10**18);
-        baoFee = _newFee;
-    }
-    
-    function setFeeToken(address _newFeeToken) external onlyOwner {
-        baoAddress = _newFeeToken;
-    }
-    
-    function setFeeRecipient(address _newFeeRecipient) external onlyOwner {
-        feeRecipient = _newFeeRecipient;
     }
 
     function getPrice(address _inputToken, address _outputToken, uint256 _outputAmount) public returns(uint256)  {
