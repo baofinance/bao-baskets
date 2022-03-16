@@ -114,19 +114,17 @@ interface IRegistry {
 
 pragma solidity 0.6.4;
 
-
-
-contract SmartPoolRegistry is IRegistry, Ownable {
+contract BasketRegistry is IRegistry, Ownable {
     mapping(address => bool) public override inRegistry;
     address[] public override entries;
 
-    function addSmartPool(address _smartPool) external override onlyOwner {
-        require(!inRegistry[_smartPool], "SmartPoolRegistry.addSmartPool: POOL_ALREADY_IN_REGISTRY");
-        entries.push(_smartPool);
-        inRegistry[_smartPool] = true;
+    function addBasket(address _basket) external override onlyOwner {
+        require(!inRegistry[_basket], "Basket is already in Registry");
+        entries.push(_basket);
+        inRegistry[_basket] = true;
     }
 
-    function removeSmartPool(uint256 _index) public override onlyOwner {
+    function removeBasket(uint256 _index) public override onlyOwner {
         address registryAddress = entries[_index];
 
         inRegistry[registryAddress] = false;
@@ -137,11 +135,11 @@ contract SmartPoolRegistry is IRegistry, Ownable {
         entries.pop();
     }
     
-    function removeSmartPoolByAddress(address _address) external override onlyOwner {
+    function removeBasketByAddress(address _address) external override onlyOwner {
         // Search for pool and remove it if found. Otherwise do nothing
         for(uint256 i = 0; i < entries.length; i ++) {
             if(_address == entries[i]) {
-                removeSmartPool(i);
+                removeBasket(i);
                 break;
             }
         }   

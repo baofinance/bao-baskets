@@ -8,18 +8,18 @@ import "./OpenZeppelin/SafeERC20.sol";
 import "./Diamond/PProxy.sol";
 import "./Interfaces/IExperiPie.sol";
 
-contract PieFactoryContract is Ownable {
+contract BasketFactoryContract is Ownable {
     using SafeERC20 for IERC20;
 
-    address[] public pies;
-    mapping(address => bool) public isPie;
+    address[] public baskets;
+    mapping(address => bool) public isBasket;
     address public defaultController;
     address public diamondImplementation;
 
     IDiamondCut.FacetCut[] public defaultCut;
 
-    event PieCreated(
-        address indexed pieAddress,
+    event BasketCreated(
+        address indexed basketAddress,
         address indexed deployer,
         uint256 indexed index
     );
@@ -54,7 +54,7 @@ contract PieFactoryContract is Ownable {
         diamondImplementation = _diamondImplementation;
     }
 
-    function bakePie(
+    function bakeBasket(
         address[] memory _tokens,
         uint256[] memory _amounts,
         uint256 _initialSupply,
@@ -68,37 +68,37 @@ contract PieFactoryContract is Ownable {
 
         d.initialize(defaultCut, address(this));
 
-        pies.push(address(d));
-        isPie[address(d)] = true;
+        baskets.push(address(d));
+        isBasket[address(d)] = true;
 
         // emit DiamondCreated(address(d));
-        require(_tokens.length != 0, "CANNOT_CREATE_ZERO_TOKEN_LENGTH_PIE");
+        require(_tokens.length != 0, "CANNOT_CREATE_ZERO_TOKEN_LENGTH_BASKET");
         require(_tokens.length == _amounts.length, "ARRAY_LENGTH_MISMATCH");
 
-        IExperiPie pie = IExperiPie(address(d));
+        IExperiPie basket = IExperiPie(address(d));
 
         // Init erc20 facet
-        pie.initialize(_initialSupply, _name, _symbol);
+        basket.initialize(_initialSupply, _name, _symbol);
 
         // Transfer and add tokens
         for (uint256 i = 0; i < _tokens.length; i++) {
             IERC20 token = IERC20(_tokens[i]);
-            token.safeTransferFrom(msg.sender, address(pie), _amounts[i]);
-            pie.addToken(_tokens[i]);
+            token.safeTransferFrom(msg.sender, address(basket), _amounts[i]);
+            basket.addToken(_tokens[i]);
         }
 
         // Unlock pool
-        pie.setLock(1);
+        basket.setLock(1);
 
         // Uncap pool
-        pie.setCap(uint256(-1));
+        basket.setCap(uint256(-1));
 
-        // Send minted pie to msg.sender
-        pie.transfer(msg.sender, _initialSupply);
-        pie.transferOwnership(defaultController);
+        // Send minted basket to msg.sender
+        basket.transfer(msg.sender, _initialSupply);
+        basket.transferOwnership(defaultController);
         proxy.setProxyOwner(defaultController);
 
-        emit PieCreated(address(d), msg.sender, pies.length - 1);
+        emit BasketCreated(address(d), msg.sender, baskets.length - 1);
     }
 
     function getDefaultCut()
