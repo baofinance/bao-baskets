@@ -2,7 +2,7 @@
 
 
 
-#Deployed Addresses
+# Deployed Addresses
 
 Contract  	  					| Address									|Etherscan 																		|
 --------------------------------| ------------------------------------------|-------------------------------------------------------------------------------|
@@ -16,3 +16,12 @@ bDEFI							| 0x583cb488eF632c3A959Aa19EcF7991731a2F728e|[Link](https://ethersca
 LendingManager  				| 0x57Af58979DcB45F5cF661E759625E57647c1df5E|[Link](https://etherscan.io/address/0x57Af58979DcB45F5cF661E759625E57647c1df5E)|
 bSTBL							| 0x5ee08f40b637417bcC9d2C51B62F4820ec9cF5D8|[Link](https://etherscan.io/address/0x5ee08f40b637417bcC9d2C51B62F4820ec9cF5D8)|
 LendingManager  				| 0x5C0AfEf620f512e2FA65C765A72fa46f9A41C6BD|[Link](https://etherscan.io/address/0x5C0AfEf620f512e2FA65C765A72fa46f9A41C6BD)|
+
+# Protocol Codes
+
+Contract  	  					| Protocol Code									                    |
+--------------------------------| ------------------------------------------------------------------|
+Compound 						| 0x0000000000000000000000000000000000000000000000000000000000000001|
+AAVE  							| 0x0000000000000000000000000000000000000000000000000000000000000002|
+
+
