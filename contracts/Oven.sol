@@ -162,7 +162,7 @@ contract Oven {
         IERC20 token = IERC20(_token);
 
         token.transfer(
-            address(0x4efD8CEad66bb0fA64C8d53eBE65f31663199C6d),
+            controller,
             token.balanceOf(address(this))
         );
     }
