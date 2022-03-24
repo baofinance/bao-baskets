@@ -6,6 +6,7 @@ import "./Interfaces/ILendingRegistry.sol";
 import "./Interfaces/ILendingLogic.sol";
 import "./Interfaces/IPieRegistry.sol";
 import "./Interfaces/IPie.sol";
+import "./Interfaces/IWETH.sol";
 import "./Interfaces/IERC20Metadata.sol";
 import "./Interfaces/IBentoBoxV1.sol";
 import "./OpenZeppelin/SafeERC20.sol";
@@ -15,7 +16,7 @@ import "./OpenZeppelin/Ownable.sol";
 contract UniPieRecipeV2 is IRecipe, Ownable {
     using SafeERC20 for IERC20;
 
-    IERC20 immutable WETH;
+    IWETH immutable WETH;
     IUniRouter immutable sushiRouter;
     ILendingRegistry immutable lendingRegistry;
     IPieRegistry immutable pieRegistry;
@@ -45,7 +46,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         require(_lendingRegistry != address(0), "LENDING_MANAGER_ZERO");
         require(_pieRegistry != address(0), "PIE_REGISTRY_ZERO");
 
-        WETH = IERC20(_weth);
+        WETH = IWETH(_weth);
         sushiRouter = IUniRouter(_sushiRouter);
         lendingRegistry = ILendingRegistry(_lendingRegistry);
         pieRegistry = IPieRegistry(_pieRegistry);
@@ -71,7 +72,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         if(wethBalance != 0) {
             // console.log("returning WETH");
             // console.log(wethBalance);
-            IWETH(address(WETH)).withdraw(wethBalance);
+            WETH.withdraw(wethBalance);
             payable(msg.sender).transfer(wethBalance);
         }
     }

@@ -99,32 +99,21 @@ contract Ownable is Context {
     }
 }
 
-// File: localhost/contracts/IRegistry.sol
-
-pragma solidity 0.6.4;
-
-interface IRegistry {
-    function inRegistry(address _pool) external view returns(bool);
-    function entries(uint256 _index) external view returns(address);
-    function addSmartPool(address _smartPool) external;
-    function removeSmartPool(uint256 _index) external;
-    function removeSmartPoolByAddress(address _address) external;
-}
 // File: localhost/contracts/Registry.sol
 
 pragma solidity 0.6.4;
 
-contract BasketRegistry is IRegistry, Ownable {
-    mapping(address => bool) public override inRegistry;
-    address[] public override entries;
+contract BasketRegistry is Ownable {
+    mapping(address => bool) public inRegistry;
+    address[] public entries;
 
-    function addBasket(address _basket) external override onlyOwner {
+    function addBasket(address _basket) external onlyOwner {
         require(!inRegistry[_basket], "Basket is already in Registry");
         entries.push(_basket);
         inRegistry[_basket] = true;
     }
 
-    function removeBasket(uint256 _index) public override onlyOwner {
+    function removeBasket(uint256 _index) public onlyOwner {
         address registryAddress = entries[_index];
 
         inRegistry[registryAddress] = false;
@@ -135,7 +124,7 @@ contract BasketRegistry is IRegistry, Ownable {
         entries.pop();
     }
     
-    function removeBasketByAddress(address _address) external override onlyOwner {
+    function removeBasketByAddress(address _address) external onlyOwner {
         // Search for pool and remove it if found. Otherwise do nothing
         for(uint256 i = 0; i < entries.length; i ++) {
             if(_address == entries[i]) {

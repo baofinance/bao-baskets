@@ -1,0 +1,3355 @@
+{
+  "_format": "hh-sol-cache-2",
+  "files": {
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\BasketRegistry.sol": {
+      "lastModificationDate": 1648109262183,
+      "contentHash": "89bf9824bc14c2dab5000c843e1a57ed",
+      "sourceName": "contracts/BasketRegistry.sol",
+      "solcConfig": {
+        "version": "0.6.4",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.6.0",
+        "^0.6.0",
+        "0.6.4"
+      ],
+      "artifacts": [
+        "BasketRegistry",
+        "Context",
+        "Ownable"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\BasketFactoryContract.sol": {
+      "lastModificationDate": 1647432936709,
+      "contentHash": "e80ab196de9f5b11d7a6b9c2c0f3a582",
+      "sourceName": "contracts/BasketFactoryContract.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Diamond/Diamond.sol",
+        "./OpenZeppelin/Ownable.sol",
+        "./OpenZeppelin/SafeERC20.sol",
+        "./Diamond/PProxy.sol",
+        "./Interfaces/IExperiPie.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "BasketFactoryContract"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\Diamond.sol": {
+      "lastModificationDate": 1647432687396,
+      "contentHash": "097c2a6d4c1846791970c5a50ef43826",
+      "sourceName": "contracts/Diamond/Diamond.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./LibDiamond.sol",
+        "./LibDiamondInitialize.sol",
+        "../Interfaces/IDiamondLoupe.sol",
+        "../Interfaces/IDiamondCut.sol",
+        "../Interfaces/IERC173.sol",
+        "../Interfaces/IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "Diamond"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\Ownable.sol": {
+      "lastModificationDate": 1647432687441,
+      "contentHash": "0cf087c118f26c1dcefb4d327d0b78df",
+      "sourceName": "contracts/OpenZeppelin/Ownable.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\SafeERC20.sol": {
+      "lastModificationDate": 1647432687443,
+      "contentHash": "981db99c450d84c54cc97a80e567e6b3",
+      "sourceName": "contracts/OpenZeppelin/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IERC20.sol",
+        "./SafeMath.sol",
+        "./Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "SafeERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\PProxy.sol": {
+      "lastModificationDate": 1647432687411,
+      "contentHash": "60c3ce1f3035fd3ad7114491b51db4ab",
+      "sourceName": "contracts/Diamond/PProxy.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./PProxyStorage.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "PProxy"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IExperiPie.sol": {
+      "lastModificationDate": 1647432687426,
+      "contentHash": "750ccd4420dd7af64c91efa9a8213c53",
+      "sourceName": "contracts/Interfaces/IExperiPie.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol",
+        "./IERC173.sol",
+        "./IBasketFacet.sol",
+        "./IERC20Facet.sol",
+        "./ICallFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IExperiPie"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\LibDiamond.sol": {
+      "lastModificationDate": 1647432687403,
+      "contentHash": "3a210a12c1eeea6d24f5f6b586b33759",
+      "sourceName": "contracts/Diamond/LibDiamond.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IDiamondCut.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LibDiamond"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\LibDiamondInitialize.sol": {
+      "lastModificationDate": 1647432687407,
+      "contentHash": "facf50a0e6c03fd6cd598494b0d57c98",
+      "sourceName": "contracts/Diamond/LibDiamondInitialize.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IDiamondCut.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LibDiamondInitialize"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IDiamondLoupe.sol": {
+      "lastModificationDate": 1647432687422,
+      "contentHash": "01af85e5112c4bd23190cbe908568aff",
+      "sourceName": "contracts/Interfaces/IDiamondLoupe.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IDiamondLoupe"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IDiamondCut.sol": {
+      "lastModificationDate": 1647432687422,
+      "contentHash": "96dbd1c5a59568a29a54c415d4693b52",
+      "sourceName": "contracts/Interfaces/IDiamondCut.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IDiamondCut"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IERC173.sol": {
+      "lastModificationDate": 1647432687424,
+      "contentHash": "9bcf1201fa4c137f2d30df14be3afbdf",
+      "sourceName": "contracts/Interfaces/IERC173.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IERC173"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IERC165.sol": {
+      "lastModificationDate": 1647432687423,
+      "contentHash": "d250d821fb1d7412fb0701cc05720d78",
+      "sourceName": "contracts/Interfaces/IERC165.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IERC165"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\Context.sol": {
+      "lastModificationDate": 1647432687434,
+      "contentHash": "1f01e532484d0879e284181bc843d7ff",
+      "sourceName": "contracts/OpenZeppelin/Context.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IERC20.sol": {
+      "lastModificationDate": 1647432687424,
+      "contentHash": "ab93a339e4f839276a366e4e039a3c7a",
+      "sourceName": "contracts/Interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\SafeMath.sol": {
+      "lastModificationDate": 1647432687443,
+      "contentHash": "4c9229569d5bd7e44c33452aab297ee5",
+      "sourceName": "contracts/OpenZeppelin/SafeMath.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "SafeMath"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\Address.sol": {
+      "lastModificationDate": 1647432687433,
+      "contentHash": "2d08dcb13f00d2471563cf4943f0678a",
+      "sourceName": "contracts/OpenZeppelin/Address.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "Address"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\PProxyStorage.sol": {
+      "lastModificationDate": 1647432687411,
+      "contentHash": "1cab486dc4455d6e11d774409ad55ce7",
+      "sourceName": "contracts/Diamond/PProxyStorage.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "PProxyStorage"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IBasketFacet.sol": {
+      "lastModificationDate": 1647432687415,
+      "contentHash": "93323a563130ba210ac5cec61086ea5a",
+      "sourceName": "contracts/Interfaces/IBasketFacet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IBasketFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IERC20Facet.sol": {
+      "lastModificationDate": 1647432687425,
+      "contentHash": "24d3b8f617ab363baaca46465bc62eb5",
+      "sourceName": "contracts/Interfaces/IERC20Facet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IERC20Facet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\ICallFacet.sol": {
+      "lastModificationDate": 1647432687419,
+      "contentHash": "76b272dc9f583bd8c9b9160d7642280a",
+      "sourceName": "contracts/Interfaces/ICallFacet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "ICallFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\CallFacet.sol": {
+      "lastModificationDate": 1647432687394,
+      "contentHash": "ede48e2ea9a85d3a4ea332c792efafd2",
+      "sourceName": "contracts/Diamond/CallFacet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./LibDiamond.sol",
+        "../Interfaces/ICallFacet.sol",
+        "./ReentryProtection.sol",
+        "./CallProtection.sol",
+        "./LibCallStorage.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "CallFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\ReentryProtection.sol": {
+      "lastModificationDate": 1647432687412,
+      "contentHash": "0dab31c4b90d0e02e45c2bf9e33242b2",
+      "sourceName": "contracts/Diamond/ReentryProtection.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./LibReentryProtectionStorage.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "ReentryProtection"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\CallProtection.sol": {
+      "lastModificationDate": 1647432687395,
+      "contentHash": "4a9bad49e592cca4076a14e6aad6b585",
+      "sourceName": "contracts/Diamond/CallProtection.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./LibDiamond.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "CallProtection"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\LibCallStorage.sol": {
+      "lastModificationDate": 1647432687400,
+      "contentHash": "abd77fbe2bbae1cdeb9919bd613b7f4c",
+      "sourceName": "contracts/Diamond/LibCallStorage.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LibCallStorage"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\LibReentryProtectionStorage.sol": {
+      "lastModificationDate": 1647432687409,
+      "contentHash": "2a326b47737c47afa369e64b89ba789b",
+      "sourceName": "contracts/Diamond/LibReentryProtectionStorage.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LibReentryProtectionStorage"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\ERC20Facet.sol": {
+      "lastModificationDate": 1647432687398,
+      "contentHash": "3199e7584da69cd99fda19cd37de9893",
+      "sourceName": "contracts/Diamond/ERC20Facet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IERC20.sol",
+        "../OpenZeppelin/SafeMath.sol",
+        "./LibDiamond.sol",
+        "../Interfaces/IERC20Facet.sol",
+        "./LibERC20Storage.sol",
+        "./LibERC20.sol",
+        "./CallProtection.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "ERC20Facet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\LibERC20Storage.sol": {
+      "lastModificationDate": 1647432687409,
+      "contentHash": "06ef528c60c86cd40303f289ceb43f9a",
+      "sourceName": "contracts/Diamond/LibERC20Storage.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LibERC20Storage"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\LibERC20.sol": {
+      "lastModificationDate": 1647432687408,
+      "contentHash": "1f2a4749ba47a9fcfb35ef5e79d01a11",
+      "sourceName": "contracts/Diamond/LibERC20.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./LibERC20Storage.sol",
+        "../Interfaces/IERC20.sol",
+        "../OpenZeppelin/SafeMath.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LibERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\LendingLogicCompound.sol": {
+      "lastModificationDate": 1647434139585,
+      "contentHash": "14016a7043cba6ed785493354a491321",
+      "sourceName": "contracts/Strategies/LendingLogicCompound.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../OpenZeppelin/Ownable.sol",
+        "../OpenZeppelin/SafeMath.sol",
+        "../Interfaces/IERC20.sol",
+        "../Interfaces/ILendingLogic.sol",
+        "../LendingRegistry.sol",
+        "../Interfaces/ICToken.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LendingLogicCompound"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\ILendingLogic.sol": {
+      "lastModificationDate": 1647432687426,
+      "contentHash": "854794d08b9c20a8a31b0a6a98a0a6a4",
+      "sourceName": "contracts/Interfaces/ILendingLogic.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "ILendingLogic"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\LendingRegistry.sol": {
+      "lastModificationDate": 1647432687432,
+      "contentHash": "5e45f44667b0857db5783fd07bbb9530",
+      "sourceName": "contracts/LendingRegistry.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./OpenZeppelin/Ownable.sol",
+        "./Interfaces/ILendingLogic.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LendingRegistry"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\ICToken.sol": {
+      "lastModificationDate": 1647432687416,
+      "contentHash": "c55cd6ebb76e6a3ac5483b10f577962f",
+      "sourceName": "contracts/Interfaces/ICToken.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "ICToken"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\LendingLogicAaveV2.sol": {
+      "lastModificationDate": 1648109008930,
+      "contentHash": "046c524a6a890ac87c8d321492a9dab4",
+      "sourceName": "contracts/Strategies/LendingLogicAaveV2.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../OpenZeppelin/SafeMath.sol",
+        "../Interfaces/IERC20.sol",
+        "../Interfaces/ILendingLogic.sol",
+        "../Interfaces/IATokenV2.sol",
+        "../Interfaces/IAaveLendingPoolV2.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "ATokenV2",
+        "LendingLogicAaveV2"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IATokenV2.sol": {
+      "lastModificationDate": 1647432687413,
+      "contentHash": "6a373f6dc0a3b91abaff345c3d0c5f97",
+      "sourceName": "contracts/Interfaces/IATokenV2.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IATokenV2"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IAaveLendingPoolV2.sol": {
+      "lastModificationDate": 1647432687414,
+      "contentHash": "629a4a8ab7362f33b58bd27602670a37",
+      "sourceName": "contracts/Interfaces/IAaveLendingPoolV2.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "DataTypes",
+        "IAaveLendingPoolV2"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Oven.sol": {
+      "lastModificationDate": 1647506382400,
+      "contentHash": "2a5ac30ab2630a680defe3b43184690a",
+      "sourceName": "contracts/Oven.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./OpenZeppelin/SafeMath.sol",
+        "./Interfaces/IERC20.sol",
+        "./Interfaces/IRecipe.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "Oven"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IRecipe.sol": {
+      "lastModificationDate": 1647432687429,
+      "contentHash": "4f8d14777989b014dbf176cd140d39c8",
+      "sourceName": "contracts/Interfaces/IRecipe.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.7.1"
+      ],
+      "artifacts": [
+        "IRecipe"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OvenFactory.sol": {
+      "lastModificationDate": 1647506384379,
+      "contentHash": "05f69ceade6d8c220beaaecb89e8ab26",
+      "sourceName": "contracts/OvenFactory.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./OpenZeppelin/Ownable.sol",
+        "./Oven.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "OvenFactoryContract"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\ERC20.sol": {
+      "lastModificationDate": 1647432687437,
+      "contentHash": "0fe805c057fc835efededd712a45b56a",
+      "sourceName": "contracts/OpenZeppelin/ERC20.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Context.sol",
+        "../Interfaces/IERC20.sol",
+        "./SafeMath.sol",
+        "./Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "ERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\BasketFacet.sol": {
+      "lastModificationDate": 1647432687394,
+      "contentHash": "1301d72e458cacbb3f549ab9fcfdb63e",
+      "sourceName": "contracts/Diamond/BasketFacet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../OpenZeppelin/SafeMath.sol",
+        "../OpenZeppelin/SafeERC20.sol",
+        "../Interfaces/IBasketFacet.sol",
+        "./LibERC20Storage.sol",
+        "./LibERC20.sol",
+        "./ReentryProtection.sol",
+        "./CallProtection.sol",
+        "./LibBasketStorage.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "BasketFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\LibBasketStorage.sol": {
+      "lastModificationDate": 1647432687399,
+      "contentHash": "7e3bc7e62d70328ec4746844e29ad297",
+      "sourceName": "contracts/Diamond/LibBasketStorage.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "LibBasketStorage"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IWETH.sol": {
+      "lastModificationDate": 1647432687431,
+      "contentHash": "677f7324d266675edad866ce06d2e1e3",
+      "sourceName": "contracts/Interfaces/IWETH.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.7.1"
+      ],
+      "artifacts": [
+        "IWETH"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IPie.sol": {
+      "lastModificationDate": 1647432687427,
+      "contentHash": "d8950f79962376b2ff719b183845a3b0",
+      "sourceName": "contracts/Interfaces/IPie.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.7.1"
+      ],
+      "artifacts": [
+        "IPie"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\OwnershipFacet.sol": {
+      "lastModificationDate": 1647432687410,
+      "contentHash": "a9651f64ab4520c2742453d0cc69a58e",
+      "sourceName": "contracts/Diamond/OwnershipFacet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./LibDiamond.sol",
+        "../Interfaces/IERC173.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "OwnershipFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\DiamondFactoryContract.sol": {
+      "lastModificationDate": 1647432687397,
+      "contentHash": "39d4df8ed50a4979c7a3c0959314f4b0",
+      "sourceName": "contracts/Diamond/DiamondFactoryContract.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Diamond.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "DiamondFactoryContract"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\DiamondLoupeFacet.sol": {
+      "lastModificationDate": 1647432687398,
+      "contentHash": "1ebe55d4fb00a38515a89d01e4295e63",
+      "sourceName": "contracts/Diamond/DiamondLoupeFacet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./LibDiamond.sol",
+        "../Interfaces/IDiamondLoupe.sol",
+        "../Interfaces/IERC165.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "DiamondLoupeFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\Imports.sol": {
+      "lastModificationDate": 1647432687399,
+      "contentHash": "f22e067781186ad3ec3173e7915a83c5",
+      "sourceName": "contracts/Diamond/Imports.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./DiamondCutFacet.sol",
+        "./DiamondLoupeFacet.sol",
+        "./OwnershipFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "Imports"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Diamond\\DiamondCutFacet.sol": {
+      "lastModificationDate": 1647432687396,
+      "contentHash": "13b8ce200244216051f8b277fe5d252a",
+      "sourceName": "contracts/Diamond/DiamondCutFacet.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IDiamondCut.sol",
+        "./LibDiamond.sol"
+      ],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "DiamondCutFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IAToken.sol": {
+      "lastModificationDate": 1647432687413,
+      "contentHash": "2c12f260c425b475c3dceda59bd1ad4c",
+      "sourceName": "contracts/Interfaces/IAToken.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IAToken"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IPriceReferenceFeed.sol": {
+      "lastModificationDate": 1647432687429,
+      "contentHash": "d524f7bd4eb437e7006ed2c95b823134",
+      "sourceName": "contracts/Interfaces/IPriceReferenceFeed.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "IPriceReferenceFeed"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\LendingManager.sol": {
+      "lastModificationDate": 1647432687432,
+      "contentHash": "de1e525b0e8ac50e7b69dfa1831967ca",
+      "sourceName": "contracts/LendingManager.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.7.1",
+        "^0.7.1",
+        "^0.7.1",
+        "^0.7.1",
+        "^0.7.1",
+        "^0.7.0",
+        "^0.7.1",
+        "^0.7.1",
+        "^0.7.0",
+        "^0.7.0",
+        "^0.7.1",
+        "^0.7.0",
+        "^0.7.0",
+        "^0.7.1"
+      ],
+      "artifacts": [
+        "Context",
+        "IBasketFacet",
+        "ICallFacet",
+        "IERC173",
+        "IERC20",
+        "IERC20Facet",
+        "IExperiPie",
+        "IKashiPair",
+        "ILendingLogic",
+        "LendingManager",
+        "LendingRegistry",
+        "Math",
+        "Ownable",
+        "ReentrancyGuard"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\Math.sol": {
+      "lastModificationDate": 1647432687440,
+      "contentHash": "4572a1ede048914b1dd10e74f259b560",
+      "sourceName": "contracts/OpenZeppelin/Math.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "Math"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\OpenZeppelin\\ReentrancyGuard.sol": {
+      "lastModificationDate": 1647432687442,
+      "contentHash": "fb33090785defdddce47cc5459e878fa",
+      "sourceName": "contracts/OpenZeppelin/ReentrancyGuard.sol",
+      "solcConfig": {
+        "version": "0.7.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.7.0"
+      ],
+      "artifacts": [
+        "ReentrancyGuard"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IBaoToken.sol": {
+      "lastModificationDate": 1647432687415,
+      "contentHash": "628efaba72e16d0312d03839418a6701",
+      "sourceName": "contracts/Interfaces/IBaoToken.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IPollyToken"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\ILendingRegistry.sol": {
+      "lastModificationDate": 1647432687427,
+      "contentHash": "3251510a76248d7ac65be2b09433659f",
+      "sourceName": "contracts/Interfaces/ILendingRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "ILendingRegistry"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IPieRegistry.sol": {
+      "lastModificationDate": 1647432687428,
+      "contentHash": "7c602976f4c10cd2ecf14abe97136c50",
+      "sourceName": "contracts/Interfaces/IPieRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "IPieRegistry"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Interfaces\\IUniRouter.sol": {
+      "lastModificationDate": 1647432687430,
+      "contentHash": "db99dda31b901676e808a032dbf86378",
+      "sourceName": "contracts/Interfaces/IUniRouter.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IUniRouter",
+        "IUniswapV2Router01"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IBasketFacet.sol": {
+      "lastModificationDate": 1647432687447,
+      "contentHash": "8dba31a1dde46778577867dc2aa253d1",
+      "sourceName": "contracts/Recipes/Interfaces/IBasketFacet.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "IBasketFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IExperiPie.sol": {
+      "lastModificationDate": 1647432687455,
+      "contentHash": "9361ee0c57955cb45a137d0146faf409",
+      "sourceName": "contracts/Recipes/Interfaces/IExperiPie.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol",
+        "./IERC173.sol",
+        "./IBasketFacet.sol",
+        "./IERC20Facet.sol",
+        "./ICallFacet.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "IExperiPie"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IERC20.sol": {
+      "lastModificationDate": 1647432687450,
+      "contentHash": "67dc80c6ea619d48af49b343a5d2d997",
+      "sourceName": "contracts/Recipes/Interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IERC173.sol": {
+      "lastModificationDate": 1647432687449,
+      "contentHash": "4d0240dd009758485cd0d2f7d9e3a539",
+      "sourceName": "contracts/Recipes/Interfaces/IERC173.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "IERC173"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IERC20Facet.sol": {
+      "lastModificationDate": 1647432687454,
+      "contentHash": "864038730b95caf7ce3755f9065fd604",
+      "sourceName": "contracts/Recipes/Interfaces/IERC20Facet.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "IERC20Facet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\ICallFacet.sol": {
+      "lastModificationDate": 1647432687449,
+      "contentHash": "6d42d4a2ca7b5541e778c2831049b34a",
+      "sourceName": "contracts/Recipes/Interfaces/ICallFacet.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "ICallFacet"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\OpenZeppelin\\SafeERC20.sol": {
+      "lastModificationDate": 1647432687462,
+      "contentHash": "b41127b7b8ab99a73486ce0d969936a6",
+      "sourceName": "contracts/Recipes/OpenZeppelin/SafeERC20.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IERC20.sol",
+        "./Address.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "SafeERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\OpenZeppelin\\Address.sol": {
+      "lastModificationDate": 1647432687460,
+      "contentHash": "2f371b9dcb05f89c07cd9bea07a51cec",
+      "sourceName": "contracts/Recipes/OpenZeppelin/Address.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Address"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Recipe.sol": {
+      "lastModificationDate": 1648109588780,
+      "contentHash": "f7dc970a94d311079ddf4722c44d3607",
+      "sourceName": "contracts/Recipes/Recipe.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Interfaces/IRecipe.sol",
+        "./Interfaces/IUniRouter.sol",
+        "./Interfaces/ILendingRegistry.sol",
+        "./Interfaces/ILendingLogic.sol",
+        "./Interfaces/IPieRegistry.sol",
+        "./Interfaces/IPie.sol",
+        "./Interfaces/IWETH.sol",
+        "./Interfaces/IERC20Metadata.sol",
+        "./Interfaces/IBentoBoxV1.sol",
+        "./OpenZeppelin/SafeERC20.sol",
+        "./OpenZeppelin/Context.sol",
+        "./OpenZeppelin/Ownable.sol"
+      ],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "UniPieRecipeV2"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IRecipe.sol": {
+      "lastModificationDate": 1647432687458,
+      "contentHash": "98f56005ccec89960f705cbd28324cef",
+      "sourceName": "contracts/Recipes/Interfaces/IRecipe.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "IRecipe"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IUniRouter.sol": {
+      "lastModificationDate": 1647432687459,
+      "contentHash": "db99dda31b901676e808a032dbf86378",
+      "sourceName": "contracts/Recipes/Interfaces/IUniRouter.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.6.2"
+      ],
+      "artifacts": [
+        "IUniRouter",
+        "IUniswapV2Router01"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\ILendingRegistry.sol": {
+      "lastModificationDate": 1647432687456,
+      "contentHash": "388ba562e158a45127eaa1ebbe307ddf",
+      "sourceName": "contracts/Recipes/Interfaces/ILendingRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "ILendingRegistry"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\ILendingLogic.sol": {
+      "lastModificationDate": 1647432687455,
+      "contentHash": "594ebf79117b0c609ec81a93349dd821",
+      "sourceName": "contracts/Recipes/Interfaces/ILendingLogic.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "ILendingLogic"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IPieRegistry.sol": {
+      "lastModificationDate": 1647432687457,
+      "contentHash": "5b06c36bba35d88778e79e25d522aa53",
+      "sourceName": "contracts/Recipes/Interfaces/IPieRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "IPieRegistry"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IPie.sol": {
+      "lastModificationDate": 1647432687457,
+      "contentHash": "c26b9002e85cff753b4333ef7fa631b0",
+      "sourceName": "contracts/Recipes/Interfaces/IPie.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "IPie"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IWETH.sol": {
+      "lastModificationDate": 1647432687459,
+      "contentHash": "9c5750cf89b714b2e26cc3092561e4c2",
+      "sourceName": "contracts/Recipes/Interfaces/IWETH.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "IWETH"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IERC20Metadata.sol": {
+      "lastModificationDate": 1647432687455,
+      "contentHash": "cfe44195d23c663de65961dcc8bdbca6",
+      "sourceName": "contracts/Recipes/Interfaces/IERC20Metadata.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20Metadata"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IBentoBoxV1.sol": {
+      "lastModificationDate": 1647432687448,
+      "contentHash": "ad3431974440e3459809503c9f704a62",
+      "sourceName": "contracts/Recipes/Interfaces/IBentoBoxV1.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "IBentoBoxV1"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\OpenZeppelin\\Context.sol": {
+      "lastModificationDate": 1647432687461,
+      "contentHash": "2611a9ab11e4bbf82199123060b1ebd7",
+      "sourceName": "contracts/Recipes/OpenZeppelin/Context.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\OpenZeppelin\\Ownable.sol": {
+      "lastModificationDate": 1647432687462,
+      "contentHash": "1f959ae717732162cd2ce1e191344092",
+      "sourceName": "contracts/Recipes/OpenZeppelin/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\OpenZeppelin\\ERC20.sol": {
+      "lastModificationDate": 1647432687461,
+      "contentHash": "270d5d630e4846368b811acfd5dc5957",
+      "sourceName": "contracts/Recipes/OpenZeppelin/ERC20.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Interfaces/IERC20.sol",
+        "../Interfaces/IERC20Metadata.sol",
+        "./Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "ERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Recipes\\Interfaces\\IPollyToken.sol": {
+      "lastModificationDate": 1647432687458,
+      "contentHash": "efe305b43154461097985d02572d1f86",
+      "sourceName": "contracts/Recipes/Interfaces/IPollyToken.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IPollyToken"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\Interfaces\\IBentoBoxV1.sol": {
+      "lastModificationDate": 1647432687464,
+      "contentHash": "1993695105ba309f4a1b0c6118c5b17f",
+      "sourceName": "contracts/Strategies/KashiLending/Interfaces/IBentoBoxV1.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "IBentoBoxV1"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\Interfaces\\IERC20.sol": {
+      "lastModificationDate": 1647432687465,
+      "contentHash": "67dc80c6ea619d48af49b343a5d2d997",
+      "sourceName": "contracts/Strategies/KashiLending/Interfaces/IERC20.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "IERC20"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Utility\\KashiLendingEncoder.sol": {
+      "lastModificationDate": 1647432687475,
+      "contentHash": "e399fe9db3e26fa88da068e744bab844",
+      "sourceName": "contracts/Utility/KashiLendingEncoder.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "../Strategies/KashiLending/Interfaces/IBentoBoxV1.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "KashiLendingEncoder"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\LendingLogicKashi.sol": {
+      "lastModificationDate": 1647432687471,
+      "contentHash": "ab5ad60c31a5da1d75f77915f5e952bc",
+      "sourceName": "contracts/Strategies/KashiLending/LendingLogicKashi.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Interfaces/IERC20.sol",
+        "./Interfaces/ILendingLogic.sol",
+        "./LendingRegistry.sol",
+        "./Interfaces/IBentoBoxV1.sol",
+        "./Interfaces/IKashiPair.sol",
+        "hardhat/console.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "LendingLogicKashi"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\Interfaces\\ILendingLogic.sol": {
+      "lastModificationDate": 1647432687467,
+      "contentHash": "594ebf79117b0c609ec81a93349dd821",
+      "sourceName": "contracts/Strategies/KashiLending/Interfaces/ILendingLogic.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "ILendingLogic"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\LendingRegistry.sol": {
+      "lastModificationDate": 1647432687472,
+      "contentHash": "71769271ff2de81821d7b449283b8588",
+      "sourceName": "contracts/Strategies/KashiLending/LendingRegistry.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./OpenZeppelin/Ownable.sol",
+        "./Interfaces/ILendingLogic.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.1"
+      ],
+      "artifacts": [
+        "LendingRegistry"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\Interfaces\\IKashiPair.sol": {
+      "lastModificationDate": 1647432687466,
+      "contentHash": "7a1490f6f0c0d3334717224f3319b770",
+      "sourceName": "contracts/Strategies/KashiLending/Interfaces/IKashiPair.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./IERC20.sol"
+      ],
+      "versionPragmas": [
+        "0.8.1"
+      ],
+      "artifacts": [
+        "IKashiPair"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\node_modules\\hardhat\\console.sol": {
+      "lastModificationDate": 1648042847135,
+      "contentHash": "cc4777addd464ea56fa35b1c45df0591",
+      "sourceName": "hardhat/console.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        ">=0.4.22 <0.9.0"
+      ],
+      "artifacts": [
+        "console"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\OpenZeppelin\\Ownable.sol": {
+      "lastModificationDate": 1647432687474,
+      "contentHash": "1f959ae717732162cd2ce1e191344092",
+      "sourceName": "contracts/Strategies/KashiLending/OpenZeppelin/Ownable.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [
+        "./Context.sol"
+      ],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Ownable"
+      ]
+    },
+    "C:\\Users\\marlo\\OneDrive\\Desktop\\Stuff Stuff\\bao-baskets\\contracts\\Strategies\\KashiLending\\OpenZeppelin\\Context.sol": {
+      "lastModificationDate": 1647432687473,
+      "contentHash": "2611a9ab11e4bbf82199123060b1ebd7",
+      "sourceName": "contracts/Strategies/KashiLending/OpenZeppelin/Context.sol",
+      "solcConfig": {
+        "version": "0.8.1",
+        "settings": {
+          "optimizer": {
+            "enabled": true,
+            "runs": 200
+          },
+          "outputSelection": {
+            "*": {
+              "*": [
+                "abi",
+                "evm.bytecode",
+                "evm.deployedBytecode",
+                "evm.methodIdentifiers",
+                "metadata"
+              ],
+              "": [
+                "ast"
+              ]
+            }
+          }
+        }
+      },
+      "imports": [],
+      "versionPragmas": [
+        "^0.8.0"
+      ],
+      "artifacts": [
+        "Context"
+      ]
+    }
+  }
+}

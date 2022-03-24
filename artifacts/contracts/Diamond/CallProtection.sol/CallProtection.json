@@ -1,0 +1,10 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "CallProtection",
+  "sourceName": "contracts/Diamond/CallProtection.sol",
+  "abi": [],
+  "bytecode": "0x6080604052348015600f57600080fd5b50603f80601d6000396000f3fe6080604052600080fdfea26469706673582212206b7f98761fef7f8e7bdbc5244bacfe0c4704f9163a5109c72f8a7c588981c33064736f6c63430007010033",
+  "deployedBytecode": "0x6080604052600080fdfea26469706673582212206b7f98761fef7f8e7bdbc5244bacfe0c4704f9163a5109c72f8a7c588981c33064736f6c63430007010033",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

@@ -1,0 +1,50 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IRecipe",
+  "sourceName": "contracts/Recipes/Interfaces/IRecipe.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_inputToken",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_outputToken",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_maxInput",
+          "type": "uint256"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "bake",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "inputAmountUsed",
+          "type": "uint256"
+        },
+        {
+          "internalType": "uint256",
+          "name": "outputAmount",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}
