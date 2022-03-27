@@ -6,7 +6,7 @@
 
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
 /*
  * @dev Provides information about the current execution context, including the
@@ -33,7 +33,7 @@ abstract contract Context {
 
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.6.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -101,7 +101,7 @@ contract Ownable is Context {
 
 // File: localhost/src/Registry.sol
 
-pragma solidity 0.6.4;
+pragma solidity ^0.8.0;
 
 contract BasketRegistry is Ownable {
     mapping(address => bool) public inRegistry;

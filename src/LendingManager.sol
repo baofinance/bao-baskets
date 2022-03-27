@@ -7,7 +7,7 @@
 
 //import "hardhat/console.sol";
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 
 interface IKashiPair {
@@ -148,7 +148,7 @@ interface IKashiPair {
 // File: Interfaces/ICallFacet.sol
 
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 interface ICallFacet {
 
@@ -217,7 +217,7 @@ interface ICallFacet {
 // File: Interfaces/IERC20Facet.sol
 
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 interface IERC20Facet {
 
@@ -295,7 +295,7 @@ interface IERC20Facet {
 // File: Interfaces/IBasketFacet.sol
 
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 interface IBasketFacet {
 
@@ -494,7 +494,7 @@ interface IBasketFacet {
 // File: Interfaces/IERC173.sol
 
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 /// @title ERC-173 Contract Ownership Standard
 ///  Note: the ERC-165 identifier for this interface is 0x7f5828d0
@@ -516,7 +516,7 @@ interface IERC173 {
 
 
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Interface of the ERC20 standard as defined in the EIP.
@@ -594,7 +594,7 @@ interface IERC20 {
 // File: Interfaces/IExperiPie.sol
 
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 
 
@@ -610,7 +610,7 @@ interface IExperiPie is IERC20, IBasketFacet, IERC20Facet, IERC173, ICallFacet {
 // File: Interfaces/ILendingLogic.sol
 
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 interface ILendingLogic {
     /**
@@ -664,7 +664,7 @@ interface ILendingLogic {
 
 
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 /*
  * @dev Provides information about the current execution context, including the
@@ -690,7 +690,7 @@ abstract contract Context {
 
 
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Contract module which provides a basic access control mechanism, where
@@ -759,7 +759,7 @@ contract Ownable is Context {
 // File: LendingRegistry.sol
 
 
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 
 
@@ -882,7 +882,7 @@ contract LendingRegistry is Ownable {
 
 
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Standard math utilities missing in the Solidity language.
@@ -915,7 +915,7 @@ library Math {
 
 
 
-pragma solidity ^0.7.0;
+pragma solidity ^0.8.0;
 
 /**
  * @dev Contract module that helps prevent reentrant calls to a function.
@@ -980,7 +980,7 @@ contract ReentrancyGuard {
 
 
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 
 

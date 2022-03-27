@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./Interfaces/ILendingLogic.sol";

@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 
 import "./LibDiamond.sol";
-import "./Interfaces/IERC173";
+import "../Interfaces/IERC173";
 
 contract OwnershipFacet is IERC173 {
     function transferOwnership(address _newOwner) external override {

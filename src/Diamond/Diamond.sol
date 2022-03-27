@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.7.1;
+pragma solidity ^0.8.0;
 pragma experimental ABIEncoderV2;
 
 /******************************************************************************\
@@ -12,7 +12,7 @@ import "./LibDiamond.sol";
 import "./LibDiamondInitialize.sol";
 import "../Interfaces/IDiamondLoupe.sol";
 import "../Interfaces/IDiamondCut.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "../Interfaces/IERC173.sol";
 import "openzeppelin-contracts/contracts/interfaces/IERC165.sol";
 
 contract Diamond {
