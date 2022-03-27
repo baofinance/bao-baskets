@@ -2,9 +2,7 @@
 pragma solidity ^0.7.1;
 
 import "./LibDiamond.sol";
-//import "../Interfaces/IERC173.sol";
-//import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "./Interfaces/IERC173";
 
 contract OwnershipFacet is IERC173 {
     function transferOwnership(address _newOwner) external override {

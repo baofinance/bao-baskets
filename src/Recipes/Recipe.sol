@@ -7,17 +7,9 @@ import "../Interfaces/ILendingLogic.sol";
 import "../Interfaces/IPieRegistry.sol";
 import "../Interfaces/IPie.sol";
 import "../Interfaces/IBentoBoxV1.sol";
-//import "./Interfaces/IWETH.sol";
-//import "../../lib/v2-periphery/contracts/interfaces/IWETH.sol";
 import "v2-periphery/contracts/interfaces/IWETH.sol";
-//import "./Interfaces/IERC20Metadata.sol";
-//import "../../lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-//import "./OpenZeppelin/SafeERC20.sol";
-//import "../../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-//import "./OpenZeppelin/Ownable.sol";
-//import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract UniPieRecipeV2 is IRecipe, Ownable {

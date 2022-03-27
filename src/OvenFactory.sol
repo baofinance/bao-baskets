@@ -1,8 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.1;
 
-//import "./OpenZeppelin/Ownable.sol";
-//import "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./Oven.sol";
 

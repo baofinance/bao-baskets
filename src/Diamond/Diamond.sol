@@ -12,11 +12,7 @@ import "./LibDiamond.sol";
 import "./LibDiamondInitialize.sol";
 import "../Interfaces/IDiamondLoupe.sol";
 import "../Interfaces/IDiamondCut.sol";
-//import "../Interfaces/IERC173.sol";
-//import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
-//import "../Interfaces/IERC165.sol";
-//import "../../lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol";
 import "openzeppelin-contracts/contracts/interfaces/IERC165.sol";
 
 contract Diamond {

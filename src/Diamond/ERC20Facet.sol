@@ -1,11 +1,7 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.1;
 
-//import "../Interfaces/IERC20.sol";
-//import "../../lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
-//import "../OpenZeppelin/SafeMath.sol";
-//import "../../lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
 import "./LibDiamond.sol";
 import "../Interfaces/IERC20Facet.sol";

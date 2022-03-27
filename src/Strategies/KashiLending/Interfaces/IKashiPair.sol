@@ -1,6 +1,5 @@
 pragma solidity 0.8.1;
 
-//import "../../../../lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 interface IKashiPair {

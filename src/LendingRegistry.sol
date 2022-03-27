@@ -2,9 +2,6 @@
 pragma experimental ABIEncoderV2;
 pragma solidity ^0.7.1;
 
-
-//import "./OpenZeppelin/Ownable.sol";
-//import "../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./Interfaces/ILendingLogic.sol";
 
