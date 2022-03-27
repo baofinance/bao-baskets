@@ -1,7 +1,9 @@
 pragma solidity ^0.8.1;
 
 
-import "./OpenZeppelin/Ownable.sol";
+//import "./OpenZeppelin/Ownable.sol";
+//import "../../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./Interfaces/ILendingLogic.sol";
 
 // TODO consider making this contract upgradeable
@@ -68,7 +70,7 @@ contract LendingRegistry is Ownable {
         @param _underlying Address of the underlying token
         @param _amount Amount to lend
         @param _protocol Bytes32 key of the protocol
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata for the calls
     */
     function getLendTXData(address _underlying, uint256 _amount, address _tokenHolder, bytes32 _protocol) external view returns(address[] memory targets, bytes[] memory data) {
@@ -82,7 +84,7 @@ contract LendingRegistry is Ownable {
         @notice Get the tx data to unlend the wrapped amount
         @param _wrapped Address of the wrapped token
         @param _amount Amount of wrapped token to unlend
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata for the calls
     */
     function getUnlendTXData(address _wrapped, uint256 _amount, address _tokenHolder) external view returns(address[] memory targets, bytes[] memory data) {

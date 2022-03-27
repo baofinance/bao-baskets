@@ -2,9 +2,16 @@
 pragma experimental ABIEncoderV2;
 pragma solidity ^0.7.1;
 
-import "../OpenZeppelin/Ownable.sol";
-import "../OpenZeppelin/SafeMath.sol";
-import "../Interfaces/IERC20.sol";
+//import "../OpenZeppelin/Ownable.sol";
+//import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
+//import "../OpenZeppelin/SafeMath.sol";
+//import "../../lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+//import "../Interfaces/IERC20.sol";
+//import "../../lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+
 import "../Interfaces/ILendingLogic.sol";
 import "../LendingRegistry.sol";
 import "../Interfaces/ICToken.sol";

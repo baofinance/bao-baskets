@@ -7,7 +7,7 @@
 
 //import "hardhat/console.sol";
 
-pragma solidity 0.7.1;
+pragma solidity ^0.7.1;
 
 
 interface IKashiPair {
@@ -26,7 +26,7 @@ interface IKashiPair {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
     function DOMAIN_SEPARATOR() external view returns (bytes32);
-    
+
     struct AccrueInfo {
         uint64 interestPerSecond;
         uint64 lastAccrued;
@@ -46,7 +46,7 @@ interface IKashiPair {
         bool skim,
         uint256 share
     ) external;
-    
+
     function accrue() external;
 
     function allowance(address, address) external view returns (uint256);
@@ -220,7 +220,7 @@ interface ICallFacet {
 pragma solidity ^0.7.1;
 
 interface IERC20Facet {
-    
+
     /**
         @notice Get the token name
         @return The token name
@@ -229,7 +229,7 @@ interface IERC20Facet {
 
     /**
         @notice Get the token symbol
-        @return The token symbol 
+        @return The token symbol
     */
     function symbol() external view returns (string memory);
 
@@ -276,7 +276,7 @@ interface IERC20Facet {
         @param _symbol New token symbol
     */
     function setSymbol(string calldata _symbol) external;
-    
+
     /**
         @notice Increase the amount of tokens another address can spend
         @param _spender Spender
@@ -314,7 +314,7 @@ interface IBasketFacet {
     event LockSet(uint256 lockBlock);
     event CapSet(uint256 cap);
 
-    /** 
+    /**
         @notice Sets entry fee paid when minting
         @param _fee Amount of fee. 1e18 == 100%, capped at 10%
     */
@@ -363,7 +363,7 @@ interface IBasketFacet {
 
     /**
         @notice Set the fee beneficiaries share of the entry fee
-        @notice _share Share of the fee. 1e18 == 100%. Capped at 100% 
+        @notice _share Share of the fee. 1e18 == 100%. Capped at 100%
     */
     function setEntryFeeBeneficiaryShare(uint256 _share) external;
 
@@ -375,7 +375,7 @@ interface IBasketFacet {
 
     /**
         @notice Set the fee beneficiaries share of the exit fee
-        @notice _share Share of the fee. 1e18 == 100%. Capped at 100% 
+        @notice _share Share of the fee. 1e18 == 100%. Capped at 100%
     */
     function setExitFeeBeneficiaryShare(uint256 _share) external;
 
@@ -433,7 +433,7 @@ interface IBasketFacet {
 
     /**
         @notice Set the maximum of pool tokens that can be minted
-        @param _maxCap Max cap 
+        @param _maxCap Max cap
     */
     function setCap(uint256 _maxCap) external;
 
@@ -631,7 +631,7 @@ interface ILendingLogic {
         @notice Get the calls needed to lend.
         @param _underlying Address of the underlying token
         @param _amount Amount of the underlying token
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata of the calls
     */
     function lend(address _underlying, uint256 _amount, address _tokenHolder) external view returns(address[] memory targets, bytes[] memory data);
@@ -640,7 +640,7 @@ interface ILendingLogic {
         @notice Get the calls needed to unlend
         @param _wrapped Address of the wrapped token
         @param _amount Amount of the underlying tokens
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata of the calls
     */
     function unlend(address _wrapped, uint256 _amount, address _tokenHolder) external view returns(address[] memory targets, bytes[] memory data);
@@ -674,7 +674,7 @@ pragma solidity ^0.7.0;
  * paying for execution may not be the actual sender (as far as an application
  * is concerned).
  *
- * This contract is only required for intermediate, library-like contracts.
+ * This contract is only required for intermediate, library-like src.
  */
 abstract contract Context {
     function _msgSender() internal view virtual returns (address payable) {
@@ -827,7 +827,7 @@ contract LendingRegistry is Ownable {
         @param _underlying Address of the underlying token
         @param _amount Amount to lend
         @param _protocol Bytes32 key of the protocol
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata for the calls
     */
     function getLendTXData(address _underlying, uint256 _amount, address _tokenHolder, bytes32 _protocol) external view returns(address[] memory targets, bytes[] memory data) {
@@ -841,7 +841,7 @@ contract LendingRegistry is Ownable {
         @notice Get the tx data to unlend the wrapped amount
         @param _wrapped Address of the wrapped token
         @param _amount Amount of wrapped token to unlend
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata for the calls
     */
     function getUnlendTXData(address _wrapped, uint256 _amount, address _tokenHolder) external view returns(address[] memory targets, bytes[] memory data) {
@@ -1043,10 +1043,10 @@ contract LendingManager is Ownable, ReentrancyGuard {
         @param _amount Amount of the wrapped token to unlend
     */
     function unlend(address _wrapped, uint256 _amount) public onlyOwner nonReentrant {
-        
+
         // _amount or actual balance, whatever is less
         uint256 amount = _amount.min(IERC20(_wrapped).balanceOf(address(basket)));
-        
+
         //Unlend token
         (
             address[] memory _targets,
@@ -1099,5 +1099,5 @@ contract LendingManager is Ownable, ReentrancyGuard {
         // add token
         basket.singleCall(address(basket), abi.encodeWithSelector(basket.addToken.selector, _token), 0);
     }
- 
+
 }

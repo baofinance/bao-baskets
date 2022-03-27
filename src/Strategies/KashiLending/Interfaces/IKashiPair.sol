@@ -1,6 +1,7 @@
 pragma solidity 0.8.1;
 
-import "./IERC20.sol";
+//import "../../../../lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 interface IKashiPair {
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);
@@ -18,7 +19,7 @@ interface IKashiPair {
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
     function DOMAIN_SEPARATOR() external view returns (bytes32);
-    
+
     struct AccrueInfo {
         uint64 interestPerSecond;
         uint64 lastAccrued;
@@ -38,7 +39,7 @@ interface IKashiPair {
         bool skim,
         uint256 share
     ) external;
-    
+
     function accrue() external;
 
     function allowance(address, address) external view returns (uint256);

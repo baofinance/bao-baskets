@@ -2,7 +2,7 @@
  *Submitted for verification at Etherscan.io on 2020-12-15
 */
 
-// File: @openzeppelin/contracts/GSN/Context.sol
+// File: @openzeppelin/src/GSN/Context.sol
 
 // SPDX-License-Identifier: MIT
 
@@ -16,7 +16,7 @@ pragma solidity ^0.6.0;
  * paying for execution may not be the actual sender (as far as an application
  * is concerned).
  *
- * This contract is only required for intermediate, library-like contracts.
+ * This contract is only required for intermediate, library-like src.
  */
 abstract contract Context {
     function _msgSender() internal view virtual returns (address payable) {
@@ -29,7 +29,7 @@ abstract contract Context {
     }
 }
 
-// File: @openzeppelin/contracts/access/Ownable.sol
+// File: @openzeppelin/src/access/Ownable.sol
 
 // SPDX-License-Identifier: MIT
 
@@ -99,7 +99,7 @@ contract Ownable is Context {
     }
 }
 
-// File: localhost/contracts/Registry.sol
+// File: localhost/src/Registry.sol
 
 pragma solidity 0.6.4;
 
@@ -123,7 +123,7 @@ contract BasketRegistry is Ownable {
         // Pop last one off
         entries.pop();
     }
-    
+
     function removeBasketByAddress(address _address) external onlyOwner {
         // Search for pool and remove it if found. Otherwise do nothing
         for(uint256 i = 0; i < entries.length; i ++) {
@@ -131,6 +131,6 @@ contract BasketRegistry is Ownable {
                 removeBasket(i);
                 break;
             }
-        }   
+        }
     }
 }

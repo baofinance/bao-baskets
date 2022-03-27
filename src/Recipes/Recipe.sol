@@ -1,17 +1,24 @@
-pragma solidity 0.8.1;
+pragma solidity ^0.8.1;
 
-import "./Interfaces/IRecipe.sol";
-import "./Interfaces/IUniRouter.sol";
-import "./Interfaces/ILendingRegistry.sol";
-import "./Interfaces/ILendingLogic.sol";
-import "./Interfaces/IPieRegistry.sol";
-import "./Interfaces/IPie.sol";
-import "./Interfaces/IWETH.sol";
-import "./Interfaces/IERC20Metadata.sol";
-import "./Interfaces/IBentoBoxV1.sol";
-import "./OpenZeppelin/SafeERC20.sol";
-import "./OpenZeppelin/Context.sol";
-import "./OpenZeppelin/Ownable.sol";
+import "../Interfaces/IRecipe.sol";
+import "../Interfaces/IUniRouter.sol";
+import "../Interfaces/ILendingRegistry.sol";
+import "../Interfaces/ILendingLogic.sol";
+import "../Interfaces/IPieRegistry.sol";
+import "../Interfaces/IPie.sol";
+import "../Interfaces/IBentoBoxV1.sol";
+//import "./Interfaces/IWETH.sol";
+//import "../../lib/v2-periphery/contracts/interfaces/IWETH.sol";
+import "v2-periphery/contracts/interfaces/IWETH.sol";
+//import "./Interfaces/IERC20Metadata.sol";
+//import "../../lib/openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
+//import "./OpenZeppelin/SafeERC20.sol";
+//import "../../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+//import "./OpenZeppelin/Ownable.sol";
+//import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
 
 contract UniPieRecipeV2 is IRecipe, Ownable {
     using SafeERC20 for IERC20;
@@ -40,7 +47,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         address _pieRegistry,
         address _bentoBox,
         address _masterKontract
-    ) { 
+    ) {
         require(_weth != address(0), "WETH_ZERO");
         require(_sushiRouter != address(0), "SUSHI_ROUTER_ZERO");
         require(_lendingRegistry != address(0), "LENDING_MANAGER_ZERO");
@@ -50,7 +57,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         sushiRouter = IUniRouter(_sushiRouter);
         lendingRegistry = ILendingRegistry(_lendingRegistry);
         pieRegistry = IPieRegistry(_pieRegistry);
-        
+
         _bentoBox.call{ value: 0 }(abi.encodeWithSelector(IBentoBoxV1.setMasterContractApproval.selector,address(this),_masterKontract,true,0,0x0000000000000000000000000000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000000000000000000000000000));
     }
 
@@ -60,7 +67,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
 
         // convert to WETH
         address(WETH).call{value: msg.value}("");
-        
+
         // bake pie
         uint256 outputAmount = _bake(address(WETH), _pie, msg.value, _outputAmount);
 
@@ -97,12 +104,12 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         outputAmount = _bake(_inputToken, _outputToken, _maxInput, mintAmount);
 
         uint256 remainingInputBalance = inputToken.balanceOf(address(this));
-        
+
         if(remainingInputBalance > 0) {
             inputToken.transfer(_msgSender(), inputToken.balanceOf(address(this)));
         }
 
-        outputToken.safeTransfer(_msgSender(), outputAmount);  
+        outputToken.safeTransfer(_msgSender(), outputAmount);
 
         return(inputAmountUsed, outputAmount);
     }
@@ -133,7 +140,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
             swapPie(_outputToken, _outputAmount);
             return;
         }
-        
+
         address underlying = lendingRegistry.wrappedToUnderlying(_outputToken);
         if(underlying != address(0)) {
             // calc amount according to exchange rate
@@ -185,7 +192,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
             hopSwapSushi(_inputToken, customHop.hop, _outputToken, _outputAmount);
             return;
         }
-        
+
         address[] memory route = getRoute(_inputToken, _outputToken, address(0));
 
         inputToken.approve(address(sushiRouter), 0);
@@ -193,12 +200,12 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         sushiRouter.swapTokensForExactTokens(_outputAmount, type(uint256).max, route, address(this), block.timestamp + 1);
 
     }
-    
+
     function hopSwapSushi(address _inputToken,address _hopToken, address _outputToken, uint256 _outputAmount) internal {
         IERC20 inputToken = IERC20(_inputToken);
-        
+
         address[] memory route = getRoute(_inputToken, _outputToken, _hopToken);
-        
+
         inputToken.approve(address(sushiRouter), 0);
         inputToken.approve(address(sushiRouter), type(uint256).max);
         sushiRouter.swapTokensForExactTokens(_outputAmount, type(uint256).max, route, address(this), block.timestamp + 1);
@@ -214,7 +221,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
     function saveToken(address _token, address _to, uint256 _amount) external onlyOwner {
         IERC20(_token).transfer(_to, _amount);
     }
-  
+
     function saveEth(address payable _to, uint256 _amount) external onlyOwner {
         _to.call{value: _amount}("");
     }
@@ -282,7 +289,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
             route[2] = _outputToken;
             return route;
         }
-        
+
         if(_hop != address(0)){
             route = new address[](3);
             route[0] = _inputToken;
@@ -302,7 +309,7 @@ contract UniPieRecipeV2 is IRecipe, Ownable {
         if(_inputToken == _outputToken) {
             return(_outputAmount);
         }
-        
+
         try _router.getAmountsIn(_outputAmount, getRoute(_inputToken, _outputToken, address(0))) returns(uint256[] memory amounts) {
             return amounts[0];
         } catch {

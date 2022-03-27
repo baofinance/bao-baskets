@@ -1,8 +1,13 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.7.1;
 
-import "../OpenZeppelin/SafeMath.sol";
-import "../OpenZeppelin/SafeERC20.sol";
+//import "../OpenZeppelin/SafeMath.sol";
+//import "../../lib/openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+//import "../OpenZeppelin/SafeERC20.sol";
+//import "../../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+
 import "../Interfaces/IBasketFacet.sol";
 import "./LibERC20Storage.sol";
 import "./LibERC20.sol";

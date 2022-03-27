@@ -1,6 +1,7 @@
 pragma solidity ^0.8.1;
 
-import "./IERC20.sol";
+//import "../../../../lib/openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
 
 interface IBentoBoxV1 {
     event LogDeploy(address indexed masterContract, bytes data, address indexed cloneAddress);
@@ -19,17 +20,17 @@ interface IBentoBoxV1 {
     event LogWhiteListMasterContract(address indexed masterContract, bool approved);
     event LogWithdraw(address indexed token, address indexed from, address indexed to, uint256 amount, uint256 share);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
-    
+
     struct AccrueInfo {
         uint64 interestPerSecond;
         uint64 lastAccrued;
         uint128 feesEarnedFraction;
     }
-    
+
     function batch(bytes[] calldata calls, bool revertOnFail) external payable returns (bool[] memory successes, bytes[] memory results);
 
     function claimOwnership() external;
-    
+
     function deploy(
         address masterContract,
         bytes calldata data,

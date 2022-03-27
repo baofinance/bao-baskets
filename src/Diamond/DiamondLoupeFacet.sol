@@ -8,7 +8,9 @@ pragma experimental ABIEncoderV2;
 
 import "./LibDiamond.sol";
 import "../Interfaces/IDiamondLoupe.sol";
-import "../Interfaces/IERC165.sol";
+// "../Interfaces/IERC165.sol";
+//import "../../lib/openzeppelin-contracts/contracts/interfaces/IERC165.sol";
+import "openzeppelin-contracts/contracts/interfaces/IERC165.sol";
 
 contract DiamondLoupeFacet is IDiamondLoupe, IERC165 {
     // Diamond Loupe Functions

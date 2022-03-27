@@ -79,7 +79,7 @@ async function main() {
         await ownershipFacetContract.deployTransaction.wait();
 
         console.log("Facets Deployed");
-        
+
     }
 
     async function deployNestRegistry(){
@@ -93,7 +93,7 @@ async function main() {
 
     async function deployLendingRegistry(){
         //deploy lending registry
-        var lendingRegistryFactory = await ethers.getContractFactory("contracts/LendingRegistry.sol:LendingRegistry");
+        var lendingRegistryFactory = await ethers.getContractFactory("src/LendingRegistry.sol:LendingRegistry");
         lendingRegistryContract = await lendingRegistryFactory.deploy();
         await lendingRegistryContract.deployTransaction.wait();
 
@@ -126,7 +126,7 @@ async function main() {
             [callFacetContract.address,0,["0x747293fb","0xeef21cd2","0x30c9473c","0xbd509fd5","0x98a9884d","0xcb6e7a89","0xdd8d4c40","0xbf29b3a7"]],
             [diamondCutFacetContract.address,0,["0x1f931c1c"]],
             [diamondLoupeFacetContract.address,0,["0x7a0ed627","0xadfca15e","0x52ef6b2c","0xcdffacc6","0x01ffc9a7"]]]
-        
+
         //Add Facet info to factory, used for future nest creations
         for (const facet of facetArray) {
             var tranasctionTx = await factoryContract.addFacet(facet);
@@ -142,9 +142,9 @@ async function main() {
         const kashiLendingFactory = await ethers.getContractFactory("LendingLogicKashi");
         kashiLendingContract = await kashiLendingFactory.deploy(lendingRegistryContract.address, kashiProtocol, bentoBox);
         await kashiLendingContract.deployTransaction.wait();
-        
+
         console.log("Lending Logic Deployed");
-    } 
+    }
 
     async function createNest(){
         //Prep information needed for nest creation
@@ -172,12 +172,12 @@ async function main() {
     async function deployLendingManager(){
         //Deploy Lending Manger for each nest
         const lendingManagerFactory = await ethers.getContractFactory("LendingManager");
-        
+
         lendingManagerContract = await lendingManagerFactory.deploy(lendingRegistryContract.address, nestContract);
         await lendingManagerContract.deployTransaction.wait();
 
         console.log("Lending Manager Deployed");
-    } 
+    }
 
     async function deployRecipe(){
 
@@ -267,21 +267,21 @@ async function main() {
 
   async function buyTokens(tokensToBuy,tokenAmounts){
     for (let i = 0; i < tokensToBuy.length; i++) {
-        const sushiRounterContract = await ethers.getContractAt("contracts/Interfaces/IUniRouter.sol:IUniswapV2Router01",sushiRouter);  
+        const sushiRounterContract = await ethers.getContractAt("src/Interfaces/IUniRouter.sol:IUniswapV2Router01",sushiRouter);
         var block = await ethers.provider.getBlockNumber();
         var transaction = await sushiRounterContract.swapETHForExactTokens(tokenAmounts[i], [wmatic,weth,tokensToBuy[i]], (await ethers.getSigners())[0].address, (await ethers.provider.getBlock(block)).timestamp + 5,{value: ethers.utils.parseEther("100.0").toString()});
-        await transaction.wait(); 
+        await transaction.wait();
     }
 }
 
 async function approveTokens(spender,tokens,tokenAmounts){
     for (let i = 0; i < tokens.length; i++) {
-        const token = await ethers.getContractAt("contracts/OpenZeppelin/ERC20.sol:ERC20",tokens[i]);    
+        const token = await ethers.getContractAt("src/OpenZeppelin/ERC20.sol:ERC20",tokens[i]);
         var transaction = await token.approve(spender, tokenAmounts[i]);
-        await transaction.wait(); 
+        await transaction.wait();
     }
 }
-  
+
   main()
     .then(() => process.exit(0))
     .catch((error) => {

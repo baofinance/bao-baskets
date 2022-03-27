@@ -1,15 +1,18 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.1;
 
-import "./Interfaces/IERC20.sol";
+//import "./Interfaces/IERC20.sol";
+//import "../../lib/openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
+
 import "./Interfaces/ILendingLogic.sol";
 import "./LendingRegistry.sol";
 import "./Interfaces/IBentoBoxV1.sol";
 import "./Interfaces/IKashiPair.sol";
-import "hardhat/console.sol";
+//import "hardhat/console.sol";
 
 contract LendingLogicKashi is ILendingLogic {
-    
+
     LendingRegistry public lendingRegistry;
     bytes32 public immutable protocolKey;
     IBentoBoxV1 public immutable bentoBox;
@@ -32,8 +35,8 @@ contract LendingLogicKashi is ILendingLogic {
     }
 
     function lend(address _underlying, uint256 _amount, address _tokenHolder) external view override returns(address[] memory targets, bytes[] memory data) {
-        
-        address kaToken = lendingRegistry.underlyingToProtocolWrapped(_underlying, protocolKey);  
+
+        address kaToken = lendingRegistry.underlyingToProtocolWrapped(_underlying, protocolKey);
 
         targets = new address[](3);
         data = new bytes[](3);
@@ -66,9 +69,9 @@ contract LendingLogicKashi is ILendingLogic {
     }
 
     function unlend(address _wrapped, uint256 _amount,address _tokenHolder) external view override returns(address[] memory targets, bytes[] memory data) {
-        
+
         address underlying = address(IKashiPair(_wrapped).asset());
-        
+
         targets = new address[](1);
         data = new bytes[](1);
 
@@ -88,19 +91,19 @@ contract LendingLogicKashi is ILendingLogic {
         // Withdraw from Kashi Lending
         targets[0] = address(_wrapped);
         data[0] =  abi.encodeWithSelector(IKashiPair.cook.selector,actions,values,callData);
-        
+
         // return targets and call data
         return(targets, data);
     }
 
     function exchangeRate(address _kaToken) public override returns(uint256) {
         _kaToken.call{ value: 0 }(abi.encodeWithSelector(IKashiPair.accrue.selector));
-        
+
         (uint128 aElastic, uint128 aBase) = IKashiPair(_kaToken).totalAsset();
         (uint128 bElastic, uint128 bBase) = IKashiPair(_kaToken).totalBorrow();
         address underlying = address(IKashiPair(_kaToken).asset());
         uint8 _decimal = IKashiPair(_kaToken).decimals();
-        
+
         uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, true);
 
         uint256 share = ((1e18) * allShare) / aBase;
@@ -114,7 +117,7 @@ contract LendingLogicKashi is ILendingLogic {
         (uint128 bElastic, uint128 bBase) = IKashiPair(_kaToken).totalBorrow();
         address underlying = address(IKashiPair(_kaToken).asset());
         uint8 _decimal = IKashiPair(_kaToken).decimals();
-        
+
         uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, true);
 
         uint256 share = ((1e18) * allShare) / aBase;

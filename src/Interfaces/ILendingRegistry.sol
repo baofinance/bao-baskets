@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity 0.8.1;
+pragma solidity ^0.8.1;
 pragma experimental ABIEncoderV2;
 
 interface ILendingRegistry {
@@ -43,7 +43,7 @@ interface ILendingRegistry {
         @param _underlying Address of the underlying token
         @param _amount Amount to lend
         @param _protocol Bytes32 key of the protocol
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata for the calls
     */
     function getLendTXData(address _underlying, uint256 _amount, bytes32 _protocol) external view returns(address[] memory targets, bytes[] memory data);
@@ -52,7 +52,7 @@ interface ILendingRegistry {
         @notice Get the tx data to unlend the wrapped amount
         @param _wrapped Address of the wrapped token
         @param _amount Amount of wrapped token to unlend
-        @return targets Addresses of the contracts to call
+        @return targets Addresses of the src to call
         @return data Calldata for the calls
     */
     function getUnlendTXData(address _wrapped, uint256 _amount) external view returns(address[] memory targets, bytes[] memory data);

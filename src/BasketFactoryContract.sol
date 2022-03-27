@@ -3,8 +3,12 @@ pragma solidity ^0.7.1;
 pragma experimental ABIEncoderV2;
 
 import "./Diamond/Diamond.sol";
-import "./OpenZeppelin/Ownable.sol";
-import "./OpenZeppelin/SafeERC20.sol";
+//import "./OpenZeppelin/Ownable.sol";
+//import "../../lib/openzeppelin-contracts/contracts/access/Ownable.sol";
+import "openzeppelin-contracts/contracts/access/Ownable.sol";
+//import "./OpenZeppelin/SafeERC20.sol";
+//import "../lib/openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import "./Diamond/PProxy.sol";
 import "./Interfaces/IExperiPie.sol";
 
