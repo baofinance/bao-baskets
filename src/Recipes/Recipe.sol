@@ -7,7 +7,7 @@ import "../Interfaces/ILendingLogic.sol";
 import "../Interfaces/IPieRegistry.sol";
 import "../Interfaces/IPie.sol";
 import "../Interfaces/IBentoBoxV1.sol";
-import "v2-periphery/contracts/interfaces/IWETH.sol";
+import "v2-periphery/interfaces/IWETH.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
 import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
