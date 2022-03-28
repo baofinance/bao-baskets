@@ -1,4 +1,4 @@
-pragma solidity 0.8.1;
+pragma solidity ^0.8.1;
 interface IPieRegistry {
     function inRegistry(address _pool) external view returns(bool);
     function entries(uint256 _index) external view returns(address);

@@ -1,4 +1,4 @@
-pragma solidity 0.8.1;
+pragma solidity ^0.8.1;
 
 interface ILendingRegistry {
     // Maps wrapped token to protocol
