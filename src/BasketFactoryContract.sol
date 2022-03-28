@@ -63,7 +63,8 @@ contract BasketFactoryContract is Ownable {
     ) external {
         PProxy proxy = new PProxy();
         //type conversion illegal as Diamond has a payable fall back fucntion but address is non payable
-        Diamond d = Diamond(address(proxy));
+        address payable a = payable(proxy);
+        Diamond d = Diamond(a);
 
         proxy.setImplementation(diamondImplementation);
 
