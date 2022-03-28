@@ -1073,7 +1073,7 @@ contract LendingManager is Ownable, ReentrancyGuard {
     function bounce(address _wrapped, uint256 _amount, bytes32 _toProtocol) external {
        unlend(_wrapped, _amount);
        // Bounce all to new protocol
-       lend(lendingRegistry.wrappedToUnderlying(_wrapped), uint256(-1), _toProtocol);
+       lend(lendingRegistry.wrappedToUnderlying(_wrapped), type(uint256).max, _toProtocol);
     }
 
     function removeToken(address _token) internal {

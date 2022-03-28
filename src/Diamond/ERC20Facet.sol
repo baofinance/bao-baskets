@@ -118,7 +118,7 @@ contract ERC20Facet is IERC20, IERC20Facet, CallProtection {
     require(_from != address(0), "FROM_INVALID");
 
     // Update approval if not set to max uint256
-    if (es.allowances[_from][msg.sender] != uint256(-1)) {
+    if (es.allowances[_from][msg.sender] != type(uint256).max) {
       uint256 newApproval = es.allowances[_from][msg.sender].sub(_amount);
       es.allowances[_from][msg.sender] = newApproval;
       emit Approval(_from, msg.sender, newApproval);

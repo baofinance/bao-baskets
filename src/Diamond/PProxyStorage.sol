@@ -45,7 +45,7 @@ contract PProxyStorage {
     }
 
     function addressToBytes32(address _value) public pure returns(bytes32) {
-        return bytes32(uint256(_value));
+        return bytes32(bytes20(address(this)));
     }
 
 }

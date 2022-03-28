@@ -62,6 +62,7 @@ contract BasketFactoryContract is Ownable {
         string memory _name
     ) external {
         PProxy proxy = new PProxy();
+        //type conversion illegal as Diamond has a payable fall back fucntion but address is non payable
         Diamond d = Diamond(address(proxy));
 
         proxy.setImplementation(diamondImplementation);
@@ -91,7 +92,7 @@ contract BasketFactoryContract is Ownable {
         basket.setLock(1);
 
         // Uncap pool
-        basket.setCap(uint256(-1));
+        basket.setCap(type(uint256).max);
 
         // Send minted basket to msg.sender
         basket.transfer(msg.sender, _initialSupply);

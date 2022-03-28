@@ -31,7 +31,7 @@ contract OvenFactoryContract is Ownable {
         ovens.push(address(oven));
         isOven[address(oven)] = true;
 
-        oven.setCap(uint256(-1));
+        oven.setCap(type(uint256).max);
         oven.setController(defaultController);
         emit OvenCreated(address(oven), defaultController, _pie, _recipe);
     }
