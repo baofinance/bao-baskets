@@ -1,0 +1,19 @@
+{
+  "abi": [
+    {
+      "inputs": [],
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    }
+  ],
+  "bytecode": {
+    "object": "0x6080604052348015600f57600080fd5b506001600055603f8060226000396000f3fe6080604052600080fdfea2646970667358221220dc57f79d8768c69bfc07423d95c0f443f8324c4b02a134fa06087797eea917ab64736f6c634300080c0033",
+    "sourceMap": "30944:1776:57:-:0;;;31844:54;;;;;;;;;-1:-1:-1;31763:1:57;31869:7;:22;30944:1776;;;;;;",
+    "linkReferences": {}
+  },
+  "deployedBytecode": {
+    "object": "0x6080604052600080fdfea2646970667358221220dc57f79d8768c69bfc07423d95c0f443f8324c4b02a134fa06087797eea917ab64736f6c634300080c0033",
+    "sourceMap": "30944:1776:57:-:0;;;;;",
+    "linkReferences": {}
+  }
+}
