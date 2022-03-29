@@ -11,8 +11,15 @@ import "../LendingRegistry.sol";
 import "../Diamond/Diamond.sol";
 import "../BasketFactoryContract.sol";
 import "../Interfaces/IDiamondCut.sol";
+import { LendingLogicKashi } from "../Strategies/KashiLending/LendingLogicKashi.sol";
+import { LendingManager } from "../LendingManager.sol";
+import { Recipe } from "../Recipes/Recipe.sol";
 
+/**
+ * Helper contract for this project's test suite
+ */
 contract BasketsTestSuite {
+
     // Facets
     BasketFacet public basketFacet;
     CallFacet public callFacet;
@@ -32,6 +39,20 @@ contract BasketsTestSuite {
 
     // Factory
     BasketFactoryContract public basketFactory;
+
+    // Lending Manager & Logic
+    LendingManager public lendingManager;
+    LendingLogicKashi public lendingLogicKashi;
+
+    // Recipe
+    Recipe public recipe;
+
+    // Constants
+    address immutable public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address immutable public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
+    address immutable public SUSHI_EXACT_SWAPPER = 0xB527C5295c4Bc348cBb3a2E96B2494fD292075a7;
+
+    bytes32 immutable public KASHI_PROTOCOL = 0x000000000000000000000000d3f07ea86ddf7baebefd49731d7bbd207fedc53b;
 
     constructor () {
         deployProtocol();
@@ -149,6 +170,23 @@ contract BasketsTestSuite {
         basketFactory.addFacet(loupeFacetCut);
 
         // Deploy Lending Strategies
+        lendingLogicKashi = new LendingLogicKashi(address(lendingRegistry), KASHI_PROTOCOL, BENTO_BOX);
+
+        // Create Test Basket
         // TODO
+
+        /*
+        // Deploy Lending Manager
+        lendingManager = new LendingManager(address(lendingRegistry));
+
+        // Deploy Recipe
+        recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, MASTER_CONTRACT);
+
+        // Configure Lending
+        lendingRegistry.setProtocolToLogic(KASHI_PROTOCOL, address(lendingLogicKashi));
+        lendingRegistry.setWrappedToProtocol(0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42, KASHI_PROTOCOL); // Kashi Medium Risk V1
+        lendingRegistry.setWrappedToUnderlying(0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42, 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48); // USDC
+        lendingRegistry.setUnderlyingToProtocolWrapped(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48, KASHI_PROTOCOL, 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42);
+        */
     }
 }
