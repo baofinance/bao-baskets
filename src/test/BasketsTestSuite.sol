@@ -14,11 +14,22 @@ import "../Interfaces/IDiamondCut.sol";
 import { LendingLogicKashi } from "../Strategies/KashiLending/LendingLogicKashi.sol";
 import { LendingManager } from "../LendingManager.sol";
 import { Recipe } from "../Recipes/Recipe.sol";
+import { IUniswapV2Router01 } from "../Interfaces/IUniRouter.sol";
+import "ds-test/test.sol";
+
+interface Cheats {
+    function deal(address who, uint256 amount) external;
+    function startPrank(address sender) external;
+    function stopPrank() external;
+}
 
 /**
  * Helper contract for this project's test suite
  */
-contract BasketsTestSuite {
+contract BasketsTestSuite is DSTest {
+
+    // Foundry Cheat Codes
+    Cheats public cheats;
 
     // Facets
     BasketFacet public basketFacet;
@@ -47,14 +58,27 @@ contract BasketsTestSuite {
     // Recipe
     Recipe public recipe;
 
+    // Test Basket
+    address public basket;
+
     // Constants
+    address[] public TEST_BASKET_TOKENS;
+
     address immutable public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address immutable public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address immutable public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
     address immutable public SUSHI_EXACT_SWAPPER = 0xB527C5295c4Bc348cBb3a2E96B2494fD292075a7;
 
     bytes32 immutable public KASHI_PROTOCOL = 0x000000000000000000000000d3f07ea86ddf7baebefd49731d7bbd207fedc53b;
 
     constructor () {
+        // Give our test suite some ETH
+        cheats = Cheats(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
+        cheats.deal(address(this), 1000 ether);
+
+        // Set the tokens that we'll put in our test basket
+        TEST_BASKET_TOKENS.push(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+
         deployProtocol();
     }
 
@@ -173,20 +197,68 @@ contract BasketsTestSuite {
         lendingLogicKashi = new LendingLogicKashi(address(lendingRegistry), KASHI_PROTOCOL, BENTO_BOX);
 
         // Create Test Basket
-        // TODO
+        uint256[] memory tokenAmounts = new uint256[](1);
+        tokenAmounts[0] = 100000000;
+        uint256 initialSupply = 100 ether;
 
-        /*
+        buyTokens(tokenAmounts);
+        approveTokens(address(basketFactory));
+
+        basketFactory.bakeBasket(TEST_BASKET_TOKENS, tokenAmounts, initialSupply, "testBasket", "Test Basket");
+        basket = basketFactory.baskets(0);
+
         // Deploy Lending Manager
-        lendingManager = new LendingManager(address(lendingRegistry));
+        lendingManager = new LendingManager(address(lendingRegistry), basket);
 
         // Deploy Recipe
-        recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, MASTER_CONTRACT);
+        recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, SUSHI_EXACT_SWAPPER);
+
+        // Set privileges
+        CallFacet basketCF = CallFacet(basket);
+        basketCF.addCaller(address(this));
+        basketCF.addCaller(address(lendingManager));
 
         // Configure Lending
         lendingRegistry.setProtocolToLogic(KASHI_PROTOCOL, address(lendingLogicKashi));
         lendingRegistry.setWrappedToProtocol(0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42, KASHI_PROTOCOL); // Kashi Medium Risk V1
         lendingRegistry.setWrappedToUnderlying(0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42, 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48); // USDC
         lendingRegistry.setUnderlyingToProtocolWrapped(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48, KASHI_PROTOCOL, 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42);
-        */
+
+        // Add basket to basket registry
+        basketRegistry.addBasket(basket);
+    }
+
+    function buyTokens(uint256[] memory _tokenAmounts) private {
+        require(_tokenAmounts.length == TEST_BASKET_TOKENS.length, "Error: Incorrect length of token amounts array.");
+
+        IUniswapV2Router01 router = IUniswapV2Router01(SUSHI_ROUTER);
+        for (uint8 i; i < TEST_BASKET_TOKENS.length;) {
+            address[] memory route = _getRoute(WETH, TEST_BASKET_TOKENS[i]);
+            uint256 amountIn = router.getAmountsIn(_tokenAmounts[i], route)[0];
+
+            router.swapExactETHForTokens{value: amountIn}(
+                _tokenAmounts[i],
+                route,
+                address(this),
+                block.timestamp
+            );
+
+            unchecked { ++i; }
+        }
+    }
+
+    function approveTokens(address spender) private {
+        for (uint8 i; i < TEST_BASKET_TOKENS.length;) {
+            IERC20 token = IERC20(TEST_BASKET_TOKENS[i]);
+            token.approve(spender, type(uint256).max);
+
+            unchecked { ++i; }
+        }
+    }
+
+    function _getRoute(address a, address b) private returns (address[] memory route) {
+        route = new address[](2);
+        route[0] = a;
+        route[1] = b;
     }
 }
