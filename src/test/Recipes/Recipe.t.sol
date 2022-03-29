@@ -1,8 +1,11 @@
 import "ds-test/test.sol";
 import "../../Recipes/Recipe.sol";
+import "../BasketsTestSuite.sol";
 
 contract RecipeTest is DSTest {
     Recipe recipe;
+    BasketsTestSuite public testSuite;
+
     //Vm vm = Vm(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
     function setUp() public {
         //Deploy Recipe
