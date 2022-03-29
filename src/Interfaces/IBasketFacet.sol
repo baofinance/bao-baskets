@@ -1,6 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.1;
 
 interface IBasketFacet {
 
@@ -19,7 +18,7 @@ interface IBasketFacet {
     event LockSet(uint256 lockBlock);
     event CapSet(uint256 cap);
 
-    /** 
+    /**
         @notice Sets entry fee paid when minting
         @param _fee Amount of fee. 1e18 == 100%, capped at 10%
     */
@@ -68,7 +67,7 @@ interface IBasketFacet {
 
     /**
         @notice Set the fee beneficiaries share of the entry fee
-        @notice _share Share of the fee. 1e18 == 100%. Capped at 100% 
+        @notice _share Share of the fee. 1e18 == 100%. Capped at 100%
     */
     function setEntryFeeBeneficiaryShare(uint256 _share) external;
 
@@ -80,7 +79,7 @@ interface IBasketFacet {
 
     /**
         @notice Set the fee beneficiaries share of the exit fee
-        @notice _share Share of the fee. 1e18 == 100%. Capped at 100% 
+        @notice _share Share of the fee. 1e18 == 100%. Capped at 100%
     */
     function setExitFeeBeneficiaryShare(uint256 _share) external;
 
@@ -138,7 +137,7 @@ interface IBasketFacet {
 
     /**
         @notice Set the maximum of pool tokens that can be minted
-        @param _maxCap Max cap 
+        @param _maxCap Max cap
     */
     function setCap(uint256 _maxCap) external;
 

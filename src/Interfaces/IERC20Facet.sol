@@ -1,9 +1,8 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
-pragma experimental ABIEncoderV2;
+pragma solidity ^0.8.1;
 
 interface IERC20Facet {
-    
+
     /**
         @notice Get the token name
         @return The token name
@@ -12,7 +11,7 @@ interface IERC20Facet {
 
     /**
         @notice Get the token symbol
-        @return The token symbol 
+        @return The token symbol
     */
     function symbol() external view returns (string memory);
 
@@ -59,7 +58,7 @@ interface IERC20Facet {
         @param _symbol New token symbol
     */
     function setSymbol(string calldata _symbol) external;
-    
+
     /**
         @notice Increase the amount of tokens another address can spend
         @param _spender Spender
