@@ -1,5 +1,5 @@
 import "ds-test/test.sol";
-import "../Recipes/Recipe.sol";
+import "../../Recipes/Recipe.sol";
 
 contract RecipeTest is DSTest {
     Recipe recipe;
