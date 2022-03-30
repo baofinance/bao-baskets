@@ -30,7 +30,7 @@ contract Oven {
         controller = _controller;
         pie = IERC20(_pie);
         recipe = IRecipe(_recipe);
-        weth = _weth
+        weth = _weth;
     }
 
     modifier ovenIsReady {
