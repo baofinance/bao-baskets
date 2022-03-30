@@ -1,8 +1,8 @@
 // File: localhost/src/Registry.sol
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@openzeppelin/access/Ownable.sol";
 
 contract BasketRegistry is Ownable {
     mapping(address => bool) public inRegistry;

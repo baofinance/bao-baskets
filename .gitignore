@@ -13,6 +13,10 @@ coverage
 coverage.json
 typechain
 
+# Forge files
+out/
+cache/
+
 #Hardhat files
 cache
 artifacts

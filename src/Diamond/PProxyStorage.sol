@@ -1,4 +1,4 @@
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
 contract PProxyStorage {
 
@@ -44,8 +44,7 @@ contract PProxyStorage {
         return address(uint160(uint256(_value)));
     }
 
-    function addressToBytes32(address _value) public view returns(bytes32) {
-        return bytes32(bytes20(address(this)));
+    function addressToBytes32(address _value) public pure returns(bytes32) {
+        return bytes32(uint256(_value));
     }
-
 }

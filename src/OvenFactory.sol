@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@openzeppelin/access/Ownable.sol";
 import "./Oven.sol";
 
 contract OvenFactoryContract is Ownable {

@@ -1,4 +1,4 @@
-pragma solidity ^0.8.7;
+pragma solidity ^0.7.0;
 
 import "../Interfaces/IUniRouter.sol";
 import "../Interfaces/ILendingRegistry.sol";
@@ -9,9 +9,11 @@ import "../Interfaces/IBentoBoxV1.sol";
 import "../Interfaces/IWETH.sol";
 import "../Interfaces/IBalancer.sol";
 import "../Interfaces/IUniV3Router.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/extensions/IERC20Metadata.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "../Interfaces/IERC20Metadata.sol";
+import "@openzeppelin/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/access/Ownable.sol";
+
+pragma experimental ABIEncoderV2;
 
 contract Recipe is Ownable {
     using SafeERC20 for IERC20;
@@ -35,8 +37,6 @@ contract Recipe is Ownable {
         uint price;
         uint dexIndex;
     }
-
-    error invalidDexIndex(uint16 index);
 
     constructor(
         address _weth,
@@ -229,7 +229,7 @@ contract Recipe is Ownable {
         }
         else{
             //make custom revert.
-            revert invalidDexIndex({index:_dexIndex});
+            revert("ERROR: Invalid dex index.");
         }
 
     }
@@ -331,12 +331,13 @@ contract Recipe is Ownable {
         (address[] memory tokens, uint256[] memory amounts) = IPie(_pie).calcTokensForAmount(_pieAmount);
 
         uint256 inputAmount = 0;
-        dexIndex = new uint16[](tokens.length);;
+        dexIndex = new uint16[](tokens.length);
 
+        BestPrice memory bestPrice;
         for(uint256 i = 0; i < tokens.length; i ++) {
-            (uint16 tokenIndex, uint tokenPrice) = getBestPrice(address(WETH), tokens[i], amounts[i]);
-            mintPrice += tokenPrice;
-            dexIndex[i] = tokenIndex;
+            bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]);
+            mintPrice += bestPrice.price;
+            dexIndex[i] = uint16(bestPrice.dexIndex);
         }
 
         return (mintPrice,dexIndex);

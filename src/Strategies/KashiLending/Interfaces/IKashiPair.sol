@@ -1,6 +1,8 @@
-pragma solidity ^0.8.1;
+pragma solidity 0.7.1;
 
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/token/ERC20/IERC20.sol";
+
+pragma experimental ABIEncoderV2;
 
 interface IKashiPair {
     event Approval(address indexed _owner, address indexed _spender, uint256 _value);

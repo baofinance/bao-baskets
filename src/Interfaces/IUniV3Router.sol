@@ -1,4 +1,6 @@
-pragma solidity ^0.8.1;
+pragma solidity ^0.7.0;
+
+pragma experimental ABIEncoderV2;
 
 interface uniV3Router {
 

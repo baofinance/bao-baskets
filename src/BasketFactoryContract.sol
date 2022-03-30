@@ -1,10 +1,10 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
 import "./Diamond/Diamond.sol";
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/utils/SafeERC20.sol";
+import "@openzeppelin/access/Ownable.sol";
+import "@openzeppelin/token/ERC20/SafeERC20.sol";
 import "./Diamond/PProxy.sol";
 import "./Interfaces/IExperiPie.sol";
 

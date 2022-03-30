@@ -1,11 +1,13 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.1;
+pragma solidity ^0.7.0;
 
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/token/ERC20/IERC20.sol";
 import "./IERC173.sol";
 import "./IBasketFacet.sol";
 import "./IERC20Facet.sol";
 import "./ICallFacet.sol";
+
+pragma experimental ABIEncoderV2;
 
 /**
     @title ExperiPie Interface

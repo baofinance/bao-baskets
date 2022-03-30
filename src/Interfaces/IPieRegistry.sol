@@ -1,5 +1,5 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.1;
+pragma solidity ^0.7.0;
 
 interface IPieRegistry {
     function inRegistry(address _pool) external view returns(bool);
