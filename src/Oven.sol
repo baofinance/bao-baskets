@@ -51,7 +51,7 @@ contract Oven {
         address[] calldata _receivers,
         uint256 _outputAmount,
         uint256 _maxPrice,
-        uint16[] _dexIndex
+        uint16[] memory _dexIndex
     ) public ovenIsReady controllerOnly {
         uint256 realPrice = recipe.getPrice(weth, address(pie), _outputAmount);
         require(realPrice <= _maxPrice, "PRICE_ERROR");
