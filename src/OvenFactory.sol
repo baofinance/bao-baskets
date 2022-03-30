@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
 import "openzeppelin-contracts/contracts/access/Ownable.sol";
 import "./Oven.sol";
@@ -11,7 +11,7 @@ contract OvenFactoryContract is Ownable {
         address Pie,
         address Recipe
     );
-
+    address constant weth = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address[] public ovens;
     mapping(address => bool) public isOven;
     address public defaultController;
@@ -27,7 +27,7 @@ contract OvenFactoryContract is Ownable {
     function CreateOven(address _pie, address _recipe) public {
         require(defaultController != address(0), "CONTROLLER_NOT_SET");
 
-        Oven oven = new Oven(address(this), _pie, _recipe);
+        Oven oven = new Oven(address(this), _pie, _recipe, weth);
         ovens.push(address(oven));
         isOven[address(oven)] = true;
 
