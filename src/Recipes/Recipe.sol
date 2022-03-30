@@ -33,7 +33,7 @@ contract Recipe is Ownable {
 
     struct BestPrice{
         uint price;
-        uint ammIndex;
+        uint dexIndex;
     }
 
     error invalidDexIndex(uint16 index);
@@ -234,32 +234,8 @@ contract Recipe is Ownable {
 
     }
 
-    function getPrice(address _inputToken, address _outputToken, uint256 _outputAmount) public returns(uint256)  {
-        if(_inputToken == _outputToken) {
-            return _outputAmount;
-        }
-
-        address underlying = lendingRegistry.wrappedToUnderlying(_outputToken);
-        if(underlying != address(0)) {
-            // calc amount according to exchange rate
-            ILendingLogic lendingLogic = getLendingLogicFromWrapped(_outputToken);
-            uint256 exchangeRate = lendingLogic.exchangeRate(_outputToken); // wrapped to underlying
-            uint256 underlyingAmount = _outputAmount * exchangeRate / (10**18) + 1;
-
-            return getPrice(_inputToken, underlying, underlyingAmount);
-        }
-
-        //At this point we only want price queries from WETH to other token
-        require(_inputToken == address(WETH));
-
-        //Input amount from single swap
-        BestPrice memory bestPrice = getBestPrice(_inputToken, _outputToken, _outputAmount);
-
-        return bestPrice.price;
-    }
-
     //High gas cost, only queried off-chain
-    function getBestPrice(address _assetIn, address _assetOut, uint _amountOut) public returns (BestPrice memory bestPrice){
+    function getBestPrice(address _assetIn, address _assetOut, uint _amountOut) internal returns (BestPrice memory bestPrice){
         uint uniAmount1;
         uint uniAmount2;
         uint sushiAmount;
@@ -276,7 +252,7 @@ contract Recipe is Ownable {
                 uniAmount1 = type(uint256).max;
             }
             bestPrice.price = uniAmount1;
-            bestPrice.ammIndex = 0;
+            bestPrice.dexIndex = 0;
         }
         else if(uniFee[_assetOut] == 3000){
             try oracle.quoteExactOutputSingle(_assetIn,_assetOut,3000,_amountOut,0) returns(uint256 returnAmount) {
@@ -285,7 +261,7 @@ contract Recipe is Ownable {
                 uniAmount2 = type(uint256).max;
             }
             bestPrice.price = uniAmount2;
-            bestPrice.ammIndex = 1;
+            bestPrice.dexIndex = 1;
         }
         else{
             try oracle.quoteExactOutputSingle(_assetIn,_assetOut,500,_amountOut,0) returns(uint256 returnAmount) {
@@ -294,7 +270,7 @@ contract Recipe is Ownable {
                 uniAmount1 = type(uint256).max;
             }
             bestPrice.price = uniAmount1;
-            bestPrice.ammIndex = 0;
+            bestPrice.dexIndex = 0;
             try oracle.quoteExactOutputSingle(_assetIn,_assetOut,3000,_amountOut,0) returns(uint256 returnAmount) {
                 uniAmount2 = returnAmount;
             } catch {
@@ -302,7 +278,7 @@ contract Recipe is Ownable {
             }
             if(bestPrice.price>uniAmount2){
                 bestPrice.price = uniAmount2;
-                bestPrice.ammIndex = 1;
+                bestPrice.dexIndex = 1;
 
             }
 
@@ -319,7 +295,7 @@ contract Recipe is Ownable {
         }
         if(bestPrice.price>sushiAmount){
             bestPrice.price = sushiAmount;
-            bestPrice.ammIndex = 2;
+            bestPrice.dexIndex = 2;
         }
 
         //GET BALANCER PRICE
@@ -343,25 +319,27 @@ contract Recipe is Ownable {
             }
             if(bestPrice.price>balancerAmount){
                 bestPrice.price = balancerAmount;
-                bestPrice.ammIndex = 4;
+                bestPrice.dexIndex = 4;
             }
         }
         return bestPrice;
     }
 
-    // NOTE input token must be WETH
-    function getPricePie(address _pie, uint256 _pieAmount) public returns(uint256) {
+    function getPricePie(address _pie, uint256 _pieAmount) public returns(uint256 mintPrice, uint16[] memory dexIndex) {
         require(pieRegistry.inRegistry(_pie));
 
         (address[] memory tokens, uint256[] memory amounts) = IPie(_pie).calcTokensForAmount(_pieAmount);
 
         uint256 inputAmount = 0;
+        dexIndex = new uint16[](tokens.length);;
 
         for(uint256 i = 0; i < tokens.length; i ++) {
-            inputAmount += getBestPrice(address(WETH), tokens[i], amounts[i]).price;
+            (uint16 tokenIndex, uint tokenPrice) = getBestPrice(address(WETH), tokens[i], amounts[i]);
+            mintPrice += tokenPrice;
+            dexIndex[i] = tokenIndex;
         }
 
-        return inputAmount;
+        return (mintPrice,dexIndex);
     }
 
     function getLendingLogicFromWrapped(address _wrapped) internal view returns(ILendingLogic) {
