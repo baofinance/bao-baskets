@@ -1,5 +1,6 @@
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
+import "ds-test/test.sol";
 import "../Diamond/BasketFacet.sol";
 import "../Diamond/CallFacet.sol";
 import "../Diamond/DiamondCutFacet.sol";
@@ -15,13 +16,14 @@ import { LendingLogicKashi } from "../Strategies/KashiLending/LendingLogicKashi.
 import { LendingManager } from "../LendingManager.sol";
 import { Recipe } from "../Recipes/Recipe.sol";
 import { IUniswapV2Router01 } from "../Interfaces/IUniRouter.sol";
-import "ds-test/test.sol";
 
 interface Cheats {
     function deal(address who, uint256 amount) external;
     function startPrank(address sender) external;
     function stopPrank() external;
 }
+
+pragma experimental ABIEncoderV2;
 
 /**
  * Helper contract for this project's test suite
@@ -64,12 +66,12 @@ contract BasketsTestSuite is DSTest {
     // Constants
     address[] public TEST_BASKET_TOKENS;
 
-    address immutable public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address immutable public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
-    address immutable public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
-    address immutable public SUSHI_EXACT_SWAPPER = 0xB527C5295c4Bc348cBb3a2E96B2494fD292075a7;
+    address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
+    address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
+    address public SUSHI_EXACT_SWAPPER = 0xB527C5295c4Bc348cBb3a2E96B2494fD292075a7;
 
-    bytes32 immutable public KASHI_PROTOCOL = 0x000000000000000000000000d3f07ea86ddf7baebefd49731d7bbd207fedc53b;
+    bytes32 public KASHI_PROTOCOL = 0x000000000000000000000000d3f07ea86ddf7baebefd49731d7bbd207fedc53b;
 
     constructor () {
         // Give our test suite some ETH
@@ -86,6 +88,7 @@ contract BasketsTestSuite is DSTest {
         // Deploy Facets
         basketFacet = new BasketFacet();
         callFacet = new CallFacet();
+        erc20Facet = new ERC20Facet();
         cutFacet = new DiamondCutFacet();
         loupeFacet = new DiamondLoupeFacet();
         ownershipFacet = new OwnershipFacet();
@@ -232,7 +235,7 @@ contract BasketsTestSuite is DSTest {
         require(_tokenAmounts.length == TEST_BASKET_TOKENS.length, "Error: Incorrect length of token amounts array.");
 
         IUniswapV2Router01 router = IUniswapV2Router01(SUSHI_ROUTER);
-        for (uint8 i; i < TEST_BASKET_TOKENS.length;) {
+        for (uint8 i; i < TEST_BASKET_TOKENS.length; i++) {
             address[] memory route = _getRoute(WETH, TEST_BASKET_TOKENS[i]);
             uint256 amountIn = router.getAmountsIn(_tokenAmounts[i], route)[0];
 
@@ -242,17 +245,13 @@ contract BasketsTestSuite is DSTest {
                 address(this),
                 block.timestamp
             );
-
-            unchecked { ++i; }
         }
     }
 
     function approveTokens(address spender) private {
-        for (uint8 i; i < TEST_BASKET_TOKENS.length;) {
+        for (uint8 i; i < TEST_BASKET_TOKENS.length; i++) {
             IERC20 token = IERC20(TEST_BASKET_TOKENS[i]);
             token.approve(spender, type(uint256).max);
-
-            unchecked { ++i; }
         }
     }
 
