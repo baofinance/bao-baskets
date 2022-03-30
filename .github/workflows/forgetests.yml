@@ -26,5 +26,8 @@ jobs:
       - name: Fetch Submodule Dependencies
         run: /home/runner/.foundry/bin/forge update
 
+      - name: Checkout Correct OZ Version
+        run: (cd lib/openzeppelin-contracts && git checkout 04695aecbd4d17dddfd55de766d10e3805d6f42f)
+
       - name: Run Tests
-        run: /home/runner/.foundry/bin/forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/0Zix9biOoC7oFAdYd8I2LDkYOrO70c0k -vvv --gas-report
+        run: /home/runner/.foundry/bin/forge test --fork-url https://eth-mainnet.alchemyapi.io/v2/0Zix9biOoC7oFAdYd8I2LDkYOrO70c0k -vvv --gas-report --use 0.7.1
