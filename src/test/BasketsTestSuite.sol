@@ -65,12 +65,11 @@ contract BasketsTestSuite is DSTest {
 
     // Constants
     address[] public TEST_BASKET_TOKENS;
-
     address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
+    address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
-    address public SUSHI_EXACT_SWAPPER = 0xB527C5295c4Bc348cBb3a2E96B2494fD292075a7;
-
+    address public KASHI_MEDIUM_RISK = 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42;
     bytes32 public KASHI_PROTOCOL = 0x000000000000000000000000d3f07ea86ddf7baebefd49731d7bbd207fedc53b;
 
     constructor () {
@@ -79,10 +78,14 @@ contract BasketsTestSuite is DSTest {
         cheats.deal(address(this), 1000 ether);
 
         // Set the tokens that we'll put in our test basket
-        TEST_BASKET_TOKENS.push(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+        TEST_BASKET_TOKENS.push(USDC);
 
         deployProtocol();
     }
+
+    // ---------------------------------
+    // SET UP
+    // ---------------------------------
 
     function deployProtocol() private {
         // Deploy Facets
@@ -214,22 +217,33 @@ contract BasketsTestSuite is DSTest {
         lendingManager = new LendingManager(address(lendingRegistry), basket);
 
         // Deploy Recipe
-        recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, SUSHI_EXACT_SWAPPER);
+        recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
 
         // Set privileges
         CallFacet basketCF = CallFacet(basket);
         basketCF.addCaller(address(this));
         basketCF.addCaller(address(lendingManager));
 
+        // Approve Kashi Lending for Basket
+        address[] memory a = new address[](1);
+        a[0] = BENTO_BOX;
+        bytes[] memory b = new bytes[](1);
+        b[0] = abi.encodeWithSignature("setMasterContractApproval(address,address,bool,uint8,bytes32,bytes32)", basket, KASHI_MEDIUM_RISK, true, 0, bytes32(0), bytes32(0));
+        basketCF.callNoValue(a, b);
+
         // Configure Lending
         lendingRegistry.setProtocolToLogic(KASHI_PROTOCOL, address(lendingLogicKashi));
-        lendingRegistry.setWrappedToProtocol(0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42, KASHI_PROTOCOL); // Kashi Medium Risk V1
-        lendingRegistry.setWrappedToUnderlying(0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42, 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48); // USDC
-        lendingRegistry.setUnderlyingToProtocolWrapped(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48, KASHI_PROTOCOL, 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42);
+        lendingRegistry.setWrappedToProtocol(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, KASHI_PROTOCOL); // Kashi Medium Risk V1
+        lendingRegistry.setWrappedToUnderlying(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, USDC); // USDC
+        lendingRegistry.setUnderlyingToProtocolWrapped(USDC, KASHI_PROTOCOL, 0xB7b45754167d65347C93F3B28797887b4b6cd2F3);
 
         // Add basket to basket registry
         basketRegistry.addBasket(basket);
     }
+
+    // ---------------------------------
+    // HELPER FUNCTIONS
+    // ---------------------------------
 
     function buyTokens(uint256[] memory _tokenAmounts) private {
         require(_tokenAmounts.length == TEST_BASKET_TOKENS.length, "Error: Incorrect length of token amounts array.");
