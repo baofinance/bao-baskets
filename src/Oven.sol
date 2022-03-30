@@ -16,6 +16,7 @@ contract Oven {
     mapping(address => uint256) public ethBalanceOf;
     mapping(address => uint256) public outputBalanceOf;
     address public controller;
+    address immutable weth;
     IERC20 public pie;
     IRecipe public recipe;
     uint256 public cap;
@@ -23,11 +24,13 @@ contract Oven {
     constructor(
         address _controller,
         address _pie,
-        address _recipe
+        address _recipe,
+        address _weth
     ) public {
         controller = _controller;
         pie = IERC20(_pie);
         recipe = IRecipe(_recipe);
+        weth = _weth
     }
 
     modifier ovenIsReady {
@@ -47,9 +50,10 @@ contract Oven {
     function bake(
         address[] calldata _receivers,
         uint256 _outputAmount,
-        uint256 _maxPrice
+        uint256 _maxPrice,
+        uint16[] memory _dexIndex
     ) public ovenIsReady controllerOnly {
-        uint256 realPrice = recipe.calcToPie(address(pie), _outputAmount);
+        uint256 realPrice = recipe.getPrice(weth, address(pie), _outputAmount);
         require(realPrice <= _maxPrice, "PRICE_ERROR");
 
         uint256 totalInputAmount = 0;
@@ -87,7 +91,7 @@ contract Oven {
         }
         // Provided balances are too low.
         require(totalInputAmount == realPrice, "INSUFFICIENT_FUNDS");
-        recipe.toPie{value: realPrice}(address(pie), _outputAmount);
+        recipe.toPie{value: realPrice}(address(pie), _outputAmount, _dexIndex);
     }
 
     function deposit() public payable ovenIsReady {
