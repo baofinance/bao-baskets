@@ -331,12 +331,13 @@ contract Recipe is Ownable {
         (address[] memory tokens, uint256[] memory amounts) = IPie(_pie).calcTokensForAmount(_pieAmount);
 
         uint256 inputAmount = 0;
-        dexIndex = new uint16[](tokens.length);;
+        dexIndex = new uint16[](tokens.length);
 
+        BestPrice memory bestPrice;
         for(uint256 i = 0; i < tokens.length; i ++) {
-            (uint16 tokenIndex, uint tokenPrice) = getBestPrice(address(WETH), tokens[i], amounts[i]);
-            mintPrice += tokenPrice;
-            dexIndex[i] = tokenIndex;
+            bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]);
+            mintPrice += bestPrice.price;
+            dexIndex[i] = uint16(bestPrice.dexIndex);
         }
 
         return (mintPrice,dexIndex);
