@@ -1,7 +1,9 @@
-pragma solidity ^0.8.1;
+pragma solidity 0.7.1;
 
-import "openzeppelin-contracts/contracts/access/Ownable.sol";
+import "@openzeppelin/access/Ownable.sol";
 import "./Interfaces/ILendingLogic.sol";
+
+pragma experimental ABIEncoderV2;
 
 // TODO consider making this contract upgradeable
 contract LendingRegistry is Ownable {

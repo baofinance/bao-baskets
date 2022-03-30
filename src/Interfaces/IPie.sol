@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: Unlicense
-pragma solidity ^0.8.1;
+pragma solidity ^0.7.0;
 
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/token/ERC20/IERC20.sol";
 
 interface IPie is IERC20 {
     function joinPool(uint256 _amount) external;
