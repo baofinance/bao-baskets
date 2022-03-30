@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
 import "./LibERC20Storage.sol";
-import "openzeppelin-contracts/contracts/token/ERC20/IERC20.sol";
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
+import "@openzeppelin/token/ERC20/IERC20.sol";
+import "@openzeppelin/math/SafeMath.sol";
 
 library LibERC20 {
   using SafeMath for uint256;

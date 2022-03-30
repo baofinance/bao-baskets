@@ -1,9 +1,9 @@
 // SPDX-License-Identifier: MIT
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
-import "openzeppelin-contracts/contracts/utils/math/SafeMath.sol";
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/math/SafeMath.sol";
+import "@openzeppelin/token/ERC20/IERC20.sol";
 import "../Interfaces/ILendingLogic.sol";
 import "../Interfaces/IATokenV2.sol";
 import "../Interfaces/IAaveLendingPoolV2.sol";

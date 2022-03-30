@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma experimental ABIEncoderV2;
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
 interface ICToken {
     function mint(uint _mintAmount) external returns (uint256);

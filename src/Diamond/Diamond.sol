@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
 /******************************************************************************\
@@ -13,7 +13,7 @@ import "./LibDiamondInitialize.sol";
 import "../Interfaces/IDiamondLoupe.sol";
 import "../Interfaces/IDiamondCut.sol";
 import "../Interfaces/IERC173.sol";
-import "openzeppelin-contracts/contracts/interfaces/IERC165.sol";
+import "@openzeppelin/introspection/IERC165.sol";
 
 contract Diamond {
     function initialize(IDiamondCut.FacetCut[] memory _diamondCut, address _owner) external payable {

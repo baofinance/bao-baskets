@@ -1,7 +1,7 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.0;
+pragma solidity ^0.7.0;
 
-import "openzeppelin-contracts/contracts/interfaces/IERC20.sol";
+import "@openzeppelin/token/ERC20/IERC20.sol";
 
 library LibBasketStorage {
   bytes32 constant BASKET_STORAGE_POSITION = keccak256(
