@@ -12,4 +12,8 @@ interface IRecipe {
     function toPie(address _pie, uint256 _outputAmount, uint16[] memory _dexIndex) external payable;
 
     function getPrice(address _inputToken, address _pie, uint256 _poolAmount) external returns(uint256);
+    
+    function setUniPoolMapping(address _outputAsset, uint16 _Fee) external;
+
+    function setBalancerPoolMapping(address _inputAsset, bytes32 _pool) external;
 }

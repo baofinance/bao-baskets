@@ -17,14 +17,14 @@ pragma experimental ABIEncoderV2;
 
 contract Recipe is Ownable {
     using SafeERC20 for IERC20;
-
+     
     IWETH immutable WETH;
     ILendingRegistry immutable lendingRegistry;
     IPieRegistry immutable pieRegistry;
     IBalancer balancer = IBalancer(0xBA12222222228d8Ba445958a75a0704d566BF2C8);
     uniOracle oracle = uniOracle(0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6);
     uniV3Router uniRouter = uniV3Router(0xE592427A0AEce92De3Edee1F18E0157C05861564);
-    IUniRouter sushiRouter = IUniRouter(0x1b02dA8Cb0d097eB8D57A175b88c7D8b47997506);
+    IUniRouter sushiRouter = IUniRouter(0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F);
 
     //Failing to query a price is expensive,
     //so we save info about the DEX state to prevent querying the price if it is not viable
@@ -37,6 +37,8 @@ contract Recipe is Ownable {
         uint price;
         uint dexIndex;
     }
+    event log_named_address(string key, address val);
+    event log_named_uint(string key, uint val);
 
     constructor(
         address _weth,
@@ -297,6 +299,11 @@ contract Recipe is Ownable {
             bestPrice.price = sushiAmount;
             bestPrice.dexIndex = 2;
         }
+	
+	emit log_named_address("assetIn: ",_assetIn);
+	emit log_named_address("assetOut: ",_assetOut);
+	emit log_named_uint("sushiAmount: ",sushiAmount);
+	emit log_named_uint("amountOut: ",_amountOut);	
 
         //GET BALANCER PRICE
         if(balancerViable[_assetOut]!= ""){
@@ -319,7 +326,7 @@ contract Recipe is Ownable {
             }
             if(bestPrice.price>balancerAmount){
                 bestPrice.price = balancerAmount;
-                bestPrice.dexIndex = 4;
+                bestPrice.dexIndex = 3;
             }
         }
         return bestPrice;
@@ -329,12 +336,11 @@ contract Recipe is Ownable {
         require(pieRegistry.inRegistry(_pie));
 
         (address[] memory tokens, uint256[] memory amounts) = IPie(_pie).calcTokensForAmount(_pieAmount);
-
-        uint256 inputAmount = 0;
         dexIndex = new uint16[](tokens.length);
 
         BestPrice memory bestPrice;
         for(uint256 i = 0; i < tokens.length; i ++) {
+	    require(amounts[i] != 0,"RECIPE: Mint amount to low");
             bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]);
             mintPrice += bestPrice.price;
             dexIndex[i] = uint16(bestPrice.dexIndex);
