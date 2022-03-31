@@ -24,7 +24,7 @@ contract OvenFactoryContract is Ownable {
         CreateOven(address(0), address(0));
     }
 
-    function CreateOven(address _pie, address _recipe) public {
+    function CreateOven(address _pie, address _recipe) public returns(Oven){
         require(defaultController != address(0), "CONTROLLER_NOT_SET");
 
         Oven oven = new Oven(address(this), _pie, _recipe, weth);
@@ -34,5 +34,6 @@ contract OvenFactoryContract is Ownable {
         oven.setCap(type(uint256).max);
         oven.setController(defaultController);
         emit OvenCreated(address(oven), defaultController, _pie, _recipe);
+        return(oven);
     }
 }

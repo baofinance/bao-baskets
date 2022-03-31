@@ -25,14 +25,18 @@ contract RecipeTest is DSTest {
 
         for (uint256 i = 0; i < mintAmounts.length; i++) {
             (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), mintAmounts[i]);
-            emit log_named_uint("mintPrice: ",mintPrice);
-	    emit log_named_uint("dexIndex: ",dexIndex[0]);
+             emit log_named_uint("Amount of Basket tokens to be minted",mintAmounts[i]);
+	     emit log_named_uint("Predicted Price for minting Tokens (ETH): ",mintPrice);
   	
  	    recipe.toPie{value: mintPrice}(
                 testSuite.basket(),
                 mintAmounts[i],
                 dexIndex
             );
+	    //Check that balance amount is as expected
+
+	    //Check that used ETH is as expected
+	    
         }
     }
 }

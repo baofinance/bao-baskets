@@ -8,6 +8,8 @@ import "../Diamond/DiamondLoupeFacet.sol";
 import "../Diamond/ERC20Facet.sol";
 import "../Diamond/OwnershipFacet.sol";
 import "../BasketRegistry.sol";
+import { Oven } from "../Oven.sol";
+import { OvenFactoryContract } from "../OvenFactory.sol";
 import "../LendingRegistry.sol";
 import "../Diamond/Diamond.sol";
 import "../BasketFactoryContract.sol";
@@ -59,6 +61,12 @@ contract BasketsTestSuite is DSTest {
 
     // Recipe
     Recipe public recipe;
+     
+    // OvenFactory
+    OvenFactoryContract public ovenFactory;
+
+    // Oven
+    Oven public oven;
 
     // Test Basket
     address public basket;
@@ -218,6 +226,11 @@ contract BasketsTestSuite is DSTest {
 
         // Deploy Recipe
         recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
+	
+	// Deploy OvenFactory
+	ovenFactory = new OvenFactoryContract();
+	ovenFactory.setDefaultController(address(this));
+	oven = ovenFactory.CreateOven(address(basket),address(recipe));
 
         // Set privileges
         CallFacet basketCF = CallFacet(basket);
