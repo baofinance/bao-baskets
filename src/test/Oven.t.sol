@@ -37,10 +37,17 @@ contract OvenTest is DSTest {
 
     function testOvenBake() public{
 	(uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), 1e18);
+	
+	//depositing 3% more, which is the max slippage we allow
 	oven.deposit{value:mintPrice}();
-	emit log_named_uint("Mint Amount",mintPrice);
+	
 	address[] memory receivers = new address[](1);
 	receivers[0] = address(testSuite);
-	oven.bake(receivers,1e18,mintPrice,dexIndex);
+	uint initialBalance = IERC20(address(testSuite.basket())).balanceOf(address(testSuite));
+	
+	oven.bake(receivers,1e18,mintPrice);
+	
+	oven.withdrawOutput(address(testSuite));
+    	assertEq(IERC20(address(testSuite.basket())).balanceOf(address(testSuite)),initialBalance+1e18);
     }    
 }

@@ -50,10 +50,9 @@ contract Oven {
     function bake(
         address[] calldata _receivers,
         uint256 _outputAmount,
-        uint256 _maxPrice,
-        uint16[] memory _dexIndex
+        uint256 _maxPrice
     ) public ovenIsReady controllerOnly {
-        (uint256 realPrice,) = recipe.getPricePie(address(pie), _outputAmount);
+        (uint256 realPrice,uint16[] memory _dexIndex) = recipe.getPricePie(address(pie), _outputAmount);
 	require(realPrice <= _maxPrice, "PRICE_ERROR");
         uint256 totalInputAmount = 0;
         for (uint256 i = 0; i < _receivers.length; i++) {
