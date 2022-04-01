@@ -37,8 +37,6 @@ contract Recipe is Ownable {
         uint price;
         uint dexIndex;
     }
-    event log_named_address(string key, address val);
-    event log_named_uint(string key, uint val);
 
     constructor(
         address _weth,
@@ -300,11 +298,6 @@ contract Recipe is Ownable {
             bestPrice.dexIndex = 2;
         }
 	
-	emit log_named_address("assetIn: ",_assetIn);
-	emit log_named_address("assetOut: ",_assetOut);
-	emit log_named_uint("sushiAmount: ",sushiAmount);
-	emit log_named_uint("amountOut: ",_amountOut);	
-
         //GET BALANCER PRICE
         if(balancerViable[_assetOut]!= ""){
             //Get Balancer price

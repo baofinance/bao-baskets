@@ -287,4 +287,6 @@ contract BasketsTestSuite is DSTest {
         route[0] = a;
         route[1] = b;
     }
+
+    receive() external payable{}
 }
