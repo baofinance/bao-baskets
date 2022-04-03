@@ -17,7 +17,7 @@ pragma experimental ABIEncoderV2;
 
 contract Recipe is Ownable {
     using SafeERC20 for IERC20;
-     
+
     IWETH immutable WETH;
     ILendingRegistry immutable lendingRegistry;
     IPieRegistry immutable pieRegistry;
@@ -33,7 +33,7 @@ contract Recipe is Ownable {
     // Adds a custom hop before reaching the destination token
     mapping(address => address) public customHops;
 
-    struct BestPrice{
+    struct BestPrice {
         uint price;
         uint dexIndex;
     }
@@ -53,13 +53,13 @@ contract Recipe is Ownable {
         lendingRegistry = ILendingRegistry(_lendingRegistry);
         pieRegistry = IPieRegistry(_pieRegistry);
 
-        _bentoBox.call{ value: 0 }(abi.encodeWithSelector(IBentoBoxV1.setMasterContractApproval.selector,address(this),_masterContract,true,0,0x0000000000000000000000000000000000000000000000000000000000000000,0x0000000000000000000000000000000000000000000000000000000000000000));
+        _bentoBox.call{value : 0}(abi.encodeWithSelector(IBentoBoxV1.setMasterContractApproval.selector, address(this), _masterContract, true, 0, 0x0000000000000000000000000000000000000000000000000000000000000000, 0x0000000000000000000000000000000000000000000000000000000000000000));
     }
 
-    function toPie(address _pie, uint256 _outputAmount,uint16[] memory _dexIndex) external payable {
+    function toPie(address _pie, uint256 _outputAmount, uint16[] memory _dexIndex) external payable {
 
         // convert to WETH
-        address(WETH).call{value: msg.value}("");
+        address(WETH).call{value : msg.value}("");
 
         // bake pie
         uint256 outputAmount = _bake(address(WETH), _pie, msg.value, _outputAmount, _dexIndex);
@@ -69,7 +69,7 @@ contract Recipe is Ownable {
 
         // if any WETH left convert it into ETH and send it back
         uint256 wethBalance = WETH.balanceOf(address(this));
-        if(wethBalance != 0) {
+        if (wethBalance != 0) {
             // console.log("returning WETH");
             // console.log(wethBalance);
             WETH.withdraw(wethBalance);
@@ -82,7 +82,7 @@ contract Recipe is Ownable {
         uint256 _maxInput,
         uint256 _mintAmount,
         uint16[] memory _dexIndex
-    ) external returns(uint256 inputAmountUsed, uint256 outputAmount) {
+    ) external returns (uint256 inputAmountUsed, uint256 outputAmount) {
         IERC20 outputToken = IERC20(_outputToken);
 
         IERC20(address(WETH)).safeTransferFrom(_msgSender(), address(this), _maxInput);
@@ -91,16 +91,16 @@ contract Recipe is Ownable {
 
         uint256 remainingInputBalance = WETH.balanceOf(address(this));
 
-        if(remainingInputBalance > 0) {
+        if (remainingInputBalance > 0) {
             WETH.transfer(_msgSender(), WETH.balanceOf(address(this)));
         }
 
         outputToken.safeTransfer(_msgSender(), outputAmount);
 
-        return(inputAmountUsed, outputAmount);
+        return (inputAmountUsed, outputAmount);
     }
 
-    function _bake(address _inputToken, address _outputToken, uint256 _maxInput, uint256 _mintAmount, uint16[] memory _dexIndex) internal returns(uint256 outputAmount) {
+    function _bake(address _inputToken, address _outputToken, uint256 _maxInput, uint256 _mintAmount, uint16[] memory _dexIndex) internal returns (uint256 outputAmount) {
         require(_inputToken == address(WETH));
         require(pieRegistry.inRegistry(_outputToken));
 
@@ -108,27 +108,28 @@ contract Recipe is Ownable {
 
         outputAmount = IERC20(_outputToken).balanceOf(address(this));
 
-        return(outputAmount);
+        return (outputAmount);
     }
 
     function swap(address _inputToken, address _outputToken, uint256 _outputAmount, uint16 _dexIndex) internal {
-        if(_inputToken == _outputToken) {
+        if (_inputToken == _outputToken) {
             return;
         }
 
         address underlying = lendingRegistry.wrappedToUnderlying(_outputToken);
-        if(underlying != address(0)) {
+        if (underlying != address(0)) {
             // calc amount according to exchange rate
             ILendingLogic lendingLogic = getLendingLogicFromWrapped(_outputToken);
-            uint256 exchangeRate = lendingLogic.exchangeRate(_outputToken); // wrapped to underlying
+            uint256 exchangeRate = lendingLogic.exchangeRate(_outputToken);
+            // wrapped to underlying
             uint256 underlyingAmount = _outputAmount * exchangeRate / (1e18) + 1;
 
             swap(_inputToken, underlying, underlyingAmount, _dexIndex);
             (address[] memory targets, bytes[] memory data) = lendingLogic.lend(underlying, underlyingAmount, address(this));
 
             //execute lending transactions
-            for(uint256 i = 0; i < targets.length; i ++) {
-                (bool success, ) = targets[i].call{ value: 0 }(data[i]);
+            for (uint256 i = 0; i < targets.length; i ++) {
+                (bool success,) = targets[i].call{value : 0}(data[i]);
                 require(success, "CALL_FAILED");
             }
             return;
@@ -142,7 +143,7 @@ contract Recipe is Ownable {
         IPie pie = IPie(_pie);
         (address[] memory tokens, uint256[] memory amounts) = pie.calcTokensForAmount(_outputAmount);
 
-        for(uint256 i = 0; i < tokens.length; i ++) {
+        for (uint256 i = 0; i < tokens.length; i ++) {
             swap(address(WETH), tokens[i], amounts[i], _dexIndex[i]);
             IERC20 token = IERC20(tokens[i]);
             token.approve(_pie, 0);
@@ -155,7 +156,7 @@ contract Recipe is Ownable {
 
     function dexSwap(address _assetIn, address _assetOut, uint _amountOut, uint16 _dexIndex) public {
         //Uni 500 fee
-        if(_dexIndex == 0){
+        if (_dexIndex == 0) {
             uniV3Router.ExactOutputSingleParams memory params = uniV3Router.ExactOutputSingleParams(
                 _assetIn,
                 _assetOut,
@@ -172,7 +173,7 @@ contract Recipe is Ownable {
             return;
         }
         //Uni 3000 fee
-        if(_dexIndex == 1){
+        if (_dexIndex == 1) {
             uniV3Router.ExactOutputSingleParams memory params = uniV3Router.ExactOutputSingleParams(
                 _assetIn,
                 _assetOut,
@@ -190,17 +191,17 @@ contract Recipe is Ownable {
             return;
         }
         //Sushi
-        if(_dexIndex == 2){
+        if (_dexIndex == 2) {
             address[] memory route = new address[](2);
             route[0] = _assetIn;
             route[1] = _assetOut;
             IERC20(_assetIn).approve(address(sushiRouter), 0);
             IERC20(_assetIn).approve(address(sushiRouter), type(uint256).max);
-            sushiRouter.swapTokensForExactTokens(_amountOut,type(uint256).max,route,address(this),block.timestamp + 1);
+            sushiRouter.swapTokensForExactTokens(_amountOut, type(uint256).max, route, address(this), block.timestamp + 1);
             return;
         }
         //Balancer
-        if(_dexIndex == 3){
+        if (_dexIndex == 3) {
             //Balancer
             IBalancer.SwapKind kind = IBalancer.SwapKind.GIVEN_OUT;
             IBalancer.SingleSwap memory singleSwap = IBalancer.SingleSwap(
@@ -211,7 +212,7 @@ contract Recipe is Ownable {
                 _amountOut,
                 ""
             );
-            IBalancer.FundManagement memory funds =  IBalancer.FundManagement(
+            IBalancer.FundManagement memory funds = IBalancer.FundManagement(
                 address(this),
                 false,
                 payable(address(this)),
@@ -227,7 +228,7 @@ contract Recipe is Ownable {
                 block.timestamp + 1
             );
         }
-        else{
+        else {
             //make custom revert.
             revert("ERROR: Invalid dex index.");
         }
@@ -245,8 +246,8 @@ contract Recipe is Ownable {
         //GET UNI PRICE
         //(Uni provides pools with different fees. The most popular being 0.05% and 0.3%)
         //Unfortunately they have to be specified
-        if(uniFee[_assetOut] == 500){
-            try oracle.quoteExactOutputSingle(_assetIn,_assetOut,500,_amountOut,0) returns(uint256 returnAmount) {
+        if (uniFee[_assetOut] == 500) {
+            try oracle.quoteExactOutputSingle(_assetIn, _assetOut, 500, _amountOut, 0) returns (uint256 returnAmount) {
                 uniAmount1 = returnAmount;
             } catch {
                 uniAmount1 = type(uint256).max;
@@ -254,8 +255,8 @@ contract Recipe is Ownable {
             bestPrice.price = uniAmount1;
             bestPrice.dexIndex = 0;
         }
-        else if(uniFee[_assetOut] == 3000){
-            try oracle.quoteExactOutputSingle(_assetIn,_assetOut,3000,_amountOut,0) returns(uint256 returnAmount) {
+        else if (uniFee[_assetOut] == 3000) {
+            try oracle.quoteExactOutputSingle(_assetIn, _assetOut, 3000, _amountOut, 0) returns (uint256 returnAmount) {
                 uniAmount2 = returnAmount;
             } catch {
                 uniAmount2 = type(uint256).max;
@@ -263,20 +264,20 @@ contract Recipe is Ownable {
             bestPrice.price = uniAmount2;
             bestPrice.dexIndex = 1;
         }
-        else{
-            try oracle.quoteExactOutputSingle(_assetIn,_assetOut,500,_amountOut,0) returns(uint256 returnAmount) {
+        else {
+            try oracle.quoteExactOutputSingle(_assetIn, _assetOut, 500, _amountOut, 0) returns (uint256 returnAmount) {
                 uniAmount1 = returnAmount;
             } catch {
                 uniAmount1 = type(uint256).max;
             }
             bestPrice.price = uniAmount1;
             bestPrice.dexIndex = 0;
-            try oracle.quoteExactOutputSingle(_assetIn,_assetOut,3000,_amountOut,0) returns(uint256 returnAmount) {
+            try oracle.quoteExactOutputSingle(_assetIn, _assetOut, 3000, _amountOut, 0) returns (uint256 returnAmount) {
                 uniAmount2 = returnAmount;
             } catch {
                 uniAmount2 = type(uint256).max;
             }
-            if(bestPrice.price>uniAmount2){
+            if (bestPrice.price > uniAmount2) {
                 bestPrice.price = uniAmount2;
                 bestPrice.dexIndex = 1;
 
@@ -288,18 +289,18 @@ contract Recipe is Ownable {
         address[] memory route = new address[](2);
         route[0] = _assetIn;
         route[1] = _assetOut;
-        try sushiRouter.getAmountsIn(_amountOut, route) returns(uint256[] memory amounts) {
+        try sushiRouter.getAmountsIn(_amountOut, route) returns (uint256[] memory amounts) {
             sushiAmount = amounts[0];
         } catch {
             sushiAmount = type(uint256).max;
         }
-        if(bestPrice.price>sushiAmount){
+        if (bestPrice.price > sushiAmount) {
             bestPrice.price = sushiAmount;
             bestPrice.dexIndex = 2;
         }
-	
+
         //GET BALANCER PRICE
-        if(balancerViable[_assetOut]!= ""){
+        if (balancerViable[_assetOut] != "") {
             //Get Balancer price
             IBalancer.SwapKind kind = IBalancer.SwapKind.GIVEN_OUT;
 
@@ -310,14 +311,14 @@ contract Recipe is Ownable {
             IBalancer.BatchSwapStep[] memory swapStep = new IBalancer.BatchSwapStep[](1);
             swapStep[0] = IBalancer.BatchSwapStep(balancerViable[_assetOut], 0, 1, _amountOut, "");
 
-            IBalancer.FundManagement memory funds = IBalancer.FundManagement(payable(msg.sender),false,payable(msg.sender),false);
+            IBalancer.FundManagement memory funds = IBalancer.FundManagement(payable(msg.sender), false, payable(msg.sender), false);
 
-            try balancer.queryBatchSwap(kind,swapStep,assets,funds) returns(int[] memory amounts) {
+            try balancer.queryBatchSwap(kind, swapStep, assets, funds) returns (int[] memory amounts) {
                 balancerAmount = uint(amounts[0]);
             } catch {
                 balancerAmount = type(uint256).max;
             }
-            if(bestPrice.price>balancerAmount){
+            if (bestPrice.price > balancerAmount) {
                 bestPrice.price = balancerAmount;
                 bestPrice.dexIndex = 3;
             }
@@ -325,24 +326,24 @@ contract Recipe is Ownable {
         return bestPrice;
     }
 
-    function getPricePie(address _pie, uint256 _pieAmount) public returns(uint256 mintPrice, uint16[] memory dexIndex) {
+    function getPricePie(address _pie, uint256 _pieAmount) public returns (uint256 mintPrice, uint16[] memory dexIndex) {
         require(pieRegistry.inRegistry(_pie));
 
         (address[] memory tokens, uint256[] memory amounts) = IPie(_pie).calcTokensForAmount(_pieAmount);
         dexIndex = new uint16[](tokens.length);
 
         BestPrice memory bestPrice;
-        for(uint256 i = 0; i < tokens.length; i ++) {
-	    require(amounts[i] != 0,"RECIPE: Mint amount to low");
+        for (uint256 i = 0; i < tokens.length; i ++) {
+            require(amounts[i] != 0, "RECIPE: Mint amount to low");
             bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]);
             mintPrice += bestPrice.price;
             dexIndex[i] = uint16(bestPrice.dexIndex);
         }
 
-        return (mintPrice,dexIndex);
+        return (mintPrice, dexIndex);
     }
 
-    function getLendingLogicFromWrapped(address _wrapped) internal view returns(ILendingLogic) {
+    function getLendingLogicFromWrapped(address _wrapped) internal view returns (ILendingLogic) {
         return ILendingLogic(
             lendingRegistry.protocolToLogic(
                 lendingRegistry.wrappedToProtocol(
@@ -369,6 +370,6 @@ contract Recipe is Ownable {
     }
 
     function saveEth(address payable _to, uint256 _amount) external onlyOwner {
-        _to.call{value: _amount}("");
+        _to.call{value : _amount}("");
     }
 }

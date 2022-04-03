@@ -6,37 +6,61 @@ import "../BasketsTestSuite.sol";
 import "./RecipeConfiguration.sol";
 
 contract RecipeTest is DSTest {
+
     BasketsTestSuite public testSuite;
     RecipeConfigurator public recipeConfigurator;
-    event log_named_uint(uint);
-    
+
     function setUp() public {
         testSuite = new BasketsTestSuite();
-        recipeConfigurator = new RecipeConfigurator(address(testSuite.recipe()),address(testSuite));
+        recipeConfigurator = new RecipeConfigurator(address(testSuite.recipe()), address(testSuite));
     }
-    
+
     function testMint() public {
         Recipe recipe = testSuite.recipe();
-        IERC20(testSuite.basket()).approve(address(recipe),type(uint256).max);
+        IERC20 basket = IERC20(testSuite.basket());
+
+        basket.approve(address(recipe), type(uint256).max);
         uint[] memory mintAmounts = new uint[](2);
-       
+
         mintAmounts[0] = 1e18;
-	mintAmounts[1] = 1000e18;
+        mintAmounts[1] = 1000e18;
 
         for (uint256 i = 0; i < mintAmounts.length; i++) {
+            uint256 initialBalance = address(this).balance;
             (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), mintAmounts[i]);
-             emit log_named_uint("Amount of Basket tokens to be minted",mintAmounts[i]);
-	     emit log_named_uint("Predicted Price for minting Tokens (ETH): ",mintPrice);
-  	
- 	    recipe.toPie{value: mintPrice}(
+
+            recipe.toPie{value : mintPrice}(
                 testSuite.basket(),
                 mintAmounts[i],
                 dexIndex
             );
-	    //Check that balance amount is as expected
+            uint256 basketBalance = basket.balanceOf(address(this));
 
-	    //Check that used ETH is as expected
-	    
+            assertGe(basketBalance, mintAmounts[i]);
+            assertEq(mintPrice, initialBalance - address(this).balance);
+        }
+    }
+
+    function testRedeem() public {
+        Recipe recipe = testSuite.recipe();
+        IExperiPie basket = IExperiPie(testSuite.basket());
+
+        (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), 1e18);
+
+        recipe.toPie{value : mintPrice}(
+            address(basket),
+            1e18,
+            dexIndex
+        );
+
+        (address[] memory _tokens, uint256[] memory _amounts) = basket.calcTokensForAmountExit(1e18);
+        basket.exitPool(basket.balanceOf(address(this)));
+
+        for (uint8 i; i < _tokens.length; i++) {
+            assertGt(_amounts[i], 0);
+
+            uint256 balance = IERC20(_tokens[i]).balanceOf(address(this));
+            assertEq(balance, _amounts[i]);
         }
     }
 }

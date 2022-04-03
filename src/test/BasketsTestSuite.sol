@@ -226,11 +226,11 @@ contract BasketsTestSuite is DSTest {
 
         // Deploy Recipe
         recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
-	
-	// Deploy OvenFactory
-	ovenFactory = new OvenFactoryContract();
-	ovenFactory.setDefaultController(address(this));
-	oven = ovenFactory.CreateOven(address(basket),address(recipe));
+
+        // Deploy OvenFactory
+        ovenFactory = new OvenFactoryContract();
+        ovenFactory.setDefaultController(address(this));
+        oven = ovenFactory.CreateOven(address(basket),address(recipe));
 
         // Set privileges
         CallFacet basketCF = CallFacet(basket);
