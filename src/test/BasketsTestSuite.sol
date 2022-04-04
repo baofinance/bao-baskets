@@ -264,7 +264,10 @@ contract BasketsTestSuite is DSTest {
         lendingRegistry.setUnderlyingToProtocolWrapped(DAI, AAVE_PROTOCOL, aDAI);
 	// Add basket to basket registry
         basketRegistry.addBasket(basket);
+
+        //Lend USDC into KASHI Lending
         lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
+	//Lend DAI into AAVE
 	lendingManager.lend(DAI, IERC20(DAI).balanceOf(basket), AAVE_PROTOCOL);
      }
 
