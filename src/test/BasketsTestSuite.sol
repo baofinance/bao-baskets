@@ -252,6 +252,14 @@ contract BasketsTestSuite is DSTest {
 
         // Add basket to basket registry
         basketRegistry.addBasket(basket);
+
+        (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(basket, 1e18);
+        recipe.toPie{value: mintPrice}(
+            basket,
+            1e18,
+            dexIndex
+        );
+        lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
     }
 
     // ---------------------------------
