@@ -253,6 +253,7 @@ contract BasketsTestSuite is DSTest {
         // Add basket to basket registry
         basketRegistry.addBasket(basket);
 
+        //Lend USDC into KASHI Lending
         lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
     }
 

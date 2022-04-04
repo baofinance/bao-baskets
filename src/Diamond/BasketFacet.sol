@@ -129,7 +129,7 @@ contract BasketFacet is ReentryProtection, CallProtection, IBasketFacet {
             IERC20 token = bs.tokens[i];
             uint256 tokenAmount = balance(address(token)).mul(_amount.add(feeAmount)).div(totalSupply);
             require(tokenAmount != 0, "AMOUNT_TOO_SMALL");
-	    token.safeTransferFrom(msg.sender, address(this), tokenAmount);
+	        token.safeTransferFrom(msg.sender, address(this), tokenAmount);
         }
 
         // If there is any fee that should go to the beneficiary mint it

@@ -138,14 +138,14 @@ contract Recipe is Ownable {
     }
 
     function swapPie(address _pie, uint256 _outputAmount, uint16[] memory _dexIndex) internal {
-	IPie pie = IPie(_pie);
+	    IPie pie = IPie(_pie);
         (address[] memory tokens, uint256[] memory amounts) = pie.calcTokensForAmount(_outputAmount);
-	for (uint256 i = 0; i < tokens.length; i ++) {
-	    swap(address(WETH), tokens[i], amounts[i]+1, _dexIndex[i]);
-	    IERC20 token = IERC20(tokens[i]);
-            token.approve(_pie, 0);
-            token.approve(_pie, amounts[i]+1);
-	    require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
+	    for (uint256 i = 0; i < tokens.length; i ++) {
+            swap(address(WETH), tokens[i], amounts[i]+1, _dexIndex[i]);
+            IERC20 token = IERC20(tokens[i]);
+                token.approve(_pie, 0);
+                token.approve(_pie, amounts[i]+1);
+            require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
         }
         pie.joinPool(_outputAmount);
     }
@@ -276,9 +276,7 @@ contract Recipe is Ownable {
             if (bestPrice.price > uniAmount2) {
                 bestPrice.price = uniAmount2;
                 bestPrice.dexIndex = 1;
-
             }
-
         }
 
         //GET SUSHI PRICE
@@ -331,7 +329,7 @@ contract Recipe is Ownable {
         BestPrice memory bestPrice;
         for (uint256 i = 0; i < tokens.length; i ++) {
             require(amounts[i] != 0, "RECIPE: Mint amount to low");
-	    address underlying = lendingRegistry.wrappedToUnderlying(tokens[i]);
+	        address underlying = lendingRegistry.wrappedToUnderlying(tokens[i]);
             if(underlying != address(0)) {
                 address wrapedToken = tokens[i];
                 tokens[i] = underlying;
@@ -339,7 +337,7 @@ contract Recipe is Ownable {
                 uint256 exchangeRate = lendingLogic.exchangeRate(wrapedToken);
                 amounts[i] = amounts[i] * exchangeRate / (1e18) + 1;
             }            
-	    bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]+1);
+	        bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]+1);
             mintPrice += bestPrice.price;
             dexIndex[i] = uint16(bestPrice.dexIndex);
         }

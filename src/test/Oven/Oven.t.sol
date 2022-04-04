@@ -40,7 +40,6 @@ contract OvenTest is DSTest {
     function testOvenBake() public {
         (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), 1e18);
 
-        //depositing 3% more, which is the max slippage we allow
         oven.deposit{value : mintPrice}();
 
         IERC20 basket = IERC20(testSuite.basket());
