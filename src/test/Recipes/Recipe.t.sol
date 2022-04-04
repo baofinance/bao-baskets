@@ -28,14 +28,14 @@ contract RecipeTest is DSTest {
         for (uint256 i = 0; i < mintAmounts.length; i++) {
             uint256 initialBalance = address(this).balance;
             (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), mintAmounts[i]);
-
-            recipe.toPie{value : mintPrice}(
+	    emit log_named_uint("RECIPE mintPrice: ",mintPrice);
+            recipe.toPie{value : mintPrice+1e18}(
                 testSuite.basket(),
                 mintAmounts[i],
                 dexIndex
             );
             uint256 basketBalance = basket.balanceOf(address(this));
-
+            emit log_named_uint("Actual spend: ",initialBalance - address(this).balance);
             assertGe(basketBalance, mintAmounts[i]);
             assertEq(mintPrice, initialBalance - address(this).balance);
         }
@@ -63,4 +63,5 @@ contract RecipeTest is DSTest {
             assertEq(balance, _amounts[i]);
         }
     }
+    receive() external payable{}
 }

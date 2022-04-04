@@ -63,10 +63,8 @@ contract Recipe is Ownable {
 
         // bake pie
         uint256 outputAmount = _bake(address(WETH), _pie, msg.value, _outputAmount, _dexIndex);
-
         // transfer output
         IERC20(_pie).safeTransfer(_msgSender(), outputAmount);
-
         // if any WETH left convert it into ETH and send it back
         uint256 wethBalance = WETH.balanceOf(address(this));
         if (wethBalance != 0) {
@@ -140,17 +138,15 @@ contract Recipe is Ownable {
     }
 
     function swapPie(address _pie, uint256 _outputAmount, uint16[] memory _dexIndex) internal {
-        IPie pie = IPie(_pie);
+	IPie pie = IPie(_pie);
         (address[] memory tokens, uint256[] memory amounts) = pie.calcTokensForAmount(_outputAmount);
-
-        for (uint256 i = 0; i < tokens.length; i ++) {
-            swap(address(WETH), tokens[i], amounts[i], _dexIndex[i]);
-            IERC20 token = IERC20(tokens[i]);
+	for (uint256 i = 0; i < tokens.length; i ++) {
+	    swap(address(WETH), tokens[i], amounts[i]+1, _dexIndex[i]);
+	    IERC20 token = IERC20(tokens[i]);
             token.approve(_pie, 0);
-            token.approve(_pie, amounts[i]);
-            require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
+            token.approve(_pie, amounts[i]+1);
+	    require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
         }
-
         pie.joinPool(_outputAmount);
     }
 
@@ -335,7 +331,15 @@ contract Recipe is Ownable {
         BestPrice memory bestPrice;
         for (uint256 i = 0; i < tokens.length; i ++) {
             require(amounts[i] != 0, "RECIPE: Mint amount to low");
-            bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]);
+	    address underlying = lendingRegistry.wrappedToUnderlying(tokens[i]);
+            if(underlying != address(0)) {
+                address wrapedToken = tokens[i];
+                tokens[i] = underlying;
+                ILendingLogic lendingLogic = getLendingLogicFromWrapped(wrapedToken);
+                uint256 exchangeRate = lendingLogic.exchangeRate(wrapedToken);
+                amounts[i] = amounts[i] * exchangeRate / (1e18) + 1;
+            }            
+	    bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]+1);
             mintPrice += bestPrice.price;
             dexIndex[i] = uint16(bestPrice.dexIndex);
         }
@@ -372,4 +376,6 @@ contract Recipe is Ownable {
     function saveEth(address payable _to, uint256 _amount) external onlyOwner {
         _to.call{value : _amount}("");
     }
+
+    receive() external payable{}
 }
