@@ -108,7 +108,7 @@ contract Oven {
     }
 
     function withdrawAllETH(address payable _receiver) public ovenIsReady {
-	withdrawETH(ethBalanceOf[msg.sender], _receiver);
+	    withdrawETH(ethBalanceOf[msg.sender], _receiver);
     }
 
     function withdrawETH(uint256 _amount, address payable _receiver)
