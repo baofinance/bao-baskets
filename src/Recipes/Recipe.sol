@@ -11,12 +11,14 @@ import "../Interfaces/IBalancer.sol";
 import "../Interfaces/IUniV3Router.sol";
 import "../Interfaces/IERC20Metadata.sol";
 import "@openzeppelin/token/ERC20/SafeERC20.sol";
+import "@openzeppelin/math/SafeMath.sol";
 import "@openzeppelin/access/Ownable.sol";
 
 pragma experimental ABIEncoderV2;
 
 contract Recipe is Ownable {
     using SafeERC20 for IERC20;
+    using SafeMath for uint256;
 
     IWETH immutable WETH;
     ILendingRegistry immutable lendingRegistry;
@@ -120,8 +122,7 @@ contract Recipe is Ownable {
             ILendingLogic lendingLogic = getLendingLogicFromWrapped(_outputToken);
             uint256 exchangeRate = lendingLogic.exchangeRate(_outputToken);
             // wrapped to underlying
-            uint256 underlyingAmount = _outputAmount * exchangeRate / (1e18) + 1;
-
+            uint256 underlyingAmount = _outputAmount.mul(exchangeRate).div(1e18);
             swap(_inputToken, underlying, underlyingAmount, _dexIndex);
             (address[] memory targets, bytes[] memory data) = lendingLogic.lend(underlying, underlyingAmount, address(this));
 
@@ -141,10 +142,10 @@ contract Recipe is Ownable {
 	    IPie pie = IPie(_pie);
         (address[] memory tokens, uint256[] memory amounts) = pie.calcTokensForAmount(_outputAmount);
 	    for (uint256 i = 0; i < tokens.length; i ++) {
-            swap(address(WETH), tokens[i], amounts[i]+1, _dexIndex[i]);
+            swap(address(WETH), tokens[i], amounts[i], _dexIndex[i]);
             IERC20 token = IERC20(tokens[i]);
             token.approve(_pie, 0);
-            token.approve(_pie, amounts[i]+1);
+	    token.approve(_pie, amounts[i]);
             require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
         }
         pie.joinPool(_outputAmount);
@@ -335,9 +336,9 @@ contract Recipe is Ownable {
                 tokens[i] = underlying;
                 ILendingLogic lendingLogic = getLendingLogicFromWrapped(wrapedToken);
                 uint256 exchangeRate = lendingLogic.exchangeRate(wrapedToken);
-                amounts[i] = amounts[i] * exchangeRate / (1e18) + 1;
+                amounts[i] = amounts[i].mul(exchangeRate).div(1e18);
             }            
-	        bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]+1);
+	        bestPrice = getBestPrice(address(WETH), tokens[i], amounts[i]);
             mintPrice += bestPrice.price;
             dexIndex[i] = uint16(bestPrice.dexIndex);
         }
