@@ -145,7 +145,7 @@ contract Recipe is Ownable {
             swap(address(WETH), tokens[i], amounts[i], _dexIndex[i]);
             IERC20 token = IERC20(tokens[i]);
             token.approve(_pie, 0);
-	    token.approve(_pie, amounts[i]);
+	        token.approve(_pie, amounts[i]);
             require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
         }
         pie.joinPool(_outputAmount);
