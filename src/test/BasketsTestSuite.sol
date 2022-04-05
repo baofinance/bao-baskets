@@ -82,7 +82,7 @@ contract BasketsTestSuite is DSTest {
     address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
     address public KASHI_MEDIUM_RISK = 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42;
-    bytes32 public KASHI_PROTOCOL = 0x000000000000000000000000d3f07ea86ddf7baebefd49731d7bbd207fedc53b;
+    bytes32 public KASHI_PROTOCOL = 0x0000000000000000000000000000000000000000000000000000000000000003;
     bytes32 public AAVE_PROTOCOL = 0x0000000000000000000000000000000000000000000000000000000000000002;    
 
     constructor () {
@@ -266,7 +266,7 @@ contract BasketsTestSuite is DSTest {
         basketRegistry.addBasket(basket);
 
         //Lend USDC into KASHI Lending
-        lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
+        //lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
 	//Lend DAI into AAVE
 	lendingManager.lend(DAI, IERC20(DAI).balanceOf(basket), AAVE_PROTOCOL);
      }

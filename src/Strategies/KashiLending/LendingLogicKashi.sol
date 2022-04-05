@@ -16,6 +16,8 @@ contract LendingLogicKashi is ILendingLogic {
     bytes32 public immutable protocolKey;
     IBentoBoxV1 public immutable bentoBox;
 
+    event log_named_uint(string key, uint val);
+
     constructor(address _lendingRegistry, bytes32 _protocolKey, address _bentoBox) {
         require(_lendingRegistry != address(0), "INVALID_LENDING_REGISTRY");
         lendingRegistry = LendingRegistry(_lendingRegistry);
@@ -103,11 +105,13 @@ contract LendingLogicKashi is ILendingLogic {
         address underlying = address(IKashiPair(_kaToken).asset());
         uint8 _decimal = IKashiPair(_kaToken).decimals();
 
-        uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, true);
-
-        uint256 share = ((1e18) * allShare) / aBase;
-
-        return bentoBox.toAmount(IERC20(underlying),share,true);
+        uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, false);
+	emit log_named_uint("allShare", allShare);
+	emit log_named_uint("aBase", aBase);
+        uint256 share = ((1e6) * allShare) / aBase;
+	emit log_named_uint("share", share);
+	emit log_named_uint("toAmount", bentoBox.toAmount(IERC20(underlying),share,false));
+        return bentoBox.toAmount(IERC20(underlying),share+1,false)*1e12;
     }
 
 
@@ -117,10 +121,10 @@ contract LendingLogicKashi is ILendingLogic {
         address underlying = address(IKashiPair(_kaToken).asset());
         uint8 _decimal = IKashiPair(_kaToken).decimals();
 
-        uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, true);
+        uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, false);
 
-        uint256 share = ((1e18) * allShare) / aBase;
+        uint256 share = ((1e6) * allShare) / aBase;
 
-        return bentoBox.toAmount(IERC20(underlying),share,true);
+        return bentoBox.toAmount(IERC20(underlying),share+1,false)*1e12;
     }
 }
