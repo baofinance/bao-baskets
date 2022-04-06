@@ -122,7 +122,7 @@ contract Recipe is Ownable {
             ILendingLogic lendingLogic = getLendingLogicFromWrapped(_outputToken);
             uint256 exchangeRate = lendingLogic.exchangeRate(_outputToken);
             // wrapped to underlying
-            uint256 underlyingAmount = _outputAmount.mul(exchangeRate).div(1e18);
+            uint256 underlyingAmount = _outputAmount.mul(exchangeRate).div(1e18).add(1);
             swap(_inputToken, underlying, underlyingAmount, _dexIndex);
             (address[] memory targets, bytes[] memory data) = lendingLogic.lend(underlying, underlyingAmount, address(this));
 

@@ -103,13 +103,12 @@ contract LendingLogicKashi is ILendingLogic {
         (uint128 aElastic, uint128 aBase) = IKashiPair(_kaToken).totalAsset();
         (uint128 bElastic, uint128 bBase) = IKashiPair(_kaToken).totalBorrow();
         address underlying = address(IKashiPair(_kaToken).asset());
-        uint8 _decimal = IKashiPair(_kaToken).decimals();
 
         uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, false);
 	
         uint256 share = ((1e18) * allShare) / aBase;
 	
-        return bentoBox.toAmount(IERC20(underlying),share+1,false);
+        return bentoBox.toAmount(IERC20(underlying),share,false);
     }
 
 
@@ -117,12 +116,11 @@ contract LendingLogicKashi is ILendingLogic {
         (uint128 aElastic, uint128 aBase) = IKashiPair(_kaToken).totalAsset();
         (uint128 bElastic, uint128 bBase) = IKashiPair(_kaToken).totalBorrow();
         address underlying = address(IKashiPair(_kaToken).asset());
-        uint8 _decimal = IKashiPair(_kaToken).decimals();
 
         uint256 allShare = aElastic + bentoBox.toShare(IERC20(underlying), bElastic, false);
 
         uint256 share = ((1e18) * allShare) / aBase;
 
-        return bentoBox.toAmount(IERC20(underlying),share+1,false);
+        return bentoBox.toAmount(IERC20(underlying),share,false);
     }
 }
