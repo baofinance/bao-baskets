@@ -39,7 +39,7 @@ contract Recipe is Ownable {
         uint price;
         uint dexIndex;
     }
-
+    event log_named_uint(string key, uint val);
     constructor(
         address _weth,
         address _lendingRegistry,
@@ -146,9 +146,13 @@ contract Recipe is Ownable {
             IERC20 token = IERC20(tokens[i]);
             token.approve(_pie, 0);
             token.approve(_pie, amounts[i]);
+            //emit log_named_uint("Token: ",tokens[i]);
+            emit log_named_uint("Amount we have",token.balanceOf(address(this)));
+            emit log_named_uint("Amount we need",amounts[i]);
             require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
         }
         pie.joinPool(_outputAmount);
+        emit log_named_uint("Join Success!",0);
     }
 
     function dexSwap(address _assetIn, address _assetOut, uint _amountOut, uint16 _dexIndex) public {

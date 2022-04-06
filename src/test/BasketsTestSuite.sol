@@ -81,8 +81,8 @@ contract BasketsTestSuite is DSTest {
     address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     address public DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
-    address public USDT = 0xdAC17F958D2ee523a2206206994597C13D831ec7;
-    address public cUSDT = 0xf650C3d88D12dB855b8bf7D11Be6C55A4e07dCC9;
+    address public LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
+    address public cLINK = 0xFAce851a4921ce59e912d19329929CE6da6EB0c7;
     address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
     address public KASHI_MEDIUM_RISK = 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42;
@@ -98,7 +98,7 @@ contract BasketsTestSuite is DSTest {
         // Set the tokens that we'll put in our test basket
         TEST_BASKET_TOKENS.push(USDC);
         TEST_BASKET_TOKENS.push(DAI);
-        TEST_BASKET_TOKENS.push(USDT);	
+        TEST_BASKET_TOKENS.push(LINK);	
 
         deployProtocol();
     }
@@ -218,24 +218,25 @@ contract BasketsTestSuite is DSTest {
         loupeFacetCutSelectors[4] = 0x01ffc9a7;
         IDiamondCut.FacetCut memory loupeFacetCut = IDiamondCut.FacetCut(address(loupeFacet), IDiamondCut.FacetCutAction.Add, loupeFacetCutSelectors);
         basketFactory.addFacet(loupeFacetCut);
-
+        
         // Deploy Lending Strategies
         lendingLogicKashi = new LendingLogicKashi(address(lendingRegistry), KASHI_PROTOCOL, BENTO_BOX);
         lendingLogicAave = new LendingLogicAaveV2(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, 0);
-        lendingLogicAave = new LendingLogicCompound(address(lendingRegistry), COMP_PROTOCOL);
-
+        lendingLogicCompound = new LendingLogicCompound(address(lendingRegistry), COMP_PROTOCOL);
+        
         // Create Test Basket
-        uint256[] memory tokenAmounts = new uint256[](2);
+        uint256[] memory tokenAmounts = new uint256[](3);
         tokenAmounts[0] = 100e6;
         tokenAmounts[1] = 100e18;
+        tokenAmounts[2] = 50e18;
         uint256 initialSupply = 100 ether;
-
+        
         buyTokens(tokenAmounts);
         approveTokens(address(basketFactory));
-
+        
         basketFactory.bakeBasket(TEST_BASKET_TOKENS, tokenAmounts, initialSupply, "testBasket", "Test Basket");
         basket = basketFactory.baskets(0);
-
+        
         // Deploy Lending Manager
         lendingManager = new LendingManager(address(lendingRegistry), basket);
 
@@ -272,18 +273,19 @@ contract BasketsTestSuite is DSTest {
         lendingRegistry.setUnderlyingToProtocolWrapped(DAI, AAVE_PROTOCOL, aDAI);
         // USDT - COMPOUND
         lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
-        lendingRegistry.setWrappedToProtocol(cUSDT, COMP_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(cUSDT, USDT);
-        lendingRegistry.setUnderlyingToProtocolWrapped(USDT, COMP_PROTOCOL, cUSDT);
+        lendingRegistry.setWrappedToProtocol(cLINK, COMP_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(cLINK, LINK);
+        lendingRegistry.setUnderlyingToProtocolWrapped(LINK, COMP_PROTOCOL, cLINK);
 
         // Add basket to basket registry
         basketRegistry.addBasket(basket);
-
+        
         //Lend USDC into KASHI Lending
         //lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
         //Lend DAI into AAVE
         lendingManager.lend(DAI, IERC20(DAI).balanceOf(basket), AAVE_PROTOCOL);
-        lendingManager.lend(USDT, IERC20(USDT).balanceOf(basket), COMP_PROTOCOL);
+        //Lend LINK into COMPOUND
+        lendingManager.lend(LINK, IERC20(LINK).balanceOf(basket), COMP_PROTOCOL);
     }
 
     // ---------------------------------
