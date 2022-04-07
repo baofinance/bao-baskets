@@ -50,12 +50,10 @@ contract Oven {
     function bake(
         address[] calldata _receivers,
         uint256 _outputAmount,
-        uint256 _maxPrice,
-        uint16[] memory _dexIndex
+        uint256 _maxPrice
     ) public ovenIsReady controllerOnly {
-        uint256 realPrice = recipe.getPrice(weth, address(pie), _outputAmount);
-        require(realPrice <= _maxPrice, "PRICE_ERROR");
-
+        (uint256 realPrice,uint16[] memory _dexIndex) = recipe.getPricePie(address(pie), _outputAmount);
+	require(realPrice <= _maxPrice, "PRICE_ERROR");
         uint256 totalInputAmount = 0;
         for (uint256 i = 0; i < _receivers.length; i++) {
             // This logic aims to execute the following logic
@@ -66,7 +64,7 @@ contract Oven {
             // User 4: 2 eth (0% used)
 
             uint256 userAmount = ethBalanceOf[_receivers[i]];
-            if (totalInputAmount == realPrice) {
+	    if (totalInputAmount == realPrice) {
                 break;
             } else if (totalInputAmount.add(userAmount) <= realPrice) {
                 totalInputAmount = totalInputAmount.add(userAmount);
@@ -90,13 +88,13 @@ contract Oven {
             emit Bake(_receivers[i], userBakeAmount, userAmount);
         }
         // Provided balances are too low.
-        require(totalInputAmount == realPrice, "INSUFFICIENT_FUNDS");
+	require(totalInputAmount == realPrice, "INSUFFICIENT_FUNDS");
         recipe.toPie{value: realPrice}(address(pie), _outputAmount, _dexIndex);
     }
 
     function deposit() public payable ovenIsReady {
         ethBalanceOf[msg.sender] = ethBalanceOf[msg.sender].add(msg.value);
-        require(address(this).balance <= cap, "MAX_CAP");
+	require((address(this).balance) <= cap, "MAX_CAP");
         emit Deposit(msg.sender, msg.value);
     }
 
@@ -154,10 +152,6 @@ contract Oven {
     function setPieAndRecipe(address _pie, address _recipe) external {
         setPie(_pie);
         setRecipe(_recipe);
-    }
-
-    function getCap() external view returns (uint256) {
-        return cap;
     }
 
     function saveToken(address _token) external {

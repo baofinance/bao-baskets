@@ -8,11 +8,15 @@ import "../Diamond/DiamondLoupeFacet.sol";
 import "../Diamond/ERC20Facet.sol";
 import "../Diamond/OwnershipFacet.sol";
 import "../BasketRegistry.sol";
+import { Oven } from "../Oven.sol";
+import { OvenFactoryContract } from "../OvenFactory.sol";
 import "../LendingRegistry.sol";
 import "../Diamond/Diamond.sol";
 import "../BasketFactoryContract.sol";
 import "../Interfaces/IDiamondCut.sol";
 import { LendingLogicKashi } from "../Strategies/KashiLending/LendingLogicKashi.sol";
+import { LendingLogicAaveV2 } from "../Strategies/LendingLogicAaveV2.sol";
+import { LendingLogicCompound } from "../Strategies/LendingLogicCompound.sol";
 import { LendingManager } from "../LendingManager.sol";
 import { Recipe } from "../Recipes/Recipe.sol";
 import { IUniswapV2Router01 } from "../Interfaces/IUniRouter.sol";
@@ -56,9 +60,17 @@ contract BasketsTestSuite is DSTest {
     // Lending Manager & Logic
     LendingManager public lendingManager;
     LendingLogicKashi public lendingLogicKashi;
+    LendingLogicAaveV2 public lendingLogicAave;
+    LendingLogicCompound public lendingLogicCompound;
 
     // Recipe
     Recipe public recipe;
+     
+    // OvenFactory
+    OvenFactoryContract public ovenFactory;
+
+    // Oven
+    Oven public oven;
 
     // Test Basket
     address public basket;
@@ -67,10 +79,16 @@ contract BasketsTestSuite is DSTest {
     address[] public TEST_BASKET_TOKENS;
     address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address public DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address public aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
+    address public LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
+    address public cLINK = 0xFAce851a4921ce59e912d19329929CE6da6EB0c7;
     address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
     address public KASHI_MEDIUM_RISK = 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42;
-    bytes32 public KASHI_PROTOCOL = 0x000000000000000000000000d3f07ea86ddf7baebefd49731d7bbd207fedc53b;
+    bytes32 public KASHI_PROTOCOL = 0x0000000000000000000000000000000000000000000000000000000000000003;
+    bytes32 public AAVE_PROTOCOL = 0x0000000000000000000000000000000000000000000000000000000000000002;   
+    bytes32 public COMP_PROTOCOL =  0x0000000000000000000000000000000000000000000000000000000000000001;
 
     constructor () {
         // Give our test suite some ETH
@@ -79,6 +97,8 @@ contract BasketsTestSuite is DSTest {
 
         // Set the tokens that we'll put in our test basket
         TEST_BASKET_TOKENS.push(USDC);
+        TEST_BASKET_TOKENS.push(DAI);
+        TEST_BASKET_TOKENS.push(LINK);	
 
         deployProtocol();
     }
@@ -198,26 +218,35 @@ contract BasketsTestSuite is DSTest {
         loupeFacetCutSelectors[4] = 0x01ffc9a7;
         IDiamondCut.FacetCut memory loupeFacetCut = IDiamondCut.FacetCut(address(loupeFacet), IDiamondCut.FacetCutAction.Add, loupeFacetCutSelectors);
         basketFactory.addFacet(loupeFacetCut);
-
+        
         // Deploy Lending Strategies
         lendingLogicKashi = new LendingLogicKashi(address(lendingRegistry), KASHI_PROTOCOL, BENTO_BOX);
-
+        lendingLogicAave = new LendingLogicAaveV2(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, 0);
+        lendingLogicCompound = new LendingLogicCompound(address(lendingRegistry), COMP_PROTOCOL);
+        
         // Create Test Basket
-        uint256[] memory tokenAmounts = new uint256[](1);
-        tokenAmounts[0] = 100000000;
+        uint256[] memory tokenAmounts = new uint256[](3);
+        tokenAmounts[0] = 100e6;
+        tokenAmounts[1] = 100e18;
+        tokenAmounts[2] = 50e18;
         uint256 initialSupply = 100 ether;
-
+        
         buyTokens(tokenAmounts);
         approveTokens(address(basketFactory));
-
+        
         basketFactory.bakeBasket(TEST_BASKET_TOKENS, tokenAmounts, initialSupply, "testBasket", "Test Basket");
         basket = basketFactory.baskets(0);
-
+        
         // Deploy Lending Manager
         lendingManager = new LendingManager(address(lendingRegistry), basket);
 
         // Deploy Recipe
         recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
+
+        // Deploy OvenFactory
+        ovenFactory = new OvenFactoryContract();
+        ovenFactory.setDefaultController(address(this));
+        oven = ovenFactory.CreateOven(address(basket),address(recipe));
 
         // Set privileges
         CallFacet basketCF = CallFacet(basket);
@@ -230,15 +259,33 @@ contract BasketsTestSuite is DSTest {
         bytes[] memory b = new bytes[](1);
         b[0] = abi.encodeWithSignature("setMasterContractApproval(address,address,bool,uint8,bytes32,bytes32)", basket, KASHI_MEDIUM_RISK, true, 0, bytes32(0), bytes32(0));
         basketCF.callNoValue(a, b);
-
+        
         // Configure Lending
+        // USDC - KASHI
         lendingRegistry.setProtocolToLogic(KASHI_PROTOCOL, address(lendingLogicKashi));
         lendingRegistry.setWrappedToProtocol(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, KASHI_PROTOCOL); // Kashi Medium Risk V1
         lendingRegistry.setWrappedToUnderlying(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, USDC); // USDC
         lendingRegistry.setUnderlyingToProtocolWrapped(USDC, KASHI_PROTOCOL, 0xB7b45754167d65347C93F3B28797887b4b6cd2F3);
+        // DAI - AAVE
+        lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
+        lendingRegistry.setWrappedToProtocol(aDAI, AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(aDAI, DAI);
+        lendingRegistry.setUnderlyingToProtocolWrapped(DAI, AAVE_PROTOCOL, aDAI);
+        // USDT - COMPOUND
+        lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
+        lendingRegistry.setWrappedToProtocol(cLINK, COMP_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(cLINK, LINK);
+        lendingRegistry.setUnderlyingToProtocolWrapped(LINK, COMP_PROTOCOL, cLINK);
 
         // Add basket to basket registry
         basketRegistry.addBasket(basket);
+        
+        //Lend USDC into KASHI Lending
+        //lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
+        //Lend DAI into AAVE
+        lendingManager.lend(DAI, IERC20(DAI).balanceOf(basket), AAVE_PROTOCOL);
+        //Lend LINK into COMPOUND
+        lendingManager.lend(LINK, IERC20(LINK).balanceOf(basket), COMP_PROTOCOL);
     }
 
     // ---------------------------------
@@ -274,4 +321,6 @@ contract BasketsTestSuite is DSTest {
         route[0] = a;
         route[1] = b;
     }
+
+    receive() external payable{}
 }
