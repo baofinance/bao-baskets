@@ -292,11 +292,13 @@ contract BasketsTestSuite is DSTest {
     // HELPER FUNCTIONS
     // ---------------------------------
 
-    function buyTokens(uint256[] memory _tokenAmounts) private {
+    function buyTokens(uint256[] memory _tokenAmounts) public {
         require(_tokenAmounts.length == TEST_BASKET_TOKENS.length, "Error: Incorrect length of token amounts array.");
 
         IUniswapV2Router01 router = IUniswapV2Router01(SUSHI_ROUTER);
         for (uint8 i; i < TEST_BASKET_TOKENS.length; i++) {
+            if (_tokenAmounts[i] == 0) continue;
+
             address[] memory route = _getRoute(WETH, TEST_BASKET_TOKENS[i]);
             uint256 amountIn = router.getAmountsIn(_tokenAmounts[i], route)[0];
 
