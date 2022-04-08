@@ -64,7 +64,7 @@ contract Recipe is Ownable {
         address(WETH).call{value : msg.value}("");
 
         // bake pie
-        uint256 outputAmount = _bake(address(WETH), _pie, msg.value, _outputAmount, _dexIndex);
+        uint256 outputAmount = _bake(address(WETH), _pie, _outputAmount, _dexIndex);
         // transfer output
         IERC20(_pie).safeTransfer(_msgSender(), outputAmount);
         // if any WETH left convert it into ETH and send it back
@@ -87,7 +87,7 @@ contract Recipe is Ownable {
 
         IERC20(address(WETH)).safeTransferFrom(_msgSender(), address(this), _maxInput);
 
-        outputAmount = _bake(address(WETH), _outputToken, _maxInput, _mintAmount, _dexIndex);
+        outputAmount = _bake(address(WETH), _outputToken, _mintAmount, _dexIndex);
 
         uint256 remainingInputBalance = WETH.balanceOf(address(this));
 
@@ -100,7 +100,7 @@ contract Recipe is Ownable {
         return (inputAmountUsed, outputAmount);
     }
 
-    function _bake(address _inputToken, address _outputToken, uint256 _maxInput, uint256 _mintAmount, uint16[] memory _dexIndex) internal returns (uint256 outputAmount) {
+    function _bake(address _inputToken, address _outputToken, uint256 _mintAmount, uint16[] memory _dexIndex) internal returns (uint256 outputAmount) {
         require(_inputToken == address(WETH));
         require(pieRegistry.inRegistry(_outputToken));
 
