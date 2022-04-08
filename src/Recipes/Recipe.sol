@@ -32,8 +32,6 @@ contract Recipe is Ownable {
     //so we save info about the DEX state to prevent querying the price if it is not viable
     mapping(address => bytes32) balancerViable;
     mapping(address => uint16) uniFee;
-    // Adds a custom hop before reaching the destination token
-    mapping(address => address) public customHops;
 
     struct BestPrice {
         uint price;
