@@ -17,6 +17,7 @@ import "../Interfaces/IDiamondCut.sol";
 import { LendingLogicKashi } from "../Strategies/KashiLending/LendingLogicKashi.sol";
 import { LendingLogicAaveV2 } from "../Strategies/LendingLogicAaveV2.sol";
 import { LendingLogicCompound } from "../Strategies/LendingLogicCompound.sol";
+import { StakingLogicSushi } from "../Strategies/StakingLogicSushi.sol";
 import { LendingManager } from "../LendingManager.sol";
 import { Recipe } from "../Recipes/Recipe.sol";
 import { IUniswapV2Router01 } from "../Interfaces/IUniRouter.sol";
@@ -62,6 +63,7 @@ contract BasketsTestSuite is DSTest {
     LendingLogicKashi public lendingLogicKashi;
     LendingLogicAaveV2 public lendingLogicAave;
     LendingLogicCompound public lendingLogicCompound;
+    StakingLogicSushi public stakingLogicSushi;
 
     // Recipe
     Recipe public recipe;
@@ -83,9 +85,12 @@ contract BasketsTestSuite is DSTest {
     address public aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
     address public LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
     address public cLINK = 0xFAce851a4921ce59e912d19329929CE6da6EB0c7;
+    address public SUSHI = 0x6B3595068778DD592e39A122f4f5a5cF09C90fE2;
+    address public xSUSHI = 0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272;
     address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
     address public KASHI_MEDIUM_RISK = 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42;
+    bytes32 public XSUSHI_PROTOCOL = 0x0000000000000000000000000000000000000000000000000000000000000004;
     bytes32 public KASHI_PROTOCOL = 0x0000000000000000000000000000000000000000000000000000000000000003;
     bytes32 public AAVE_PROTOCOL = 0x0000000000000000000000000000000000000000000000000000000000000002;   
     bytes32 public COMP_PROTOCOL =  0x0000000000000000000000000000000000000000000000000000000000000001;
@@ -99,6 +104,7 @@ contract BasketsTestSuite is DSTest {
         TEST_BASKET_TOKENS.push(USDC);
         TEST_BASKET_TOKENS.push(DAI);
         TEST_BASKET_TOKENS.push(LINK);	
+        TEST_BASKET_TOKENS.push(SUSHI);        
 
         deployProtocol();
     }
@@ -223,12 +229,14 @@ contract BasketsTestSuite is DSTest {
         lendingLogicKashi = new LendingLogicKashi(address(lendingRegistry), KASHI_PROTOCOL, BENTO_BOX);
         lendingLogicAave = new LendingLogicAaveV2(0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9, 0);
         lendingLogicCompound = new LendingLogicCompound(address(lendingRegistry), COMP_PROTOCOL);
+        stakingLogicSushi = new StakingLogicSushi(address(lendingRegistry), XSUSHI_PROTOCOL);
         
         // Create Test Basket
-        uint256[] memory tokenAmounts = new uint256[](3);
+        uint256[] memory tokenAmounts = new uint256[](4);
         tokenAmounts[0] = 100e6;
         tokenAmounts[1] = 100e18;
         tokenAmounts[2] = 50e18;
+        tokenAmounts[3] = 30e18;
         uint256 initialSupply = 100 ether;
         
         buyTokens(tokenAmounts);
@@ -252,7 +260,7 @@ contract BasketsTestSuite is DSTest {
         CallFacet basketCF = CallFacet(basket);
         basketCF.addCaller(address(this));
         basketCF.addCaller(address(lendingManager));
-
+        
         // Approve Kashi Lending for Basket
         address[] memory a = new address[](1);
         a[0] = BENTO_BOX;
@@ -276,7 +284,12 @@ contract BasketsTestSuite is DSTest {
         lendingRegistry.setWrappedToProtocol(cLINK, COMP_PROTOCOL);
         lendingRegistry.setWrappedToUnderlying(cLINK, LINK);
         lendingRegistry.setUnderlyingToProtocolWrapped(LINK, COMP_PROTOCOL, cLINK);
-
+        // SUSHI - xSUSHI
+        lendingRegistry.setProtocolToLogic(XSUSHI_PROTOCOL, address(stakingLogicSushi));
+        lendingRegistry.setWrappedToProtocol(xSUSHI, XSUSHI_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(xSUSHI, SUSHI);
+        lendingRegistry.setUnderlyingToProtocolWrapped(SUSHI, XSUSHI_PROTOCOL, xSUSHI);
+        
         // Add basket to basket registry
         basketRegistry.addBasket(basket);
         
@@ -286,6 +299,8 @@ contract BasketsTestSuite is DSTest {
         lendingManager.lend(DAI, IERC20(DAI).balanceOf(basket), AAVE_PROTOCOL);
         //Lend LINK into COMPOUND
         lendingManager.lend(LINK, IERC20(LINK).balanceOf(basket), COMP_PROTOCOL);
+        //Stake SUSHI into xSUSHI/Sushi Bar
+        lendingManager.lend(SUSHI, IERC20(SUSHI).balanceOf(basket), XSUSHI_PROTOCOL);
     }
 
     // ---------------------------------
