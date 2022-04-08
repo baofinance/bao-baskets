@@ -6,6 +6,7 @@
 
 Contract  	  					| Address									|Etherscan 																		|
 --------------------------------| ------------------------------------------|-------------------------------------------------------------------------------|
+Recipe	  				        | 0x6C9c5fd51B95c7BF365955867268ce2EC25Deb5B|[Link](https://etherscan.io/address/0x6C9c5fd51B95c7BF365955867268ce2EC25Deb5B)|
 Basket Registry  				| 0x51801401e1f21c9184610b99B978D050a374566E|[Link](https://etherscan.io/address/0x51801401e1f21c9184610b99B978D050a374566E)|
 Lending Registry  				| 0x08a2b7D713e388123dc6678168656659d297d397|[Link](https://etherscan.io/address/0x08a2b7D713e388123dc6678168656659d297d397)|
 Basket Factory  				| 0xe1e7634Cd2AED55C6aAA704299E735987f372b70|[Link](https://etherscan.io/address/0xe1e7634Cd2AED55C6aAA704299E735987f372b70)|
