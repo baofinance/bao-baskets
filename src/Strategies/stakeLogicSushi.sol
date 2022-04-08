@@ -5,7 +5,7 @@ pragma solidity ^0.7.1;
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "../Interfaces/ILendingLogic.sol";
 import "./LendingRegistry.sol";
-import "./Interfaces/IXSushi.sol";
+import "../Interfaces/IXSushi.sol";
 
 contract StakingLogicSushi is ILendingLogic {
 
@@ -31,7 +31,6 @@ contract StakingLogicSushi is ILendingLogic {
 
         targets = new address[](3);
         data = new bytes[](3);
-
 
         address SushiBar = lendingRegistry.underlyingToProtocolWrapped(_underlying, protocolKey);
 
