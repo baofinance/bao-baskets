@@ -21,10 +21,11 @@ contract RecipeTest is DSTest {
         IERC20 basket = IERC20(testSuite.basket());
 
         basket.approve(address(recipe), type(uint256).max);
-        uint[] memory mintAmounts = new uint[](2);
+        uint[] memory mintAmounts = new uint[](3);
 
         mintAmounts[0] = 1e18;
-        mintAmounts[1] = 1000000000000000000135;
+        mintAmounts[1] = 10e18;
+        mintAmounts[2] = 1000000000000000000135;
 
         for (uint256 i = 0; i < mintAmounts.length; i++) {
             uint256 initialBalance = address(this).balance;
