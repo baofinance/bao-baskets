@@ -6,7 +6,7 @@ import "../LendingRegistry.sol";
 import "../Interfaces/IXSushi.sol";
 import "@openzeppelin/token/ERC20/IERC20.sol";
 
-contract StakingLogicSushi{
+contract StakingLogicSushi is ILendingLogic {
 
     LendingRegistry public lendingRegistry;
     bytes32 public immutable protocolKey;
@@ -17,15 +17,18 @@ contract StakingLogicSushi{
         protocolKey = _protocolKey;
     }
 
-    function getAPRFromWrapped(address _token) public view returns(uint256) {
+    function getAPRFromWrapped(address _token) public view override returns(uint256) {
         return uint256(0);
     }
 
-    function getAPRFromUnderlying(address _token) external view returns(uint256) {
+    function getAPRFromUnderlying(address _token) external view override returns(uint256) {
         return uint256(0);
     }
 
-    function lend(address _underlying, uint256 _amount, address _tokenHolder) external view returns(address[] memory targets, bytes[] memory data) {
+    function lend(address _underlying,
+        uint256 _amount,
+        address _tokenHolder
+    ) external view override returns(address[] memory targets, bytes[] memory data) {
         IERC20 underlying = IERC20(_underlying);
 
         targets = new address[](3);
@@ -48,7 +51,11 @@ contract StakingLogicSushi{
         return(targets, data);
     }
 
-    function unlend(address _wrapped, uint256 _amount, address _tokenHolder) external view returns(address[] memory targets, bytes[] memory data) {
+    function unlend(
+        address _wrapped,
+        uint256 _amount,
+        address _tokenHolder
+    ) external view override returns(address[] memory targets, bytes[] memory data) {
         targets = new address[](1);
         data = new bytes[](1);
 
@@ -58,11 +65,11 @@ contract StakingLogicSushi{
         return(targets, data);
     }
 
-    function exchangeRate(address _wrapped) external view returns(uint256) {
+    function exchangeRate(address _wrapped) external view override returns(uint256) {
         return _exchangeRate(_wrapped);
     }
 
-    function exchangeRateView(address _wrapped) external view returns(uint256) {
+    function exchangeRateView(address _wrapped) external view override returns(uint256) {
         return _exchangeRate(_wrapped);
     }
 

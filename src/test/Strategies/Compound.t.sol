@@ -22,7 +22,7 @@ contract CompoundStrategyTest is DSTest, LendingLogicTest {
         testSuite.cheats().startPrank(address(testSuite));
 
         // Buy LINK
-        uint256[] memory tokenAmounts = new uint256[](3);
+        uint256[] memory tokenAmounts = new uint256[](4);
         tokenAmounts[2] = 1e20; // 100 LINK
         testSuite.buyTokens(tokenAmounts);
 
@@ -55,26 +55,5 @@ contract CompoundStrategyTest is DSTest, LendingLogicTest {
         actual = LINK.balanceOf(address(this));
         expected = linkBalance;
         assertRelApproxEq(expected, actual, 1e10); // 0.000001% delta threshold
-    }
-
-    // https://github.com/Rari-Capital/solmate/blob/main/src/test/utils/DSTestPlus.sol
-    function assertRelApproxEq(
-        uint256 a,
-        uint256 b,
-        uint256 maxPercentDelta
-    ) internal virtual {
-        uint256 delta = a > b ? a - b : b - a;
-        uint256 abs = a > b ? a : b;
-
-        uint256 percentDelta = (delta * 1e18) / abs;
-
-        if (percentDelta > maxPercentDelta) {
-            emit log("Error: a ~= b not satisfied [uint]");
-            emit log_named_uint("    Expected", b);
-            emit log_named_uint("      Actual", a);
-            emit log_named_uint(" Max % Delta", maxPercentDelta);
-            emit log_named_uint("     % Delta", percentDelta);
-            fail();
-        }
     }
 }

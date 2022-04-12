@@ -22,7 +22,7 @@ contract AAVEStrategyTest is DSTest, LendingLogicTest {
         testSuite.cheats().startPrank(address(testSuite));
 
         // Buy DAI
-        uint256[] memory tokenAmounts = new uint256[](3);
+        uint256[] memory tokenAmounts = new uint256[](4);
         tokenAmounts[1] = 1e23; // 10000 DAI
         testSuite.buyTokens(tokenAmounts);
 
