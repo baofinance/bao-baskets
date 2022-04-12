@@ -1,6 +1,4 @@
 [default]
 optimizer = true
-optimizer_runs = 20000
-solc_version = '0.7.1'
-no_storage_caching = false
-rpc_storage_caching = { chains = "all", endpoints = "remote" }
+optimizer_runs = 200
+gas_reports = ["*"]
