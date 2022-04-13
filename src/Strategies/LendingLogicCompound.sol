@@ -9,6 +9,11 @@ import "../Interfaces/ILendingLogic.sol";
 import "../LendingRegistry.sol";
 import "../Interfaces/ICToken.sol";
 
+//IERC20 does not contain decimal getter
+interface ITokenMetaData {
+    function decimals() external view returns(uint8);
+}
+
 contract LendingLogicCompound is Ownable, ILendingLogic {
     using SafeMath for uint256;
 
@@ -74,10 +79,20 @@ contract LendingLogicCompound is Ownable, ILendingLogic {
     }
 
     function exchangeRate(address _wrapped) external override returns(uint256) {
+        address underlying = ICToken(_wrapped).underlying();
+        uint8 underlyingDecimals = ITokenMetaData(underlying).decimals();
+        if(underlyingDecimals<18){
+            return ICToken(_wrapped).exchangeRateCurrent() * 10**18-underlyingDecimals;
+        }
         return ICToken(_wrapped).exchangeRateCurrent();
     }
 
     function exchangeRateView(address _wrapped) external view override returns(uint256) {
+        address underlying = ICToken(_wrapped).underlying();
+        uint8 underlyingDecimals = ITokenMetaData(underlying).decimals();
+        if(underlyingDecimals<18){
+            return ICToken(_wrapped).exchangeRateStored() * 10**18-underlyingDecimals;
+        }
         return ICToken(_wrapped).exchangeRateStored();
     }
 
