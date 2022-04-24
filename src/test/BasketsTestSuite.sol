@@ -87,31 +87,6 @@ contract BasketsTestSuite is DSTest {
     // Constants
     address[] public bDEFI_BASKET_TOKENS;
     address[] public bSTBL_BASKET_TOKENS;
-    address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    //bDEFI
-    address public CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
-    address public MKR = 0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2;
-    address public AAVE = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
-    address public COMP = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
-    address public LDO = 0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32;
-    address public YFI = 0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e;
-    address public BAL = 0xba100000625a3754423978a60c9317c58a424e3D;
-    address public LQTY = 0x6DEA81C8171D0bA574754EF6F8b412F2Ed88c54D;
-    address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52;
-    address public FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
-    address public UNI = 0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984;
-    address public SUSHI = 0x6B3595068778DD592e39A122f4f5a5cF09C90fE2;
-    address public xSUSHI = 0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272;
-    //bSTBL
-    address public DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address public cDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
-    address public FEI = 0x956F47F50A910163D8BF957Cf5846D573E7f87CA;
-    address public aFEI = 0x683923dB55Fead99A79Fa01A27EeC3cB19679cC3;
-    address public RAI = 0x03ab458634910AaD20eF5f1C8ee96F1D6ac54919;
-    address public aRAI = 0xc9BC48c72154ef3e5425641a3c747242112a46AF;
-    address public FRAX = 0x853d955aCEf822Db058eb8505911ED77F175b99e;
-    address public aFRAX = 0xd4937682df3C8aEF4FE912A96A74121C0829E664;
     //Lending Option Config
     address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
@@ -130,23 +105,23 @@ contract BasketsTestSuite is DSTest {
         constants = new Constants();
 
         // Set the tokens that we'll put in our test baskets
-        bDEFI_BASKET_TOKENS.push(CVX);
-        bDEFI_BASKET_TOKENS.push(MKR);
-        bDEFI_BASKET_TOKENS.push(AAVE);
-        bDEFI_BASKET_TOKENS.push(COMP);
-        bDEFI_BASKET_TOKENS.push(LDO);
-        bDEFI_BASKET_TOKENS.push(YFI);
-	bDEFI_BASKET_TOKENS.push(BAL);
-	bDEFI_BASKET_TOKENS.push(LQTY);
-        bDEFI_BASKET_TOKENS.push(CRV);
-        bDEFI_BASKET_TOKENS.push(FXS);
-        bDEFI_BASKET_TOKENS.push(UNI);        
-	bDEFI_BASKET_TOKENS.push(SUSHI);
+        bDEFI_BASKET_TOKENS.push(constants.CVX());
+        bDEFI_BASKET_TOKENS.push(constants.MKR());
+        bDEFI_BASKET_TOKENS.push(constants.AAVE());
+        bDEFI_BASKET_TOKENS.push(constants.COMP());
+        bDEFI_BASKET_TOKENS.push(constants.LDO());
+        bDEFI_BASKET_TOKENS.push(constants.YFI());
+	bDEFI_BASKET_TOKENS.push(constants.BAL());
+	bDEFI_BASKET_TOKENS.push(constants.LQTY());
+        bDEFI_BASKET_TOKENS.push(constants.CRV());
+        bDEFI_BASKET_TOKENS.push(constants.FXS());
+        bDEFI_BASKET_TOKENS.push(constants.UNI());        
+	bDEFI_BASKET_TOKENS.push(constants.SUSHI());
 
-        bSTBL_BASKET_TOKENS.push(DAI);
-	bSTBL_BASKET_TOKENS.push(FRAX);
-	bSTBL_BASKET_TOKENS.push(FEI);
-	bSTBL_BASKET_TOKENS.push(RAI);    
+        bSTBL_BASKET_TOKENS.push(constants.DAI());
+	bSTBL_BASKET_TOKENS.push(constants.FRAX());
+	bSTBL_BASKET_TOKENS.push(constants.FEI());
+	bSTBL_BASKET_TOKENS.push(constants.RAI());    
  
         deployProtocol();
     }
@@ -314,7 +289,7 @@ contract BasketsTestSuite is DSTest {
 	bSLendingManager = new LendingManager(address(lendingRegistry), bSTBL);
 
         // Deploy Recipe
-        recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
+        recipe = new Recipe(constants.WETH(), address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
 
         // Deploy OvenFactory
         ovenFactory = new OvenFactoryContract();
@@ -345,50 +320,50 @@ contract BasketsTestSuite is DSTest {
         // USDC - KASHI
         lendingRegistry.setProtocolToLogic(KASHI_PROTOCOL, address(lendingLogicKashi));
         lendingRegistry.setWrappedToProtocol(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, KASHI_PROTOCOL); // Kashi Medium Risk V1
-        lendingRegistry.setWrappedToUnderlying(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, USDC); // USDC
-        lendingRegistry.setUnderlyingToProtocolWrapped(USDC, KASHI_PROTOCOL, 0xB7b45754167d65347C93F3B28797887b4b6cd2F3);
+        lendingRegistry.setWrappedToUnderlying(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, constants.USDC()); // USDC
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.USDC(), KASHI_PROTOCOL, 0xB7b45754167d65347C93F3B28797887b4b6cd2F3);
         // DAI - COMPOUND
         lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
-        lendingRegistry.setWrappedToProtocol(cDAI, COMP_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(cDAI, DAI);
-        lendingRegistry.setUnderlyingToProtocolWrapped(DAI, COMP_PROTOCOL, cDAI);
+        lendingRegistry.setWrappedToProtocol(constants.cDAI(), COMP_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.cDAI(), constants.DAI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.DAI(), COMP_PROTOCOL, constants.cDAI());
         // RAI - AAVE
 	lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
-        lendingRegistry.setWrappedToProtocol(aRAI, AAVE_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(aRAI, RAI);
-        lendingRegistry.setUnderlyingToProtocolWrapped(RAI, AAVE_PROTOCOL, aRAI);
+        lendingRegistry.setWrappedToProtocol(constants.aRAI(), AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.aRAI(), constants.RAI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.RAI(), AAVE_PROTOCOL, constants.aRAI());
 	// FRAX - AAVE
 	lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
-        lendingRegistry.setWrappedToProtocol(aFRAX, AAVE_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(aFRAX, FRAX);
-        lendingRegistry.setUnderlyingToProtocolWrapped(FRAX, AAVE_PROTOCOL, aFRAX);
+        lendingRegistry.setWrappedToProtocol(constants.aFRAX(), AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.aFRAX(), constants.FRAX());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.FRAX(), AAVE_PROTOCOL, constants.aFRAX());
  	// FEI - AAVE 
  	lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
-        lendingRegistry.setWrappedToProtocol(aFEI, AAVE_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(aFEI, FEI);
-        lendingRegistry.setUnderlyingToProtocolWrapped(FEI, AAVE_PROTOCOL, aFEI);
+        lendingRegistry.setWrappedToProtocol(constants.aFEI(), AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.aFEI(), constants.FEI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.FEI(), AAVE_PROTOCOL, constants.aFEI());
         // SUSHI - xSUSHI
         lendingRegistry.setProtocolToLogic(XSUSHI_PROTOCOL, address(stakingLogicSushi));
-        lendingRegistry.setWrappedToProtocol(xSUSHI, XSUSHI_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(xSUSHI, SUSHI);
-        lendingRegistry.setUnderlyingToProtocolWrapped(SUSHI, XSUSHI_PROTOCOL, xSUSHI);
+        lendingRegistry.setWrappedToProtocol(constants.xSUSHI(), XSUSHI_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.xSUSHI(), constants.SUSHI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.SUSHI(), XSUSHI_PROTOCOL, constants.xSUSHI());
         
         // Add basket to basket registry
         basketRegistry.addBasket(bDEFI);
         basketRegistry.addBasket(bSTBL);
  
         //Lend USDC into KASHI Lending
-        //lendingManager.lend(USDC, IERC20(USDC).balanceOf(bSTBL), KASHI_PROTOCOL);
+        //lendingManager.lend(constants.USDC(), IERC20(constants.USDC()).balanceOf(bSTBL), KASHI_PROTOCOL);
         //Lend DAI into COMPOUND
-        bSLendingManager.lend(DAI, IERC20(DAI).balanceOf(bSTBL), COMP_PROTOCOL);
+        bSLendingManager.lend(constants.DAI(), IERC20(constants.DAI()).balanceOf(bSTBL), COMP_PROTOCOL);
         //Lend RAI into AAVE
-        bSLendingManager.lend(RAI, IERC20(RAI).balanceOf(bSTBL), AAVE_PROTOCOL);
+        bSLendingManager.lend(constants.RAI(), IERC20(constants.RAI()).balanceOf(bSTBL), AAVE_PROTOCOL);
         //Lend FRAX into AAVE
-        bSLendingManager.lend(FRAX, IERC20(FRAX).balanceOf(bSTBL), AAVE_PROTOCOL);
+        bSLendingManager.lend(constants.FRAX(), IERC20(constants.FRAX()).balanceOf(bSTBL), AAVE_PROTOCOL);
 	//Lend FEI into AAVE
-        bSLendingManager.lend(FEI, IERC20(FEI).balanceOf(bSTBL), AAVE_PROTOCOL);
+        bSLendingManager.lend(constants.FEI(), IERC20(constants.FEI()).balanceOf(bSTBL), AAVE_PROTOCOL);
 	//Stake SUSHI into xSUSHI/Sushi Bar
-        bDLendingManager.lend(SUSHI, IERC20(SUSHI).balanceOf(bDEFI), XSUSHI_PROTOCOL);
+        bDLendingManager.lend(constants.SUSHI(), IERC20(constants.SUSHI()).balanceOf(bDEFI), XSUSHI_PROTOCOL);
     }
 
     // ---------------------------------
@@ -400,7 +375,7 @@ contract BasketsTestSuite is DSTest {
 
         IUniswapV2Router01 router = IUniswapV2Router01(SUSHI_ROUTER);
         for (uint8 i; i < _tokens.length; i++) {
-            address[] memory route = _getRoute(WETH, _tokens[i]);
+            address[] memory route = _getRoute(constants.WETH(), _tokens[i]);
             uint256 amountIn = router.getAmountsIn(_tokenAmounts[i], route)[0];
 
             router.swapExactETHForTokens{value: amountIn}(
