@@ -13,7 +13,7 @@ contract OvenTest is DSTest {
     function setUp() public {
         testSuite = new BasketsTestSuite();
         testSuite.cheats().startPrank(address(testSuite));
-        oven = testSuite.oven();
+        oven = testSuite.bDEFIOven();
         recipe = testSuite.recipe();
     }
 
@@ -38,11 +38,11 @@ contract OvenTest is DSTest {
     }
 
     function testOvenBake() public {
-        (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), 1e18);
+        (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.bDEFI(), 1e18);
 
         oven.deposit{value : mintPrice}();
 
-        IERC20 basket = IERC20(testSuite.basket());
+        IERC20 basket = IERC20(testSuite.bDEFI());
 
         address[] memory receivers = new address[](1);
         receivers[0] = address(testSuite);

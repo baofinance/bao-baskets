@@ -1,6 +1,7 @@
 pragma solidity ^0.7.0;
 
 import "ds-test/test.sol";
+import { Constants } from "./constants.sol";
 import "../Diamond/BasketFacet.sol";
 import "../Diamond/CallFacet.sol";
 import "../Diamond/DiamondCutFacet.sol";
@@ -38,6 +39,9 @@ contract BasketsTestSuite is DSTest {
     // Foundry Cheat Codes
     Cheats public cheats;
 
+    //Mainnet Constants
+    Constants public constants;
+
     // Facets
     BasketFacet public basketFacet;
     CallFacet public callFacet;
@@ -59,7 +63,8 @@ contract BasketsTestSuite is DSTest {
     BasketFactoryContract public basketFactory;
 
     // Lending Manager & Logic
-    LendingManager public lendingManager;
+    LendingManager public bSLendingManager;
+    LendingManager public bDLendingManager;
     LendingLogicKashi public lendingLogicKashi;
     LendingLogicAaveV2 public lendingLogicAave;
     LendingLogicCompound public lendingLogicCompound;
@@ -72,21 +77,42 @@ contract BasketsTestSuite is DSTest {
     OvenFactoryContract public ovenFactory;
 
     // Oven
-    Oven public oven;
+    Oven public bDEFIOven;
+    Oven public bSTBLOven;
 
     // Test Basket
-    address public basket;
+    address public bDEFI;
+    address public bSTBL;
 
     // Constants
-    address[] public TEST_BASKET_TOKENS;
+    address[] public bDEFI_BASKET_TOKENS;
+    address[] public bSTBL_BASKET_TOKENS;
     address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
     address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
-    address public DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
-    address public aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
-    address public LINK = 0x514910771AF9Ca656af840dff83E8264EcF986CA;
-    address public cLINK = 0xFAce851a4921ce59e912d19329929CE6da6EB0c7;
+    //bDEFI
+    address public CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
+    address public MKR = 0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2;
+    address public AAVE = 0x7Fc66500c84A76Ad7e9c93437bFc5Ac33E2DDaE9;
+    address public COMP = 0xc00e94Cb662C3520282E6f5717214004A7f26888;
+    address public LDO = 0x5A98FcBEA516Cf06857215779Fd812CA3beF1B32;
+    address public YFI = 0x0bc529c00C6401aEF6D220BE8C6Ea1667F6Ad93e;
+    address public BAL = 0xba100000625a3754423978a60c9317c58a424e3D;
+    address public LQTY = 0x6DEA81C8171D0bA574754EF6F8b412F2Ed88c54D;
+    address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52;
+    address public FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
+    address public UNI = 0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984;
     address public SUSHI = 0x6B3595068778DD592e39A122f4f5a5cF09C90fE2;
     address public xSUSHI = 0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272;
+    //bSTBL
+    address public DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
+    address public cDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    address public FEI = 0x956F47F50A910163D8BF957Cf5846D573E7f87CA;
+    address public aFEI = 0x683923dB55Fead99A79Fa01A27EeC3cB19679cC3;
+    address public RAI = 0x03ab458634910AaD20eF5f1C8ee96F1D6ac54919;
+    address public aRAI = 0xc9BC48c72154ef3e5425641a3c747242112a46AF;
+    address public FRAX = 0x853d955aCEf822Db058eb8505911ED77F175b99e;
+    address public aFRAX = 0xd4937682df3C8aEF4FE912A96A74121C0829E664;
+    //Lending Option Config
     address public SUSHI_ROUTER = 0xd9e1cE17f2641f24aE83637ab66a2cca9C378B9F;
     address public BENTO_BOX = 0xF5BCE5077908a1b7370B9ae04AdC565EBd643966;
     address public KASHI_MEDIUM_RISK = 0x2cBA6Ab6574646Badc84F0544d05059e57a5dc42;
@@ -99,13 +125,29 @@ contract BasketsTestSuite is DSTest {
         // Give our test suite some ETH
         cheats = Cheats(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
         cheats.deal(address(this), 1000 ether);
+        
+	//Get Constants
+        constants = new Constants();
 
-        // Set the tokens that we'll put in our test basket
-        TEST_BASKET_TOKENS.push(USDC);
-        TEST_BASKET_TOKENS.push(DAI);
-        TEST_BASKET_TOKENS.push(LINK);	
-        TEST_BASKET_TOKENS.push(SUSHI);        
+        // Set the tokens that we'll put in our test baskets
+        bDEFI_BASKET_TOKENS.push(CVX);
+        bDEFI_BASKET_TOKENS.push(MKR);
+        bDEFI_BASKET_TOKENS.push(AAVE);
+        bDEFI_BASKET_TOKENS.push(COMP);
+        bDEFI_BASKET_TOKENS.push(LDO);
+        bDEFI_BASKET_TOKENS.push(YFI);
+	bDEFI_BASKET_TOKENS.push(BAL);
+	bDEFI_BASKET_TOKENS.push(LQTY);
+        bDEFI_BASKET_TOKENS.push(CRV);
+        bDEFI_BASKET_TOKENS.push(FXS);
+        bDEFI_BASKET_TOKENS.push(UNI);        
+	bDEFI_BASKET_TOKENS.push(SUSHI);
 
+        bSTBL_BASKET_TOKENS.push(DAI);
+	bSTBL_BASKET_TOKENS.push(FRAX);
+	bSTBL_BASKET_TOKENS.push(FEI);
+	bSTBL_BASKET_TOKENS.push(RAI);    
+ 
         deployProtocol();
     }
 
@@ -232,21 +274,44 @@ contract BasketsTestSuite is DSTest {
         stakingLogicSushi = new StakingLogicSushi(address(lendingRegistry), XSUSHI_PROTOCOL);
         
         // Create Test Basket
-        uint256[] memory tokenAmounts = new uint256[](4);
-        tokenAmounts[0] = 100e6;
-        tokenAmounts[1] = 100e18;
-        tokenAmounts[2] = 50e18;
-        tokenAmounts[3] = 30e18;
-        uint256 initialSupply = 100 ether;
-        
-        buyTokens(tokenAmounts);
-        approveTokens(address(basketFactory));
-        
-        basketFactory.bakeBasket(TEST_BASKET_TOKENS, tokenAmounts, initialSupply, "testBasket", "Test Basket");
-        basket = basketFactory.baskets(0);
+        uint256[] memory bDEFITokenAmounts = new uint256[](12);
+        uint256[] memory bSTBLTokenAmounts = new uint256[](4);
+	//bDEFI
+        bDEFITokenAmounts[0] = 76e16;
+        bDEFITokenAmounts[1] = 1e16;
+        bDEFITokenAmounts[2] = 9e16;
+        bDEFITokenAmounts[3] = 11e16;
+        bDEFITokenAmounts[4] = 331e16;
+        bDEFITokenAmounts[5] = 41e17;
+        bDEFITokenAmounts[6] = 406e12;
+        bDEFITokenAmounts[7] = 3959e14;
+	bDEFITokenAmounts[8] = 341e16;
+        bDEFITokenAmounts[9] = 246e16;
+        bDEFITokenAmounts[10] = 1359e14;
+        bDEFITokenAmounts[11] = 18e16;
+        //bSTBL
+        bSTBLTokenAmounts[0] = 25e16;
+        bSTBLTokenAmounts[1] = 25e16;
+        bSTBLTokenAmounts[2] = 25e16;
+        bSTBLTokenAmounts[3] = 83333333333333333;
+
+        uint256 initialDEFISupply = 10 ether;
+        uint256 initialSTBLSupply = 1 ether;
+
+        getTokensFromHolders(bDEFITokenAmounts,bDEFI_BASKET_TOKENS);
+        approveTokens(address(basketFactory),bDEFI_BASKET_TOKENS);
+
+        getTokensFromHolders(bSTBLTokenAmounts,bSTBL_BASKET_TOKENS);
+        approveTokens(address(basketFactory),bSTBL_BASKET_TOKENS);
+
+        basketFactory.bakeBasket(bDEFI_BASKET_TOKENS, bDEFITokenAmounts, initialDEFISupply, "bDEFI", "bDEFI Test Basket");
+        bDEFI = basketFactory.baskets(0);
+        basketFactory.bakeBasket(bSTBL_BASKET_TOKENS, bSTBLTokenAmounts, initialSTBLSupply, "bSTBL", "bSTBL Test Basket");
+        bSTBL = basketFactory.baskets(1);
         
         // Deploy Lending Manager
-        lendingManager = new LendingManager(address(lendingRegistry), basket);
+        bDLendingManager = new LendingManager(address(lendingRegistry), bDEFI);
+	bSLendingManager = new LendingManager(address(lendingRegistry), bSTBL);
 
         // Deploy Recipe
         recipe = new Recipe(WETH, address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
@@ -254,36 +319,54 @@ contract BasketsTestSuite is DSTest {
         // Deploy OvenFactory
         ovenFactory = new OvenFactoryContract();
         ovenFactory.setDefaultController(address(this));
-        oven = ovenFactory.CreateOven(address(basket),address(recipe));
-
+        bDEFIOven = ovenFactory.CreateOven(address(bDEFI),address(recipe));
+        bSTBLOven = ovenFactory.CreateOven(address(bSTBL),address(recipe));
+  
         // Set privileges
-        CallFacet basketCF = CallFacet(basket);
-        basketCF.addCaller(address(this));
-        basketCF.addCaller(address(lendingManager));
-        
+        CallFacet bDBasketCF = CallFacet(bDEFI);
+        bDBasketCF.addCaller(address(this));
+        bDBasketCF.addCaller(address(bDLendingManager));
+    
+        CallFacet bSBasketCF = CallFacet(bSTBL);
+        bSBasketCF.addCaller(address(this));
+        bSBasketCF.addCaller(address(bSLendingManager));        
+
         // Approve Kashi Lending for Basket
         address[] memory a = new address[](1);
         a[0] = BENTO_BOX;
         bytes[] memory b = new bytes[](1);
-        b[0] = abi.encodeWithSignature("setMasterContractApproval(address,address,bool,uint8,bytes32,bytes32)", basket, KASHI_MEDIUM_RISK, true, 0, bytes32(0), bytes32(0));
-        basketCF.callNoValue(a, b);
-        
+        b[0] = abi.encodeWithSignature("setMasterContractApproval(address,address,bool,uint8,bytes32,bytes32)", bDEFI, KASHI_MEDIUM_RISK, true, 0, bytes32(0), bytes32(0));
+        bDBasketCF.callNoValue(a, b);
+	a[0] = BENTO_BOX;
+	b[0] = abi.encodeWithSignature("setMasterContractApproval(address,address,bool,uint8,bytes32,bytes32)", bSTBL, KASHI_MEDIUM_RISK, true, 0, bytes32(0), bytes32(0));
+        bSBasketCF.callNoValue(a, b);       
+ 
         // Configure Lending
         // USDC - KASHI
         lendingRegistry.setProtocolToLogic(KASHI_PROTOCOL, address(lendingLogicKashi));
         lendingRegistry.setWrappedToProtocol(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, KASHI_PROTOCOL); // Kashi Medium Risk V1
         lendingRegistry.setWrappedToUnderlying(0xB7b45754167d65347C93F3B28797887b4b6cd2F3, USDC); // USDC
         lendingRegistry.setUnderlyingToProtocolWrapped(USDC, KASHI_PROTOCOL, 0xB7b45754167d65347C93F3B28797887b4b6cd2F3);
-        // DAI - AAVE
-        lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
-        lendingRegistry.setWrappedToProtocol(aDAI, AAVE_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(aDAI, DAI);
-        lendingRegistry.setUnderlyingToProtocolWrapped(DAI, AAVE_PROTOCOL, aDAI);
-        // USDT - COMPOUND
+        // DAI - COMPOUND
         lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
-        lendingRegistry.setWrappedToProtocol(cLINK, COMP_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(cLINK, LINK);
-        lendingRegistry.setUnderlyingToProtocolWrapped(LINK, COMP_PROTOCOL, cLINK);
+        lendingRegistry.setWrappedToProtocol(cDAI, COMP_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(cDAI, DAI);
+        lendingRegistry.setUnderlyingToProtocolWrapped(DAI, COMP_PROTOCOL, cDAI);
+        // RAI - AAVE
+	lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
+        lendingRegistry.setWrappedToProtocol(aRAI, AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(aRAI, RAI);
+        lendingRegistry.setUnderlyingToProtocolWrapped(RAI, AAVE_PROTOCOL, aRAI);
+	// FRAX - AAVE
+	lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
+        lendingRegistry.setWrappedToProtocol(aFRAX, AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(aFRAX, FRAX);
+        lendingRegistry.setUnderlyingToProtocolWrapped(FRAX, AAVE_PROTOCOL, aFRAX);
+ 	// FEI - AAVE 
+ 	lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
+        lendingRegistry.setWrappedToProtocol(aFEI, AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(aFEI, FEI);
+        lendingRegistry.setUnderlyingToProtocolWrapped(FEI, AAVE_PROTOCOL, aFEI);
         // SUSHI - xSUSHI
         lendingRegistry.setProtocolToLogic(XSUSHI_PROTOCOL, address(stakingLogicSushi));
         lendingRegistry.setWrappedToProtocol(xSUSHI, XSUSHI_PROTOCOL);
@@ -291,28 +374,33 @@ contract BasketsTestSuite is DSTest {
         lendingRegistry.setUnderlyingToProtocolWrapped(SUSHI, XSUSHI_PROTOCOL, xSUSHI);
         
         // Add basket to basket registry
-        basketRegistry.addBasket(basket);
-        
+        basketRegistry.addBasket(bDEFI);
+        basketRegistry.addBasket(bSTBL);
+ 
         //Lend USDC into KASHI Lending
-        //lendingManager.lend(USDC, IERC20(USDC).balanceOf(basket), KASHI_PROTOCOL);
-        //Lend DAI into AAVE
-        lendingManager.lend(DAI, IERC20(DAI).balanceOf(basket), AAVE_PROTOCOL);
-        //Lend LINK into COMPOUND
-        lendingManager.lend(LINK, IERC20(LINK).balanceOf(basket), COMP_PROTOCOL);
-        //Stake SUSHI into xSUSHI/Sushi Bar
-        lendingManager.lend(SUSHI, IERC20(SUSHI).balanceOf(basket), XSUSHI_PROTOCOL);
+        //lendingManager.lend(USDC, IERC20(USDC).balanceOf(bSTBL), KASHI_PROTOCOL);
+        //Lend DAI into COMPOUND
+        bSLendingManager.lend(DAI, IERC20(DAI).balanceOf(bSTBL), COMP_PROTOCOL);
+        //Lend RAI into AAVE
+        bSLendingManager.lend(RAI, IERC20(RAI).balanceOf(bSTBL), AAVE_PROTOCOL);
+        //Lend FRAX into AAVE
+        bSLendingManager.lend(FRAX, IERC20(FRAX).balanceOf(bSTBL), AAVE_PROTOCOL);
+	//Lend FEI into AAVE
+        bSLendingManager.lend(FEI, IERC20(FEI).balanceOf(bSTBL), AAVE_PROTOCOL);
+	//Stake SUSHI into xSUSHI/Sushi Bar
+        bDLendingManager.lend(SUSHI, IERC20(SUSHI).balanceOf(bDEFI), XSUSHI_PROTOCOL);
     }
 
     // ---------------------------------
     // HELPER FUNCTIONS
     // ---------------------------------
 
-    function buyTokens(uint256[] memory _tokenAmounts) private {
-        require(_tokenAmounts.length == TEST_BASKET_TOKENS.length, "Error: Incorrect length of token amounts array.");
+    function buyTokens(uint256[] memory _tokenAmounts, address[] memory _tokens) private {
+        require(_tokenAmounts.length == _tokens.length, "Error: Incorrect length of token amounts array.");
 
         IUniswapV2Router01 router = IUniswapV2Router01(SUSHI_ROUTER);
-        for (uint8 i; i < TEST_BASKET_TOKENS.length; i++) {
-            address[] memory route = _getRoute(WETH, TEST_BASKET_TOKENS[i]);
+        for (uint8 i; i < _tokens.length; i++) {
+            address[] memory route = _getRoute(WETH, _tokens[i]);
             uint256 amountIn = router.getAmountsIn(_tokenAmounts[i], route)[0];
 
             router.swapExactETHForTokens{value: amountIn}(
@@ -323,10 +411,22 @@ contract BasketsTestSuite is DSTest {
             );
         }
     }
+    
+    function getTokensFromHolders(uint[] memory _tokenAmounts, address[] memory _tokens) private {
+        require(_tokenAmounts.length == _tokens.length, "Error: Incorrect length of token amounts array.");
+        for (uint8 i; i < _tokens.length; i++) {
+	    address holder = constants.tokenHolders(_tokens[i]);
+            uint holderBalance = IERC20(_tokens[i]).balanceOf(holder);
+            require(holderBalance >= _tokenAmounts[i], "Error getTokesFromHolders: Holder doesn't have enough token to provide for testing");
+            cheats.startPrank(holder); 
+            IERC20(_tokens[i]).transfer(address(this),_tokenAmounts[i]);
+            cheats.stopPrank();
+        }          
+    }
 
-    function approveTokens(address spender) private {
-        for (uint8 i; i < TEST_BASKET_TOKENS.length; i++) {
-            IERC20 token = IERC20(TEST_BASKET_TOKENS[i]);
+    function approveTokens(address spender, address[] memory _tokens) private {
+        for (uint8 i; i < _tokens.length; i++) {
+            IERC20 token = IERC20(_tokens[i]);
             token.approve(spender, type(uint256).max);
         }
     }

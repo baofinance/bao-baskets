@@ -18,20 +18,19 @@ contract RecipeTest is DSTest {
     function testMint() public {
 
 	Recipe recipe = testSuite.recipe();
-        IERC20 basket = IERC20(testSuite.basket());
+        IERC20 basket = IERC20(testSuite.bDEFI());
 
         basket.approve(address(recipe), type(uint256).max);
-        uint[] memory mintAmounts = new uint[](3);
+        uint[] memory mintAmounts = new uint[](2);
 
         mintAmounts[0] = 1e18;
         mintAmounts[1] = 10e18;
-        mintAmounts[2] = 1000000000000000000135;
 
         for (uint256 i = 0; i < mintAmounts.length; i++) {
             uint256 initialBalance = address(this).balance;
-            (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), mintAmounts[i]);
+            (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(address(basket), mintAmounts[i]);
             recipe.toPie{value : mintPrice}(
-                testSuite.basket(),
+                address(basket),
                 mintAmounts[i],
                 dexIndex
             );
@@ -43,9 +42,9 @@ contract RecipeTest is DSTest {
 
     function testRedeem() public {
         Recipe recipe = testSuite.recipe();
-        IExperiPie basket = IExperiPie(testSuite.basket());
+        IExperiPie basket = IExperiPie(testSuite.bDEFI());
 
-        (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.basket(), 1e18);
+        (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(address(basket), 1e18);
 
         recipe.toPie{value : mintPrice}(
             address(basket),
