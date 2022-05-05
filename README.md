@@ -13,6 +13,7 @@ Oven Factory  					| 0x9c5b6Ff497f69ce47273D05F76fCba1b8555CD99|[Link](https://e
 AAVELendingStrategy				| 0xD67730986FC37d55eCF5cCA0d2D854f4FCf5d876|[Link](https://etherscan.io/address/0xD67730986FC37d55eCF5cCA0d2D854f4FCf5d876)|																			|	
 AAVELendingPool  				| 0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9|[Link](https://etherscan.io/address/0x7d2768dE32b0b80b7a3454c06BdAc94A69DDc7A9)|
 CompoundLendingStrategy  		| 0x5822D781503676b6a927eA841039465193CA213a|[Link](https://etherscan.io/address/0x5822D781503676b6a927eA841039465193CA213a)|
+SushiStakingStrategy 	 		| 0xfDBB1009BEFf807336C0E34e88BB9fF0FE72f849|[Link](https://etherscan.io/address/0xfDBB1009BEFf807336C0E34e88BB9fF0FE72f849)|
 bDEFI							| 0x583cb488eF632c3A959Aa19EcF7991731a2F728e|[Link](https://etherscan.io/address/0x583cb488eF632c3A959Aa19EcF7991731a2F728e)|
 bDEFI LendingManager  			| 0x57Af58979DcB45F5cF661E759625E57647c1df5E|[Link](https://etherscan.io/address/0x57Af58979DcB45F5cF661E759625E57647c1df5E)|
 bDEFI Oven  					| 0x30DE1e1e4a42557f31F038E3B77672Afd4eAF7DF|[Link](https://etherscan.io/address/0x30DE1e1e4a42557f31F038E3B77672Afd4eAF7DF)|
@@ -26,5 +27,6 @@ Contract  	  					| Protocol Code									                    |
 --------------------------------| ------------------------------------------------------------------|
 Compound 						| 0x0000000000000000000000000000000000000000000000000000000000000001|
 AAVE  							| 0x0000000000000000000000000000000000000000000000000000000000000002|
+SUSHI  							| 0x0000000000000000000000000000000000000000000000000000000000000003|
 
 
