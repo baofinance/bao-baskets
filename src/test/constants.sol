@@ -12,7 +12,6 @@ contract Constants is DSTest {
     address[] public bDEFI_BASKET_TOKENS;
     address[] public bSTBL_BASKET_TOKENS;
     address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     //bDEFI
     address public CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
     address public MKR = 0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2;
@@ -36,6 +35,8 @@ contract Constants is DSTest {
     address public aRAI = 0xc9BC48c72154ef3e5425641a3c747242112a46AF;
     address public FRAX = 0x853d955aCEf822Db058eb8505911ED77F175b99e;
     address public aFRAX = 0xd4937682df3C8aEF4FE912A96A74121C0829E664;
+    address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address public aUSDC = 0xBcca60bB61934080951369a648Fb03DF4F96263C;
 
     //Token Rich List
     mapping(address => address) public tokenHolders;

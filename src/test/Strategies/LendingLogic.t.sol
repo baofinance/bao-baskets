@@ -2,9 +2,9 @@ pragma solidity ^0.7.0;
 pragma experimental ABIEncoderV2;
 
 import "../BasketsTestSuite.sol";
-import "ds-test/test.sol";
+import "forge-std/Test.sol";
 
-contract LendingLogicTest is DSTest {
+contract LendingLogicTest is Test {
 
     ILendingLogic public lendingLogic;
     BasketsTestSuite public testSuite;
