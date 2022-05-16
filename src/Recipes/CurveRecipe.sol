@@ -55,7 +55,7 @@ contract CurveRecipe is Ownable {
      * @param _lendingRegistry LendingRegistry address
      * @param _pieRegistry PieRegistry address
      * @param _curveAddressProvider Curve Address Provider address
-     * @param _uniV3Router Uniswap V3 Router
+     * @param _uniV3Router Uniswap V3 Router address
      */
     constructor(
         address _usdc,
@@ -131,18 +131,18 @@ contract CurveRecipe is Ownable {
      */
     function toBasket(address _basket, uint256 _mintAmount) external payable {
         // Wrap ETH
-        WETH.deposit{ value: msg.value }();
+        WETH.deposit{value : msg.value}();
 
         // Form WETH -> USDC swap params
         uniV3Router.ExactInputSingleParams memory params = uniV3Router.ExactInputSingleParams({
-            tokenIn: address(WETH),
-            tokenOut: address(USDC),
-            fee: 3000,
-            recipient: address(this),
-            deadline: block.timestamp,
-            amountIn: WETH.balanceOf(address(this)),
-            amountOutMinimum: 0,
-            sqrtPriceLimitX96: 0
+            tokenIn : address(WETH),
+            tokenOut : address(USDC),
+            fee : 3000,
+            recipient : address(this),
+            deadline : block.timestamp,
+            amountIn : WETH.balanceOf(address(this)),
+            amountOutMinimum : 0,
+            sqrtPriceLimitX96 : 0
         });
 
         // Transfer WETH for USDC on UniV3
@@ -201,21 +201,62 @@ contract CurveRecipe is Ownable {
             _token = tokens[i];
             _amount = amounts[i];
 
-            (address _pool, uint256 _out) = curveExchange.get_best_rate(_usdc, _token, _amount);
-            curveExchange.exchange(
-                _pool,
-                _usdc,
-                _token,
-                _amount,
-                _out
-            );
+            // If the token is registered in the lending registry, swap to
+            // its underlying token and lend it.
+            address underlying = lendingRegistry.wrappedToUnderlying(_token);
+            if (underlying != address(0)) {
+                // Get underlying amount according to the exchange rate
+                ILendingLogic lendingLogic = getLendingLogicFromWrapped(_token);
+                uint256 underlyingAmount = _amount.mul(lendingLogic.exchangeRate(_token)).div(1e18).add(1);
+
+                // Swap for the underlying asset on Curve
+                _swapCurve(_usdc, underlying, underlyingAmount);
+
+                // Execute lending transactions
+                (address[] memory targets, bytes[] memory data) = lendingLogic.lend(underlying, underlyingAmount, address(this));
+                for (uint256 j; j < targets.length; ++j) {
+                    (bool success,) = targets[j].call{value : 0}(data[j]);
+                    require(success, "CALL_FAILED");
+                }
+            } else {
+                _swapCurve(_usdc, _token, _amount);
+            }
 
             IERC20 token = IERC20(_token);
             token.approve(_basket, 0);
             token.approve(_basket, _amount);
-            require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
+            require(amounts[i] <= token.balanceOf(address(this)), "SLIPPAGE_THRESHOLD_EXCEEDED");
         }
         basket.joinPool(_mintAmount);
+    }
+
+    function _swapCurve(
+        address _usdc,
+        address _token,
+        uint256 _amount
+    ) internal {
+        (address _pool, uint256 _out) = curveExchange.get_best_rate(
+            _usdc,
+            _token,
+            _amount
+        );
+        curveExchange.exchange(
+            _pool,
+            _usdc,
+            _token,
+            _amount,
+            _out
+        );
+    }
+
+    function getLendingLogicFromWrapped(address _wrapped) internal view returns (ILendingLogic) {
+        return ILendingLogic(
+            lendingRegistry.protocolToLogic(
+                lendingRegistry.wrappedToProtocol(
+                    _wrapped
+                )
+            )
+        );
     }
 
     // -------------------------------
@@ -232,8 +273,23 @@ contract CurveRecipe is Ownable {
         curveExchange = ICurveExchange(_exchange);
 
         // Re-approve USDC
-        IERC20(_usdc).approve(_exchange, type(uint256).max);
+        USDC.approve(_exchange, 0);
+        USDC.approve(_exchange, type(uint256).max);
     }
 
-    receive() external payable{}
+    /**
+     * Update the Uni V3 Router
+     *
+     * @param _newRouter New Uni V3 Router address
+     */
+    function updateUniRouter(address _newRouter) external onlyOwner {
+        // Update stored Curve exchange
+        uniRouter = uniV3Router(_newRouter);
+
+        // Re-approve USDC
+        WETH.approve(_newRouter, 0);
+        WETH.approve(_newRouter, type(uint256).max);
+    }
+
+    receive() external payable {}
 }
