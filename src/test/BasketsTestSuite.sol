@@ -292,8 +292,6 @@ contract BasketsTestSuite is Test {
         bSLendingManager.lend(constants.DAI(), IERC20(constants.DAI()).balanceOf(bSTBL), COMP_PROTOCOL);
         // Lend RAI into AAVE
         bSLendingManager.lend(constants.RAI(), IERC20(constants.RAI()).balanceOf(bSTBL), AAVE_PROTOCOL);
-
-        emit log_named_uint("USDC Balance", IERC20(constants.aUSDC()).balanceOf(address(bSTBL)));
     }
 
     // ---------------------------------

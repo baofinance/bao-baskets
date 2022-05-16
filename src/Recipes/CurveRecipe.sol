@@ -10,6 +10,8 @@ import "../Interfaces/ICurveAddressProvider.sol";
 import "@openzeppelin/token/ERC20/SafeERC20.sol";
 import "@openzeppelin/math/SafeMath.sol";
 import "@openzeppelin/access/Ownable.sol";
+import "../Interfaces/IUniV3Router.sol";
+import "../Interfaces/IWETH.sol";
 
 pragma experimental ABIEncoderV2;
 
@@ -18,7 +20,7 @@ pragma experimental ABIEncoderV2;
  *
  * TODO:
  * - [x] Initial curve exchange integration
- * - [ ] Accept ETH by swapping to USDC before Curve interactions.
+ * - [x] Accept ETH by swapping to USDC before Curve interactions.
  * - [ ] Optimize where possible
  * - [ ] Incorporate into test suite for bSTBL
  *
@@ -33,6 +35,7 @@ contract CurveRecipe is Ownable {
     // -------------------------------
 
     IERC20 immutable USDC;
+    IWETH immutable WETH;
     ILendingRegistry immutable lendingRegistry;
     IPieRegistry immutable pieRegistry;
     ICurveAddressProvider immutable curveAddressProvider;
@@ -42,33 +45,44 @@ contract CurveRecipe is Ownable {
     // -------------------------------
 
     ICurveExchange curveExchange;
+    uniV3Router uniRouter;
 
     /**
      * Create a new CurveRecipe.
      *
      * @param _usdc USDC address
+     * @param _weth WETH address
      * @param _lendingRegistry LendingRegistry address
      * @param _pieRegistry PieRegistry address
      * @param _curveAddressProvider Curve Address Provider address
+     * @param _uniV3Router Uniswap V3 Router
      */
     constructor(
         address _usdc,
+        address _weth,
         address _lendingRegistry,
         address _pieRegistry,
-        address _curveAddressProvider
+        address _curveAddressProvider,
+        address _uniV3Router
     ) {
         require(_usdc != address(0), "USDC_ZERO");
         require(_lendingRegistry != address(0), "LENDING_MANAGER_ZERO");
         require(_pieRegistry != address(0), "PIE_REGISTRY_ZERO");
 
         USDC = IERC20(_usdc);
+        WETH = IWETH(_weth);
         lendingRegistry = ILendingRegistry(_lendingRegistry);
         pieRegistry = IPieRegistry(_pieRegistry);
 
         curveAddressProvider = ICurveAddressProvider(_curveAddressProvider);
-        // Can't read from immutable variables in the constructor, so we
-        // re-instantiate the address provider inline
         curveExchange = ICurveExchange(ICurveAddressProvider(_curveAddressProvider).get_address(2));
+
+        uniRouter = uniV3Router(_uniV3Router);
+
+        // Approve max USDC spending on Curve Exchange
+        IERC20(_usdc).approve(address(curveExchange), type(uint256).max);
+        // Approve max WETH spending on Uni Router
+        IWETH(_weth).approve(address(uniRouter), type(uint256).max);
     }
 
     // -------------------------------
@@ -90,18 +104,60 @@ contract CurveRecipe is Ownable {
         uint256 _maxInput,
         uint256 _mintAmount
     ) external returns (uint256 inputAmountUsed, uint256 outputAmount) {
-        USDC.safeTransferFrom(_msgSender(), address(this), _maxInput);
+        // Transfer USDC to the Recipe
+        USDC.safeTransferFrom(msg.sender, address(this), _maxInput);
 
+        // Bake _mintAmount basket tokens
         outputAmount = _bake(_outputToken, _mintAmount);
 
+        // Transfer remaining USDC to msg.sender
         uint256 remainingInputBalance = USDC.balanceOf(address(this));
         if (remainingInputBalance > 0) {
-            USDC.transfer(_msgSender(), remainingInputBalance);
+            USDC.transfer(msg.sender, remainingInputBalance);
         }
+        inputAmountUsed = _maxInput - remainingInputBalance;
 
-        IERC20(_outputToken).safeTransfer(_msgSender(), outputAmount);
+        // Transfer minted basket tokens to msg.sender
+        IERC20(_outputToken).safeTransfer(msg.sender, outputAmount);
+    }
 
-        return (inputAmountUsed, outputAmount);
+    /**
+     * Bake a basket with ETH.
+     * Wraps the ETH that was sent, swaps it for USDC on UniV3, and continues the baking
+     * process as normal
+     *
+     * @param _basket Basket token to mint
+     * @param _mintAmount Target amount of basket tokens to mint
+     */
+    function toBasket(address _basket, uint256 _mintAmount) external payable {
+        // Wrap ETH
+        WETH.deposit{ value: msg.value }();
+
+        // Form WETH -> USDC swap params
+        uniV3Router.ExactInputSingleParams memory params = uniV3Router.ExactInputSingleParams({
+            tokenIn: address(WETH),
+            tokenOut: address(USDC),
+            fee: 3000,
+            recipient: address(this),
+            deadline: block.timestamp,
+            amountIn: WETH.balanceOf(address(this)),
+            amountOutMinimum: 0,
+            sqrtPriceLimitX96: 0
+        });
+
+        // Transfer WETH for USDC on UniV3
+        uniRouter.exactInputSingle(params);
+
+        // Bake basket
+        uint256 outputAmount = _bake(_basket, _mintAmount);
+        // Transfer minted baskets to msg.sender
+        IERC20(_basket).safeTransfer(msg.sender, outputAmount);
+
+        // Send remaining USDC to msg.sender
+        uint256 usdcBalance = USDC.balanceOf(address(this));
+        if (usdcBalance != 0) {
+            USDC.safeTransfer(msg.sender, usdcBalance);
+        }
     }
 
     // -------------------------------
@@ -114,26 +170,26 @@ contract CurveRecipe is Ownable {
      * amount minted.
      *
      * @param _outputToken Basket token to bake
-     * @param _mintAmount Amount of basket tokens to mint
+     * @param _mintAmount Target amount of basket tokens to mint
      * @return outputAmount Amount of basket tokens minted
      */
     function _bake(address _outputToken, uint256 _mintAmount) internal returns (uint256 outputAmount) {
         require(pieRegistry.inRegistry(_outputToken));
 
-        swapForUnderlying(_outputToken, _mintAmount);
+        swapAndJoin(_outputToken, _mintAmount);
 
         outputAmount = IERC20(_outputToken).balanceOf(address(this));
     }
 
     /**
-     * Swap for the underlying assets of a pie using only Curve. The source token will always be USDC.
+     * Swap for the underlying assets of a basket using only Curve and mint _outputAmount basket tokens.
      *
      * @param _basket Basket to pull underlying assets from
-     * @param _outputAmount Amount of basket tokens to mint
+     * @param _mintAmount Target amount of basket tokens to mint
      */
-    function swapForUnderlying(address _basket, uint256 _outputAmount) internal {
+    function swapAndJoin(address _basket, uint256 _mintAmount) internal {
         IPie basket = IPie(_basket);
-        (address[] memory tokens, uint256[] memory amounts) = basket.calcTokensForAmount(_outputAmount);
+        (address[] memory tokens, uint256[] memory amounts) = basket.calcTokensForAmount(_mintAmount);
 
         // Load USDC address into memory to prevent multiple SLOADs in the loop
         address _usdc = address(USDC);
@@ -159,7 +215,7 @@ contract CurveRecipe is Ownable {
             token.approve(_basket, _amount);
             require(amounts[i] <= token.balanceOf(address(this)), "We are trying to deposit more then we have");
         }
-        basket.joinPool(_outputAmount);
+        basket.joinPool(_mintAmount);
     }
 
     // -------------------------------
@@ -170,6 +226,14 @@ contract CurveRecipe is Ownable {
      * Update the curve exchange to the current value stored in Curve's Address Provider
      */
     function updateCurveExchange() external onlyOwner {
-        curveExchange = ICurveExchange(curveAddressProvider.get_address(2));
+        address _exchange = curveAddressProvider.get_address(2);
+
+        // Update stored Curve exchange
+        curveExchange = ICurveExchange(_exchange);
+
+        // Re-approve USDC
+        IERC20(_usdc).approve(_exchange, type(uint256).max);
     }
+
+    receive() external payable{}
 }
