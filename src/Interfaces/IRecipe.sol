@@ -9,7 +9,7 @@ interface IRecipe {
         uint16[] memory _dexIndex
     ) external returns (uint256 inputAmountUsed, uint256 outputAmount);
 
-    function toPie(address _pie, uint256 _outputAmount, uint16[] memory _dexIndex) external payable;
+    function toBasket(address _basket, uint256 _mintAmount) external payable returns(uint outAmount);
 
     function getPricePie(address _pie, uint256 _mintAmount) external returns(uint256 mintPrice, uint16[] memory dexIndex);
 

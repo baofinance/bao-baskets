@@ -9,8 +9,8 @@ import "../Diamond/DiamondLoupeFacet.sol";
 import "../Diamond/ERC20Facet.sol";
 import "../Diamond/OwnershipFacet.sol";
 import "../BasketRegistry.sol";
-import {Oven} from "../Oven.sol";
-import {OvenFactoryContract} from "../OvenFactory.sol";
+import {Steamer} from "../Steamer.sol";
+import {SteamerFactoryContract} from "../SteamerFactory.sol";
 import "../LendingRegistry.sol";
 import "../Diamond/Diamond.sol";
 import "../BasketFactoryContract.sol";
@@ -73,10 +73,10 @@ contract BasketsTestSuite is Test {
     Recipe public recipe;
 
     // OvenFactory
-    OvenFactoryContract public ovenFactory;
+    SteamerFactoryContract public steamerFactory;
 
     // Oven
-    Oven public bSTBLOven;
+    Steamer public bSTBLSteamer;
 
     // Test Basket
     address public bSTBL;
@@ -251,10 +251,9 @@ contract BasketsTestSuite is Test {
         // Deploy Recipe
         recipe = new Recipe(constants.WETH(), address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
 
-        // Deploy OvenFactory
-        ovenFactory = new OvenFactoryContract();
-        ovenFactory.setDefaultController(address(this));
-        bSTBLOven = ovenFactory.CreateOven(address(bSTBL), address(recipe));
+        // Deploy SteamerFactory
+        steamerFactory = new SteamerFactoryContract();
+        bSTBLSteamer = steamerFactory.CreateSteamer(address(bSTBL), address(recipe), 25 ether, 0.1 ether);
 
         // Set privileges
         CallFacet bSBasketCF = CallFacet(bSTBL);
