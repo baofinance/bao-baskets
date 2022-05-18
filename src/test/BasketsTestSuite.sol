@@ -236,7 +236,7 @@ contract BasketsTestSuite is Test {
 
         //bSTBL
         bSTBLTokenAmounts[0] = 3333333333333333333;
-        bSTBLTokenAmounts[1] = 1096491200000000000;
+        bSTBLTokenAmounts[1] = 1103752750000000000;
         bSTBLTokenAmounts[2] = 3333333;
 
         uint256 initialSTBLSupply = 1 ether;
@@ -283,11 +283,10 @@ contract BasketsTestSuite is Test {
         lendingRegistry.setWrappedToProtocol(constants.aUSDC(), AAVE_PROTOCOL);
         lendingRegistry.setWrappedToUnderlying(constants.aUSDC(), constants.USDC());
         lendingRegistry.setUnderlyingToProtocolWrapped(constants.USDC(), AAVE_PROTOCOL, constants.aUSDC());
-        // DAI - COMPOUND
-        lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
-        lendingRegistry.setWrappedToProtocol(constants.cDAI(), COMP_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(constants.cDAI(), constants.DAI());
-        lendingRegistry.setUnderlyingToProtocolWrapped(constants.DAI(), COMP_PROTOCOL, constants.cDAI());
+        // DAI - AAVE
+        lendingRegistry.setWrappedToProtocol(constants.aDAI(), AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.aDAI(), constants.DAI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.DAI(), AAVE_PROTOCOL, constants.aDAI());
         // RAI - AAVE
         lendingRegistry.setWrappedToProtocol(constants.aRAI(), AAVE_PROTOCOL);
         lendingRegistry.setWrappedToUnderlying(constants.aRAI(), constants.RAI());
@@ -299,7 +298,7 @@ contract BasketsTestSuite is Test {
         // Lend USDC into AAVE
         bSLendingManager.lend(constants.USDC(), IERC20(constants.USDC()).balanceOf(bSTBL), AAVE_PROTOCOL);
         // Lend DAI into COMPOUND
-        bSLendingManager.lend(constants.DAI(), IERC20(constants.DAI()).balanceOf(bSTBL), COMP_PROTOCOL);
+        bSLendingManager.lend(constants.DAI(), IERC20(constants.DAI()).balanceOf(bSTBL), AAVE_PROTOCOL);
         // Lend RAI into AAVE
         bSLendingManager.lend(constants.RAI(), IERC20(constants.RAI()).balanceOf(bSTBL), AAVE_PROTOCOL);
     }

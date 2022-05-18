@@ -29,6 +29,7 @@ contract Constants is DSTest {
     //bSTBL
     address public DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public cDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    address public aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
     address public FEI = 0x956F47F50A910163D8BF957Cf5846D573E7f87CA;
     address public aFEI = 0x683923dB55Fead99A79Fa01A27EeC3cB19679cC3;
     address public RAI = 0x03ab458634910AaD20eF5f1C8ee96F1D6ac54919;

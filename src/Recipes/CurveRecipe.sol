@@ -14,6 +14,7 @@ import "../Interfaces/IUniV3Router.sol";
 import "../Interfaces/IWETH.sol";
 import "../../lib/forge-std/src/Test.sol";
 import "../Interfaces/ICurveRegistry.sol";
+import "../Interfaces/ICurveCalculator.sol";
 
 pragma experimental ABIEncoderV2;
 
@@ -23,8 +24,9 @@ pragma experimental ABIEncoderV2;
  * TODO:
  * - [x] Initial curve exchange integration
  * - [x] Accept ETH by swapping to USDC before Curve interactions.
- * - [ ] Optimize where possible
- * - [ ] Incorporate into test suite for bSTBL
+ * - [ ] Get `getDx` working with the RAI pool
+ * - [ ] Optimize where possible (add mulDiv, etc.)
+ * - [x] Incorporate into test suite for bSTBL
  *
  * @author vex
  */
@@ -35,6 +37,10 @@ contract CurveRecipe is Ownable, Test {
     // -------------------------------
     // CONSTANTS
     // -------------------------------
+
+    address constant RAI_3POOL = 0x618788357D0EBd8A37e763ADab3bc575D54c2C7d;
+    address constant _3POOL = 0xbEbc44782C7dB0a1A60Cb6fe97d0b483032FF1C7;
+    ICurveCalculator constant curveCalculator = ICurveCalculator(0xc1DB00a8E5Ef7bfa476395cdbcc98235477cDE4E);
 
     IERC20 immutable USDC;
     IWETH immutable WETH;
@@ -164,7 +170,14 @@ contract CurveRecipe is Ownable, Test {
         }
     }
 
-    function getPrice(address _basket, uint256 _amount) external returns (uint256 _price) {
+    /**
+     * Get the price of `_amount` basket tokens in USDC
+     *
+     * @param _basket Basket token to get the price of
+     * @param _amount Amount of basket tokens to get price of
+     * @return _price Price of `_amount` basket tokens in USDC
+     */
+    function getPrice(address _basket, uint256 _amount) external view returns (uint256 _price) {
         // Check that _basket is a valid basket
         require(basketRegistry.inRegistry(_basket));
 
@@ -190,11 +203,7 @@ contract CurveRecipe is Ownable, Test {
             }
 
             // If the token is USDC, we don't need to perform a swap before lending.
-            if (_token == _usdc) {
-                _price += _amount;
-            } else {
-                _price += getDx(_usdc, _token, _amount);
-            }
+            _price += _token == _usdc ? _amount : getDx(_usdc, _token, _amount);
         }
         return _price;
     }
@@ -246,11 +255,22 @@ contract CurveRecipe is Ownable, Test {
             if (underlying != address(0)) {
                 // Get underlying amount according to the exchange rate
                 ILendingLogic lendingLogic = getLendingLogicFromWrapped(_token);
-                // TODO: Replace with a more efficient mulDiv function
-                uint256 underlyingAmount = _amount.mul(lendingLogic.exchangeRate(_token)).div(1e18).add(1);
+                uint256 underlyingAmount;
+
+                emit log("---------------------------");
+                emit log_named_address("Token to swap", underlying);
 
                 // Swap for the underlying asset on Curve
-                _swapCurve(_usdc, underlying, underlyingAmount);
+                if (underlying == _usdc) {
+                    // If the asset is already USDC, there is no need to swap
+                    underlyingAmount = _amount.mul(lendingLogic.exchangeRate(_token)).div(1e18);
+                    emit log("No swap necessary. Lending USDC");
+                } else {
+                    emit log_named_uint("Desired Amount", _amount.mul(lendingLogic.exchangeRate(_token)).div(1e18));
+                    uint256 dx = getDx(_usdc, underlying, _amount.mul(lendingLogic.exchangeRate(_token)).div(1e18));
+                    underlyingAmount = _swapCurve(_usdc, underlying, dx);
+                    emit log_named_uint("Received Amount", IERC20(underlying).balanceOf(address(this)));
+                }
 
                 // Execute lending transactions
                 (address[] memory targets, bytes[] memory data) = lendingLogic.lend(underlying, underlyingAmount, address(this));
@@ -258,6 +278,10 @@ contract CurveRecipe is Ownable, Test {
                     (bool success,) = targets[j].call{value : 0}(data[j]);
                     require(success, "CALL_FAILED");
                 }
+
+                emit log_named_address("Lending Token", _token);
+                emit log_named_uint("Underlying Balance Remaining", IERC20(underlying).balanceOf(address(this)));
+                emit log_named_uint("Lent Balance", IERC20(_token).balanceOf(address(this)));
             } else {
                 _swapCurve(_usdc, _token, _amount);
             }
@@ -265,7 +289,11 @@ contract CurveRecipe is Ownable, Test {
             IERC20 token = IERC20(_token);
             token.approve(_basket, 0);
             token.approve(_basket, _amount);
-            require(amounts[i] <= token.balanceOf(address(this)), "SLIPPAGE_THRESHOLD_EXCEEDED");
+            emit log_named_uint("Amount required (0.25% slippage allowed)", amounts[i]);
+
+            // TODO: Add 0.25% slippage tolerance.
+            require(amounts[i] <= token.balanceOf(address(this)) * 10025 / 10000, "SLIPPAGE_THRESHOLD_EXCEEDED");
+            // require(amounts[i] <= token.balanceOf(address(this)), "SLIPPAGE_THRESHOLD_EXCEEDED");
         }
         basket.joinPool(_mintAmount);
     }
@@ -281,13 +309,20 @@ contract CurveRecipe is Ownable, Test {
         address _from,
         address _to,
         uint256 _amount
-    ) internal {
-        (address _pool, uint256 _out) = curveExchange.get_best_rate(
+    ) internal returns (uint256 _output) {
+        address _pool = getPreferredPool(_to);
+        uint256 _out = curveExchange.get_exchange_amount(
+            _pool,
             _from,
             _to,
             _amount
         );
-        curveExchange.exchange(
+
+        emit log_named_address("Pool", _pool);
+        emit log_named_uint("Amount In (dx)", _amount);
+        emit log_named_uint("Expected Out", _out);
+
+        _output = curveExchange.exchange(
             _pool,
             _from,
             _to,
@@ -301,37 +336,26 @@ contract CurveRecipe is Ownable, Test {
      *
      * @param _from Asset to swap from
      * @param _to Asset to swap to
-     * @param _amount Amount of _from to swap
+     * @param _amount Amount of _to to be received
+     * @return _dx Amount of _from to be sent in order to receive _amount of _to
      */
     function getDx(
         address _from,
         address _to,
         uint256 _amount
-    ) internal returns (uint256 _out) {
-        (address _pool,) = curveExchange.get_best_rate(_from, _to, _amount);
-        emit log_named_address("Pool ID", _pool);
-        emit log_named_address("From", _from);
-        emit log_named_address("To", _to);
-
+    ) internal view returns (uint256 _dx) {
+        address _pool = getPreferredPool(_to);
+        uint256[8] memory balances;
+        uint256[8] memory rates;
+        uint256[8] memory decimals;
         (int128 i, int128 j, bool is_underlying) = curveRegistry.get_coin_indices(_pool, _from, _to);
-        emit log_named_int("i", i);
-        emit log_named_int("j", j);
-        emit log_named_uint("underlying", is_underlying ? 1 : 0);
-
-        uint256 amp = curveRegistry.get_A(_pool);
-        emit log_named_uint("Amp", amp);
-        uint256 fee = curveRegistry.get_fees(_pool)[0];
-        emit log_named_uint("Fee", fee);
-
-        uint256[] memory balances = new uint256[](8);
-        uint256[] memory rates = new uint256[](8);
-        uint256[] memory decimals = new uint256[](8);
         uint256 n_coins = curveRegistry.get_n_coins(_pool)[uint256(is_underlying ? 1 : 0)];
+
+        uint256 amountCopy = _amount; // Copy _amount higher in the stack to prevent stack too deep error
 
         if (is_underlying) {
             balances = curveRegistry.get_underlying_balances(_pool);
             decimals = curveRegistry.get_underlying_decimals(_pool);
-            rates = new uint256[](8); // Instantiate an empty rates array
             for (uint256 x; x < 8; ++x) {
                 if (x == n_coins) {
                     break;
@@ -351,9 +375,18 @@ contract CurveRecipe is Ownable, Test {
             decimals[x] = 10 ** (18 - decimals[x]);
         }
 
-        // TODO: Determine per-pool calculators
-        // _out = ICurveCalculator(address(0)).get_dx(n_coins, balances, amp, fee, rates, decimals, i, j, _amount);
-        _out = 0;
+        _dx = curveCalculator.get_dx(
+            int128(n_coins),
+            balances,
+            curveRegistry.get_A(_pool),
+            curveRegistry.get_fees(_pool)[0],
+            rates,
+            decimals,
+            is_underlying,
+            i,
+            j,
+            amountCopy
+        );
     }
 
     /**
@@ -370,6 +403,20 @@ contract CurveRecipe is Ownable, Test {
                 )
             )
         );
+    }
+
+    /**
+     * Get the preferred pool for swapping to `_to` from USDC on Curve.
+     * We hard-code the preferred pools to ensure that the intended
+     * pools are used. With `get_best_rate`, `getDx` and `_swapCurve`
+     * may get different results, resulting in different expectations.
+     *
+     * @param _to Token to swap to
+     * @return address - Address of pool to use
+     */
+    function getPreferredPool(address _to) internal view returns (address) {
+        // If token is RAI, use RAI-3Pool. Else, use 3Pool.
+        return _to == 0x03ab458634910AaD20eF5f1C8ee96F1D6ac54919 ? RAI_3POOL : _3POOL;
     }
 
     // -------------------------------

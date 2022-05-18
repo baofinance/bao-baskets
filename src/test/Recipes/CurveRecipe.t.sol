@@ -29,7 +29,7 @@ contract CurveRecipeTest is Test {
         emit log_named_uint("USDC Balance", USDC.balanceOf(address(this)));
     }
 
-    function testMint2() public {
+    function testMintCurve() public {
         CurveRecipe recipe = testSuite.curveRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
 

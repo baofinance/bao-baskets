@@ -7,6 +7,13 @@ interface ICurveExchange {
         uint256 _amount
     ) external view returns (address, uint256);
 
+    function get_exchange_amount(
+        address _pool,
+        address _from,
+        address _to,
+        uint256 _amount
+    ) external view returns (uint256);
+
     function exchange(
         address _pool,
         address _from,
