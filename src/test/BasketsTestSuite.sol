@@ -19,8 +19,9 @@ import {LendingLogicAaveV2} from "../Strategies/LendingLogicAaveV2.sol";
 import {LendingLogicCompound} from "../Strategies/LendingLogicCompound.sol";
 import {StakingLogicSushi} from "../Strategies/StakingLogicSushi.sol";
 import {LendingManager} from "../LendingManager.sol";
-import {Recipe} from "../Recipes/Recipe.sol";
 import {IUniswapV2Router01} from "../Interfaces/IUniRouter.sol";
+import "../Recipes/CurveRecipe.sol";
+import "../Recipes/Recipe.sol";
 
 interface Cheats {
     function deal(address who, uint256 amount) external;
@@ -71,6 +72,7 @@ contract BasketsTestSuite is Test {
 
     // Recipe
     Recipe public recipe;
+    CurveRecipe public curveRecipe;
 
     // OvenFactory
     OvenFactoryContract public ovenFactory;
@@ -250,6 +252,14 @@ contract BasketsTestSuite is Test {
 
         // Deploy Recipe
         recipe = new Recipe(constants.WETH(), address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
+        curveRecipe = new CurveRecipe(
+            constants.USDC(),
+            constants.WETH(),
+            address(lendingRegistry),
+            address(basketRegistry),
+            0x0000000022D53366457F9d5E68Ec105046FC4383, // Curve Address Provider
+            0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45 // Uniswap V3 Router
+        );
 
         // Deploy OvenFactory
         ovenFactory = new OvenFactoryContract();

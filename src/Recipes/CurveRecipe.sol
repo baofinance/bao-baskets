@@ -12,6 +12,8 @@ import "@openzeppelin/math/SafeMath.sol";
 import "@openzeppelin/access/Ownable.sol";
 import "../Interfaces/IUniV3Router.sol";
 import "../Interfaces/IWETH.sol";
+import "../../lib/forge-std/src/Test.sol";
+import "../Interfaces/ICurveRegistry.sol";
 
 pragma experimental ABIEncoderV2;
 
@@ -26,7 +28,7 @@ pragma experimental ABIEncoderV2;
  *
  * @author vex
  */
-contract CurveRecipe is Ownable {
+contract CurveRecipe is Ownable, Test {
     using SafeERC20 for IERC20;
     using SafeMath for uint256;
 
@@ -37,13 +39,14 @@ contract CurveRecipe is Ownable {
     IERC20 immutable USDC;
     IWETH immutable WETH;
     ILendingRegistry immutable lendingRegistry;
-    IPieRegistry immutable pieRegistry;
+    IPieRegistry immutable basketRegistry;
     ICurveAddressProvider immutable curveAddressProvider;
 
     // -------------------------------
     // VARIABLES
     // -------------------------------
 
+    ICurveRegistry curveRegistry;
     ICurveExchange curveExchange;
     uniV3Router uniRouter;
 
@@ -72,10 +75,11 @@ contract CurveRecipe is Ownable {
         USDC = IERC20(_usdc);
         WETH = IWETH(_weth);
         lendingRegistry = ILendingRegistry(_lendingRegistry);
-        pieRegistry = IPieRegistry(_pieRegistry);
+        basketRegistry = IPieRegistry(_pieRegistry);
 
         curveAddressProvider = ICurveAddressProvider(_curveAddressProvider);
         curveExchange = ICurveExchange(ICurveAddressProvider(_curveAddressProvider).get_address(2));
+        curveRegistry = ICurveRegistry(ICurveAddressProvider(_curveAddressProvider).get_registry());
 
         uniRouter = uniV3Router(_uniV3Router);
 
@@ -160,6 +164,41 @@ contract CurveRecipe is Ownable {
         }
     }
 
+    function getPrice(address _basket, uint256 _amount) external returns (uint256 _price) {
+        // Check that _basket is a valid basket
+        require(basketRegistry.inRegistry(_basket));
+
+        // Loop through all the tokens in the basket and get their prices on Curve
+        (address[] memory tokens, uint256[] memory amounts) = IPie(_basket).calcTokensForAmount(_amount);
+        address _usdc = address(USDC);
+        address _token;
+        address _underlying;
+        uint256 _amount;
+        for (uint256 i; i < tokens.length; ++i) {
+            _token = tokens[i];
+            _amount = amounts[i];
+
+            require(_amount != 0, "MINT_AMOUNT_INVALID");
+
+            _underlying = lendingRegistry.wrappedToUnderlying(_token);
+            if (_underlying != address(0)) {
+                // TODO: Replace with a more efficient mulDiv function
+                _amount = _amount.mul(
+                    getLendingLogicFromWrapped(_token).exchangeRateView(_token)
+                ).div(1e18);
+                _token = _underlying;
+            }
+
+            // If the token is USDC, we don't need to perform a swap before lending.
+            if (_token == _usdc) {
+                _price += _amount;
+            } else {
+                _price += getDx(_usdc, _token, _amount);
+            }
+        }
+        return _price;
+    }
+
     // -------------------------------
     // INTERNAL FUNCTIONS
     // -------------------------------
@@ -174,7 +213,7 @@ contract CurveRecipe is Ownable {
      * @return outputAmount Amount of basket tokens minted
      */
     function _bake(address _outputToken, uint256 _mintAmount) internal returns (uint256 outputAmount) {
-        require(pieRegistry.inRegistry(_outputToken));
+        require(basketRegistry.inRegistry(_outputToken));
 
         swapAndJoin(_outputToken, _mintAmount);
 
@@ -207,6 +246,7 @@ contract CurveRecipe is Ownable {
             if (underlying != address(0)) {
                 // Get underlying amount according to the exchange rate
                 ILendingLogic lendingLogic = getLendingLogicFromWrapped(_token);
+                // TODO: Replace with a more efficient mulDiv function
                 uint256 underlyingAmount = _amount.mul(lendingLogic.exchangeRate(_token)).div(1e18).add(1);
 
                 // Swap for the underlying asset on Curve
@@ -230,25 +270,98 @@ contract CurveRecipe is Ownable {
         basket.joinPool(_mintAmount);
     }
 
+    /**
+     * Swap from _from to _to on Curve Exchange
+     *
+     * @param _from Asset to swap from
+     * @param _to Asset to swap to
+     * @param _amount Amount of _from to swap
+     */
     function _swapCurve(
-        address _usdc,
-        address _token,
+        address _from,
+        address _to,
         uint256 _amount
     ) internal {
         (address _pool, uint256 _out) = curveExchange.get_best_rate(
-            _usdc,
-            _token,
+            _from,
+            _to,
             _amount
         );
         curveExchange.exchange(
             _pool,
-            _usdc,
-            _token,
+            _from,
+            _to,
             _amount,
             _out
         );
     }
 
+    /**
+     * Get the amount received when swapping _from for _to on Curve Exchange
+     *
+     * @param _from Asset to swap from
+     * @param _to Asset to swap to
+     * @param _amount Amount of _from to swap
+     */
+    function getDx(
+        address _from,
+        address _to,
+        uint256 _amount
+    ) internal returns (uint256 _out) {
+        (address _pool,) = curveExchange.get_best_rate(_from, _to, _amount);
+        emit log_named_address("Pool ID", _pool);
+        emit log_named_address("From", _from);
+        emit log_named_address("To", _to);
+
+        (int128 i, int128 j, bool is_underlying) = curveRegistry.get_coin_indices(_pool, _from, _to);
+        emit log_named_int("i", i);
+        emit log_named_int("j", j);
+        emit log_named_uint("underlying", is_underlying ? 1 : 0);
+
+        uint256 amp = curveRegistry.get_A(_pool);
+        emit log_named_uint("Amp", amp);
+        uint256 fee = curveRegistry.get_fees(_pool)[0];
+        emit log_named_uint("Fee", fee);
+
+        uint256[] memory balances = new uint256[](8);
+        uint256[] memory rates = new uint256[](8);
+        uint256[] memory decimals = new uint256[](8);
+        uint256 n_coins = curveRegistry.get_n_coins(_pool)[uint256(is_underlying ? 1 : 0)];
+
+        if (is_underlying) {
+            balances = curveRegistry.get_underlying_balances(_pool);
+            decimals = curveRegistry.get_underlying_decimals(_pool);
+            rates = new uint256[](8); // Instantiate an empty rates array
+            for (uint256 x; x < 8; ++x) {
+                if (x == n_coins) {
+                    break;
+                }
+                rates[x] = 1e18;
+            }
+        } else {
+            balances = curveRegistry.get_balances(_pool);
+            decimals = curveRegistry.get_decimals(_pool);
+            rates = curveRegistry.get_rates(_pool);
+        }
+
+        for (uint256 x; x < 8; ++x) {
+            if (x == n_coins) {
+                break;
+            }
+            decimals[x] = 10 ** (18 - decimals[x]);
+        }
+
+        // TODO: Determine per-pool calculators
+        // _out = ICurveCalculator(address(0)).get_dx(n_coins, balances, amp, fee, rates, decimals, i, j, _amount);
+        _out = 0;
+    }
+
+    /**
+     * Get the lending logic of a wrapped token
+     *
+     * @param _wrapped Address of wrapped token
+     * @return ILendingLogic - Lending logic associated with _wrapped
+     */
     function getLendingLogicFromWrapped(address _wrapped) internal view returns (ILendingLogic) {
         return ILendingLogic(
             lendingRegistry.protocolToLogic(
@@ -271,6 +384,7 @@ contract CurveRecipe is Ownable {
 
         // Update stored Curve exchange
         curveExchange = ICurveExchange(_exchange);
+        curveRegistry = ICurveRegistry(curveAddressProvider.get_registry());
 
         // Re-approve USDC
         USDC.approve(_exchange, 0);
