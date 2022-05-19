@@ -157,7 +157,6 @@ contract Recipe is Ownable {
                 _assetOut,
                 500,
                 address(this),
-                block.timestamp + 1,
                 _amountOut,
                 type(uint256).max,
                 0
@@ -174,7 +173,6 @@ contract Recipe is Ownable {
                 _assetOut,
                 3000,
                 address(this),
-                block.timestamp + 1,
                 _amountOut,
                 type(uint256).max,
                 0

@@ -21,6 +21,10 @@ pragma experimental ABIEncoderV2;
 /**
  * CurveRecipe contract for BaoFinance's Baskets Protocol (PieDAO fork)
  *
+ * NOTE: This is broken. Curve's get_dx function does not return
+ * input for *exact* output, and it also does not work with
+ * non-stable pools.
+ *
  * TODO:
  * - [x] Initial curve exchange integration
  * - [x] Accept ETH by swapping to USDC before Curve interactions.
@@ -149,7 +153,6 @@ contract CurveRecipe is Ownable, Test {
             tokenOut : address(USDC),
             fee : 3000,
             recipient : address(this),
-            deadline : block.timestamp,
             amountIn : WETH.balanceOf(address(this)),
             amountOutMinimum : 0,
             sqrtPriceLimitX96 : 0
