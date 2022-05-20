@@ -22,6 +22,8 @@ contract Steamer is Ownable {
     IRecipe public RECIPE;
     address[] public DEPOSITORS;
 
+    event log_named_uint(string key, uint val);
+
     constructor(
         address _pie,
         address _recipe,
@@ -45,23 +47,27 @@ contract Steamer is Ownable {
 	
 	//
 	//uint aproxCostToMint = block.basefee().mul(GAS_AMOUNT);
-	uint aproxCostToMint = GAS_AMOUNT;
-
+	//uint aproxCostToMint = GAS_AMOUNT;
         //Amount of ETH we will use to steam the baskets
-        uint ethToSteam = maxSteam.sub(aproxCostToMint);
+        //uint ethToSteam = maxSteam.sub(aproxCostToMint);
 
         //Pay executor
-        payable(owner()).transfer(aproxCostToMint);
+        //payable(owner()).transfer(aproxCostToMint);
 
         //Make sure the minimum amount of ETH is being used to steam the baskets
-        require(address(this).balance >= ethToSteam);
-        
-        //We first make sure that steaming the basket succeeds
-        uint mintedBasketAmounts = RECIPE.toBasket{value: ethToSteam}(address(PIE), _minOutAmount);
-        
+        require(address(this).balance >= maxSteam);
+	//We first make sure that steaming the basket succeeds
+        //uint mintedBasketAmounts = RECIPE.toBasket{value: ethToSteam}(address(PIE), _minOutAmount);
+	uint mintedBasketAmounts = PIE.balanceOf(address(this));       
+
+	//We need a variable to subtract the total amount of distributed eth from
+        uint ethToDistribute = maxSteam;
+
         //We now divide the received baskets among the depositors
         //We're starting at 1, as the default value for the mapping addressToIndex is 0 
-	for (uint i = 1; i == DEPOSITORS.length; i++) {
+	emit log_named_uint("Depositors Length:",DEPOSITORS.length);
+	uint depositorAmount = DEPOSITORS.length; 
+	for (uint i; i < depositorAmount; i++) {
             // This logic aims to execute the following logic
             // E.g. 25 eth was used to steam the baskets
             // User Balance: 10 eth, (100% used)
@@ -69,28 +75,26 @@ contract Steamer is Ownable {
             // User Balance: 10 eth, (50% used)
             // User Balance: 10 eth, (0% used)
             // ...
-
+	    emit log_named_uint("Checkpoint:",i);
             //Amount of ETH deposited by user i
-            uint256 userAmount = ethBalanceOf[DEPOSITORS[i]];
-            //We need a variable to subtract the total amount of distributed eth from
-            uint ethToDistribute = maxSteam;
+            uint256 userAmount = ethBalanceOf[DEPOSITORS[0]];
         
             //vex...he has my kids. He said he won't release them if I don't save gas on SLOADs
-            address depositorAddress = DEPOSITORS[i]; 
-
-            //Decrease ETH-balance and increase basket-balance of each user
+            address depositorAddress = DEPOSITORS[0]; 
+	    emit log_named_uint("ethToDistribute:",ethToDistribute);
+            emit log_named_uint("userAmount:",userAmount);
+	    //Decrease ETH-balance and increase basket-balance of each user
             if(ethToDistribute > userAmount){
                 //decrease global eth balance
-                ethToDistribute.sub(userAmount);
+                ethToDistribute = ethToDistribute.sub(userAmount);
                 
                 //decrease user eth balance
                 ethBalanceOf[depositorAddress] = 0;
 
                 //increase user basket balance
                 outputBalanceOf[depositorAddress] = (userAmount.mul(1e18).div(maxSteam)).mul(mintedBasketAmounts).div(1e18);
-
                 //remove user from depositor list
-                DEPOSITORS[i] = DEPOSITORS[DEPOSITORS.length];
+                DEPOSITORS[0] = DEPOSITORS[DEPOSITORS.length-1];
                 DEPOSITORS.pop();
 		addressToIndex[depositorAddress] = 0;
             }
@@ -103,7 +107,7 @@ contract Steamer is Ownable {
                 
                 //Don't really need to do this
                 //ethToDistribute = 0;
-                
+                emit log_named_uint("FINAL LOOP",0);
                 return();
             }
         }
@@ -111,11 +115,11 @@ contract Steamer is Ownable {
 
     function deposit() public payable {
         //Great scenario where we want to use custom error
-	    require(msg.value <= MIN_DEPOSIT, "Steamer: deposit amount is smaller then allowed");
+	require(msg.value >= MIN_DEPOSIT, "Steamer: deposit amount is smaller then allowed");
 
         if(ethBalanceOf[msg.sender] == 0){
             DEPOSITORS.push(msg.sender);
-            addressToIndex[msg.sender] = DEPOSITORS.length;
+            addressToIndex[msg.sender] = DEPOSITORS.length-1;
         }
 
         ethBalanceOf[msg.sender] = ethBalanceOf[msg.sender].add(msg.value);

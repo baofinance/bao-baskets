@@ -321,7 +321,7 @@ contract BasketsTestSuite is Test {
             uint holderBalance = IERC20(_tokens[i]).balanceOf(holder);
             require(holderBalance >= _tokenAmounts[i], "Error getTokesFromHolders: Holder doesn't have enough token to provide for testing");
             cheats.startPrank(holder);
-            IERC20(_tokens[i]).transfer(address(this), _tokenAmounts[i]);
+            IERC20(_tokens[i]).transfer(msg.sender, _tokenAmounts[i]);
             cheats.stopPrank();
         }
     }
