@@ -28,30 +28,45 @@ contract SimpleUniRecipeTest is Test {
     }
 
     function testMint() public {
+        uint256 _basketAmount = 10e18;
+
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
 
         basket.approve(address(recipe), type(uint256).max);
-        uint[] memory mintAmounts = new uint[](2);
 
-        mintAmounts[0] = 1e18;
-        mintAmounts[1] = 1e19;
+        uint256 initialBalance = USDC.balanceOf(address(this));
+        uint256 mintPrice = recipe.getPrice(address(basket), _basketAmount);
 
-        for (uint256 i = 0; i < mintAmounts.length; i++) {
-            uint256 initialBalance = USDC.balanceOf(address(this));
+        recipe.bake(
+            address(basket),
+            mintPrice,
+            _basketAmount
+        );
 
-            uint256 mintPrice = recipe.getPrice(address(basket), mintAmounts[i]);
+        assertGe(basket.balanceOf(address(this)), _basketAmount);
+        assertEq(mintPrice, initialBalance - USDC.balanceOf(address(this)));
+    }
 
-            recipe.bake(
-                address(basket),
-                mintPrice,
-                mintAmounts[i]
-            );
+    function testMintEth() public {
+        uint256 _basketAmount = 10e18;
 
-            uint256 basketBalance = basket.balanceOf(address(this));
-            assertGe(basketBalance, mintAmounts[i]);
-            assertEq(mintPrice, initialBalance - USDC.balanceOf(address(this)));
-        }
+        SimpleUniRecipe recipe = testSuite.uniRecipe();
+        IERC20 basket = IERC20(testSuite.bSTBL());
+
+        basket.approve(address(recipe), type(uint256).max);
+
+        uint256 mintPrice = recipe.getPriceEth(address(basket), _basketAmount);
+        testSuite.cheats().deal(address(this), mintPrice);
+        uint256 initialBalance = address(this).balance;
+
+        recipe.toBasket{ value: mintPrice }(
+            address(basket),
+            _basketAmount
+        );
+
+        assertGe(basket.balanceOf(address(this)), _basketAmount);
+        assertEq(mintPrice, initialBalance - address(this).balance);
     }
 
     function testRedeem() public {

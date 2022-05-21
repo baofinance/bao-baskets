@@ -72,7 +72,7 @@ contract SimpleUniRecipe is Ownable {
 
     /**
      * External bake function.
-     * Mints _mintAmount basket tokens with as little of _maxInput as possible.
+     * Mints `_mintAmount` basket tokens with as little of `_maxInput` as possible.
      *
      * @param _basket Address of basket token to mint
      * @param _maxInput Max USDC to use to mint _mintAmount basket tokens
@@ -118,7 +118,7 @@ contract SimpleUniRecipe is Ownable {
         _swap(
             address(WETH),
             address(USDC),
-            msg.value,
+            getPrice(_basket, _mintAmount),
             500
         );
 
@@ -142,7 +142,7 @@ contract SimpleUniRecipe is Ownable {
      * @param _amount Amount of basket tokens to get price of
      * @return _price Price of `_amount` basket tokens in USDC
      */
-    function getPrice(address _basket, uint256 _amount) external returns (uint256 _price) {
+    function getPrice(address _basket, uint256 _amount) public returns (uint256 _price) {
         // Check that _basket is a valid basket
         require(basketRegistry.inRegistry(_basket));
 
@@ -164,7 +164,7 @@ contract SimpleUniRecipe is Ownable {
 
             _underlying = lendingRegistry.wrappedToUnderlying(_token);
             if (_underlying != address(0)) {
-                _amount = mulDivUp(
+                _amount = mulDivDown(
                     _amount,
                     getLendingLogicFromWrapped(_token).exchangeRateView(_token),
                     1e18
@@ -176,6 +176,22 @@ contract SimpleUniRecipe is Ownable {
             _price += _token == address(USDC) ? _amount : _quoteExactOutput(address(USDC), _token, _amount, 500);
         }
         return _price;
+    }
+
+    /**
+     * Get the price of `_amount` basket tokens in ETH
+     *
+     * @param _basket Basket token to get the price of
+     * @param _amount Amount of basket tokens to get price of
+     * @return _price Price of `_amount` basket tokens in ETH
+     */
+    function getPriceEth(address _basket, uint256 _amount) external returns (uint256 _price) {
+        _price = _quoteExactOutput(
+            address(WETH),
+            address(USDC),
+            getPrice(_basket, _amount),
+            500
+        );
     }
 
     // -------------------------------
@@ -234,7 +250,7 @@ contract SimpleUniRecipe is Ownable {
             } else {
                 // Get underlying amount according to the exchange rate
                 lendingLogic = getLendingLogicFromWrapped(_token);
-                underlyingAmount = mulDivUp(_amount, lendingLogic.exchangeRate(_token), 1e18);
+                underlyingAmount = mulDivDown(_amount, lendingLogic.exchangeRate(_token), 1e18);
 
                 // Swap for the underlying asset on UniV3
                 // If the token is USDC, no need to swap
@@ -330,24 +346,22 @@ contract SimpleUniRecipe is Ownable {
      *
      * (x*y)/z
      */
-    function mulDivUp(
+    function mulDivDown(
         uint256 x,
         uint256 y,
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-            // Store x * y in z for now.
+        // Store x * y in z for now.
             z := mul(x, y)
 
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+        // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
             if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
                 revert(0, 0)
             }
 
-            // First, divide z - 1 by the denominator and add 1.
-            // We allow z - 1 to underflow if z is 0, because we multiply the
-            // end result by 0 if z is zero, ensuring we return 0 if z is zero.
-            z := mul(iszero(iszero(z)), add(div(sub(z, 1), denominator), 1))
+        // Divide z by the denominator.
+            z := div(z, denominator)
         }
     }
 
