@@ -24,6 +24,7 @@ contract Constants is DSTest {
     address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52;
     address public FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
     address public UNI = 0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984;
+    address public cUNI = 0x35A18000230DA775CAc24873d00Ff85BccdeD550;
     address public SUSHI = 0x6B3595068778DD592e39A122f4f5a5cF09C90fE2;
     address public xSUSHI = 0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272;
     //bSTBL

@@ -272,11 +272,6 @@ contract BasketsTestSuite is Test {
         bSBasketCF.addCaller(address(bSLendingManager));
 
         // Configure Lending
-        // xSUSHI (for tests)
-        lendingRegistry.setProtocolToLogic(XSUSHI_PROTOCOL, address(stakingLogicSushi));
-        lendingRegistry.setWrappedToUnderlying(constants.xSUSHI(), constants.SUSHI());
-        lendingRegistry.setUnderlyingToProtocolWrapped(constants.SUSHI(), XSUSHI_PROTOCOL, constants.xSUSHI());
-
         // bSTBL
         // USDC - AAVE
         lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
@@ -291,6 +286,18 @@ contract BasketsTestSuite is Test {
         lendingRegistry.setWrappedToProtocol(constants.aRAI(), AAVE_PROTOCOL);
         lendingRegistry.setWrappedToUnderlying(constants.aRAI(), constants.RAI());
         lendingRegistry.setUnderlyingToProtocolWrapped(constants.RAI(), AAVE_PROTOCOL, constants.aRAI());
+
+        // For testing purposes, not in a basket
+        // UNI - Compound
+        lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
+        lendingRegistry.setWrappedToProtocol(constants.cUNI(), COMP_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.cUNI(), constants.UNI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.UNI(), COMP_PROTOCOL, constants.cUNI());
+        // xSUSHI (for tests)
+        lendingRegistry.setProtocolToLogic(XSUSHI_PROTOCOL, address(stakingLogicSushi));
+        lendingRegistry.setWrappedToProtocol(constants.xSUSHI(), XSUSHI_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.xSUSHI(), constants.SUSHI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.SUSHI(), XSUSHI_PROTOCOL, constants.xSUSHI());
 
         // Add basket to basket registry
         basketRegistry.addBasket(bSTBL);
