@@ -15,16 +15,16 @@ contract SteamerTest is Test {
         testSuite = new BasketsTestSuite();
         cheats = testSuite.cheats();
 	//startHoax(address(testSuite));
-        //steamer = testSuite.bSTBLSteamer();
-        //recipe = testSuite.recipe();
+        steamer = testSuite.bSTBLSteamer();
+        recipe = testSuite.recipe();
     }
-
+/*
     function testGasUsage() public {
 
 	address DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
 	
 	steamer = new Steamer(DAI,
-        DAI,
+        recipe,
         0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2,
         20 ether,
         1e17);
@@ -57,19 +57,14 @@ contract SteamerTest is Test {
         emit log_named_uint("Before Steamer Checkpoint",0);
  	steamer.steam(1000);
         emit log_named_uint("Final Checkpoint",0);	
-    }
+    }*/
  
-/*
-    function testFailOvenCap() public {
-        steamer.deposit{value : (1e18 + 1)}();
-    }
-
-    function testOvenDeposit() public {
+    function testSteamerDeposit() public {
         steamer.deposit{value : 1e18}();
         assertEq(steamer.ethBalanceOf(address(testSuite)), 1e18);
     }
 
-    function testOvenWithdrawETH() public {
+    function testSteamerWithdrawETH() public {
         uint256 initialBalance = address(this).balance;
 
         steamer.deposit{value : 1e18}();
@@ -78,10 +73,8 @@ contract SteamerTest is Test {
         assertEq(address(this).balance, initialBalance);
     }
 
-    function testOvenBake() public {
-        (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(testSuite.bSTBL(), 1e18);
-
-        steamer.deposit{value : mintPrice}();
+    function testSteamerSteam() public {
+        steamer.deposit{value : 30e18}();
 
         IERC20 basket = IERC20(testSuite.bSTBL());
 
@@ -94,5 +87,5 @@ contract SteamerTest is Test {
 
         steamer.withdrawOutput(address(testSuite));
         assertEq(basket.balanceOf(address(testSuite)), initialBalance + 1e18);
-    }*/
+    }
 }
