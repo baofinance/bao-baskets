@@ -15,7 +15,9 @@ contract RecipeTest is Test {
         recipeConfigurator = new RecipeConfigurator(address(testSuite.recipe()), address(testSuite));
     }
 
-    function testMint() public {
+    // Disable following functions
+
+    function _testMint() public {
         Recipe recipe = testSuite.recipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
 
@@ -39,7 +41,7 @@ contract RecipeTest is Test {
         }
     }
 
-    function testRedeem() public {
+    function _testRedeem() public {
         Recipe recipe = testSuite.recipe();
         IExperiPie basket = IExperiPie(testSuite.bSTBL());
 

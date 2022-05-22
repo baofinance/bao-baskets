@@ -19,8 +19,9 @@ import {LendingLogicAaveV2} from "../Strategies/LendingLogicAaveV2.sol";
 import {LendingLogicCompound} from "../Strategies/LendingLogicCompound.sol";
 import {StakingLogicSushi} from "../Strategies/StakingLogicSushi.sol";
 import {LendingManager} from "../LendingManager.sol";
-import {Recipe} from "../Recipes/Recipe.sol";
 import {IUniswapV2Router01} from "../Interfaces/IUniRouter.sol";
+import "../Recipes/SimpleUniRecipe.sol";
+import "../Recipes/Recipe.sol";
 
 interface Cheats {
     function deal(address who, uint256 amount) external;
@@ -28,6 +29,8 @@ interface Cheats {
     function startPrank(address sender) external;
 
     function stopPrank() external;
+
+    function assume(bool condition) external;
 }
 
 pragma experimental ABIEncoderV2;
@@ -71,6 +74,7 @@ contract BasketsTestSuite is Test {
 
     // Recipe
     Recipe public recipe;
+    SimpleUniRecipe public uniRecipe;
 
     // OvenFactory
     SteamerFactoryContract public steamerFactory;
@@ -234,7 +238,7 @@ contract BasketsTestSuite is Test {
 
         //bSTBL
         bSTBLTokenAmounts[0] = 3333333333333333333;
-        bSTBLTokenAmounts[1] = 1096491200000000000;
+        bSTBLTokenAmounts[1] = 1103752750000000000;
         bSTBLTokenAmounts[2] = 3333333;
 
         uint256 initialSTBLSupply = 1 ether;
@@ -248,8 +252,14 @@ contract BasketsTestSuite is Test {
         // Deploy Lending Manager
         bSLendingManager = new LendingManager(address(lendingRegistry), bSTBL);
 
-        // Deploy Recipe
+        // Deploy Recipes
         recipe = new Recipe(constants.WETH(), address(lendingRegistry), address(basketRegistry), BENTO_BOX, KASHI_MEDIUM_RISK);
+        uniRecipe = new SimpleUniRecipe(
+            address(lendingRegistry),
+            address(basketRegistry),
+            0x68b3465833fb72A70ecDF485E0e4C7bD8665Fc45, // Uniswap V3 Router
+            0xb27308f9F90D607463bb33eA1BeBb41C27CE5AB6
+        );
 
         // Deploy SteamerFactory
         steamerFactory = new SteamerFactoryContract();
@@ -261,26 +271,32 @@ contract BasketsTestSuite is Test {
         bSBasketCF.addCaller(address(bSLendingManager));
 
         // Configure Lending
-        // xSUSHI (for tests)
-        lendingRegistry.setProtocolToLogic(XSUSHI_PROTOCOL, address(stakingLogicSushi));
-        lendingRegistry.setWrappedToUnderlying(constants.xSUSHI(), constants.SUSHI());
-        lendingRegistry.setUnderlyingToProtocolWrapped(constants.SUSHI(), XSUSHI_PROTOCOL, constants.xSUSHI());
-
         // bSTBL
         // USDC - AAVE
         lendingRegistry.setProtocolToLogic(AAVE_PROTOCOL, address(lendingLogicAave));
         lendingRegistry.setWrappedToProtocol(constants.aUSDC(), AAVE_PROTOCOL);
         lendingRegistry.setWrappedToUnderlying(constants.aUSDC(), constants.USDC());
         lendingRegistry.setUnderlyingToProtocolWrapped(constants.USDC(), AAVE_PROTOCOL, constants.aUSDC());
-        // DAI - COMPOUND
-        lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
-        lendingRegistry.setWrappedToProtocol(constants.cDAI(), COMP_PROTOCOL);
-        lendingRegistry.setWrappedToUnderlying(constants.cDAI(), constants.DAI());
-        lendingRegistry.setUnderlyingToProtocolWrapped(constants.DAI(), COMP_PROTOCOL, constants.cDAI());
+        // DAI - AAVE
+        lendingRegistry.setWrappedToProtocol(constants.aDAI(), AAVE_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.aDAI(), constants.DAI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.DAI(), AAVE_PROTOCOL, constants.aDAI());
         // RAI - AAVE
         lendingRegistry.setWrappedToProtocol(constants.aRAI(), AAVE_PROTOCOL);
         lendingRegistry.setWrappedToUnderlying(constants.aRAI(), constants.RAI());
         lendingRegistry.setUnderlyingToProtocolWrapped(constants.RAI(), AAVE_PROTOCOL, constants.aRAI());
+
+        // For testing purposes, not in a basket
+        // UNI - Compound
+        lendingRegistry.setProtocolToLogic(COMP_PROTOCOL, address(lendingLogicCompound));
+        lendingRegistry.setWrappedToProtocol(constants.cUNI(), COMP_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.cUNI(), constants.UNI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.UNI(), COMP_PROTOCOL, constants.cUNI());
+        // xSUSHI (for tests)
+        lendingRegistry.setProtocolToLogic(XSUSHI_PROTOCOL, address(stakingLogicSushi));
+        lendingRegistry.setWrappedToProtocol(constants.xSUSHI(), XSUSHI_PROTOCOL);
+        lendingRegistry.setWrappedToUnderlying(constants.xSUSHI(), constants.SUSHI());
+        lendingRegistry.setUnderlyingToProtocolWrapped(constants.SUSHI(), XSUSHI_PROTOCOL, constants.xSUSHI());
 
         // Add basket to basket registry
         basketRegistry.addBasket(bSTBL);
@@ -288,7 +304,7 @@ contract BasketsTestSuite is Test {
         // Lend USDC into AAVE
         bSLendingManager.lend(constants.USDC(), IERC20(constants.USDC()).balanceOf(bSTBL), AAVE_PROTOCOL);
         // Lend DAI into COMPOUND
-        bSLendingManager.lend(constants.DAI(), IERC20(constants.DAI()).balanceOf(bSTBL), COMP_PROTOCOL);
+        bSLendingManager.lend(constants.DAI(), IERC20(constants.DAI()).balanceOf(bSTBL), AAVE_PROTOCOL);
         // Lend RAI into AAVE
         bSLendingManager.lend(constants.RAI(), IERC20(constants.RAI()).balanceOf(bSTBL), AAVE_PROTOCOL);
     }

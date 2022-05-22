@@ -38,8 +38,6 @@ contract SushiStakingStrategyTest is Test, LendingLogicTest {
     function testLendUnlend() public {
         uint256 sushiBalance = SUSHI.balanceOf(address(this));
 
-        emit log_named_uint("SUSHI balance", sushiBalance);
-
         lend(
             address(SUSHI),
             sushiBalance,
@@ -47,10 +45,6 @@ contract SushiStakingStrategyTest is Test, LendingLogicTest {
         );
 
         uint256 actual = xSUSHI.balanceOf(address(this));
-
-        emit log_named_uint("xSUSHI balance", actual);
-        emit log_named_uint("exchange rate", lendingLogic.exchangeRateView(address(xSUSHI)));
-
         uint256 expected = sushiBalance * 1e18 / lendingLogic.exchangeRate(address(xSUSHI));
         assertRelApproxEq(actual, expected, 1e12);
 
