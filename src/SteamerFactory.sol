@@ -14,7 +14,7 @@ contract SteamerFactoryContract is Ownable {
     address[] public steamers;
     mapping(address => bool) public isSteamer;
 
-    function CreateSteamer(address _pie, address _recipe, uint256 _maxSteam, uint256 _minDeposit) public onlyOwner returns(Steamer){
+    function CreateSteamer(address _pie, address payable _recipe, uint256 _maxSteam, uint256 _minDeposit) public onlyOwner returns(Steamer){
 
         Steamer steamer = new Steamer(_pie, _recipe, weth, _maxSteam, _minDeposit);
         steamer.transferOwnership(owner());

@@ -263,7 +263,7 @@ contract BasketsTestSuite is Test {
 
         // Deploy SteamerFactory
         steamerFactory = new SteamerFactoryContract();
-        bSTBLSteamer = steamerFactory.CreateSteamer(address(bSTBL), address(recipe), 25 ether, 0.1 ether);
+        bSTBLSteamer = steamerFactory.CreateSteamer(address(bSTBL), address(uniRecipe), 25 ether, 0.1 ether);
 
         // Set privileges
         CallFacet bSBasketCF = CallFacet(bSTBL);

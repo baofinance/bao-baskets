@@ -4,7 +4,7 @@ pragma solidity ^0.7.0;
 import "@openzeppelin/math/SafeMath.sol";
 import "@openzeppelin/token/ERC20/IERC20.sol";
 import "@openzeppelin/access/Ownable.sol";
-import "./Interfaces/IRecipe.sol";
+import {SimpleUniRecipe} from "./Recipes/SimpleUniRecipe.sol";
 
 contract Steamer is Ownable {
     using SafeMath for uint256;
@@ -19,20 +19,21 @@ contract Steamer is Ownable {
     uint public MAX_STEAM;
     uint public MIN_DEPOSIT;
     uint public GAS_AMOUNT;
-    IRecipe public RECIPE;
+    SimpleUniRecipe public RECIPE;
     address[] public DEPOSITORS;
 
     event log_named_uint(string key, uint val);
+    event log_named_address(string key, address val);
 
     constructor(
         address _pie,
-        address _recipe,
+        address payable _recipe,
         address _weth,
         uint _maxSteam,
 	uint _minDeposit
     ) public {
         PIE = IERC20(_pie);
-        RECIPE = IRecipe(_recipe);
+        RECIPE = SimpleUniRecipe(_recipe);
         WETH = _weth;
         MAX_STEAM = _maxSteam;
         MIN_DEPOSIT = _minDeposit;
@@ -40,32 +41,34 @@ contract Steamer is Ownable {
 
     function steam(
         uint256 _minOutAmount
-    ) public onlyOwner {
+    ) public {
 
         //Vex sais this saves gas, so we do this
         uint maxSteam = MAX_STEAM;
-	
-	//
-	//uint aproxCostToMint = block.basefee().mul(GAS_AMOUNT);
-	//uint aproxCostToMint = GAS_AMOUNT;
-        //Amount of ETH we will use to steam the baskets
-        //uint ethToSteam = maxSteam.sub(aproxCostToMint);
 
-        //Pay executor
-        //payable(owner()).transfer(aproxCostToMint);
+	//Pre-mint eth balance
+	uint originalEthBalance = address(this).balance;
 
-        //Make sure the minimum amount of ETH is being used to steam the baskets
-        require(address(this).balance >= maxSteam);
-	//We first make sure that steaming the basket succeeds
-        //uint mintedBasketAmounts = RECIPE.toBasket{value: ethToSteam}(address(PIE), _minOutAmount);
+	//We first make sure tha)t steaming the basket succeeds
+	RECIPE.toBasket{value: maxSteam}(address(PIE), _minOutAmount);
 	uint mintedBasketAmounts = PIE.balanceOf(address(this));       
 
-	//We need a variable to subtract the total amount of distributed eth from
-        uint ethToDistribute = maxSteam;
+	//TODO: Implement GAS cost sharing, requires update to ^0.8.x
+
+        //uint aproxCostToMint = block.basefee().mul(GAS_AMOUNT);
+        //uint aproxCostToMint = GAS_AMOUNT;
+        //Amount of ETH we will use to steam the baskets
+        //uint ethToSteam = maxSteam.sub(aproxCostToMint);
+	//Pay executor
+        //payable(owner()).transfer(aproxCostToMint);
+
+	//Amount of ETH used to mint the basket tokens
+        uint spendEth = originalEthBalance.sub(address(this).balance);
+        //We need a variable from which we can subtract the amount of distributed eth
+	uint ethToDistribute = spendEth;
 
         //We now divide the received baskets among the depositors
         //We're starting at 1, as the default value for the mapping addressToIndex is 0 
-	emit log_named_uint("Depositors Length:",DEPOSITORS.length);
 	uint depositorAmount = DEPOSITORS.length; 
 	for (uint i; i < depositorAmount; i++) {
             // This logic aims to execute the following logic
@@ -75,25 +78,21 @@ contract Steamer is Ownable {
             // User Balance: 10 eth, (50% used)
             // User Balance: 10 eth, (0% used)
             // ...
-	    emit log_named_uint("Checkpoint:",i);
             //Amount of ETH deposited by user i
             uint256 userAmount = ethBalanceOf[DEPOSITORS[0]];
         
             //vex...he has my kids. He said he won't release them if I don't save gas on SLOADs
-            address depositorAddress = DEPOSITORS[0]; 
-	    emit log_named_uint("ethToDistribute:",ethToDistribute);
-            emit log_named_uint("userAmount:",userAmount);
+            address depositorAddress = DEPOSITORS[0];
 	    //Decrease ETH-balance and increase basket-balance of each user
             if(ethToDistribute > userAmount){
                 //decrease global eth balance
                 ethToDistribute = ethToDistribute.sub(userAmount);
-                
                 //decrease user eth balance
                 ethBalanceOf[depositorAddress] = 0;
 
                 //increase user basket balance
-                outputBalanceOf[depositorAddress] = (userAmount.mul(1e18).div(maxSteam)).mul(mintedBasketAmounts).div(1e18);
-                //remove user from depositor list
+                outputBalanceOf[depositorAddress] = (userAmount.mul(1e18).div(spendEth)).mul(mintedBasketAmounts).div(1e18);
+		//remove user from depositor list
                 DEPOSITORS[0] = DEPOSITORS[DEPOSITORS.length-1];
                 DEPOSITORS.pop();
 		addressToIndex[depositorAddress] = 0;
@@ -103,11 +102,10 @@ contract Steamer is Ownable {
                 ethBalanceOf[depositorAddress] = userAmount.sub(ethToDistribute);
 
                 //increase user basket balance
-                outputBalanceOf[depositorAddress] = (userAmount.mul(1e18).div(maxSteam)).mul(mintedBasketAmounts).div(1e18);
+                outputBalanceOf[depositorAddress] = (ethToDistribute.mul(1e18).div(spendEth)).mul(mintedBasketAmounts).div(1e18);
                 
                 //Don't really need to do this
                 //ethToDistribute = 0;
-                emit log_named_uint("FINAL LOOP",0);
                 return();
             }
         }
@@ -139,15 +137,21 @@ contract Steamer is Ownable {
     {
         uint remainingEthBalance = ethBalanceOf[msg.sender].sub(_amount);
 
-        require(remainingEthBalance <= MIN_DEPOSIT && remainingEthBalance != 0, "OVEN: Remaining ETH balance is under the minimum amount of ...");
+        require(remainingEthBalance >= MIN_DEPOSIT || remainingEthBalance == 0, "STEAMER: Remaining ETH balance is under the minimum amount of ...");
         
         ethBalanceOf[msg.sender] = remainingEthBalance;
         
         if(ethBalanceOf[msg.sender] == 0){
-            DEPOSITORS[addressToIndex[msg.sender]] = DEPOSITORS[DEPOSITORS.length];
-	    addressToIndex[msg.sender] = 0;
-	    DEPOSITORS.pop();
-        }
+	    if(DEPOSITORS.length == 1){
+		addressToIndex[msg.sender] = 0;
+                DEPOSITORS.pop();
+	    }
+	    else{
+                DEPOSITORS[addressToIndex[msg.sender]] = DEPOSITORS[DEPOSITORS.length];
+	        addressToIndex[msg.sender] = 0;
+	        DEPOSITORS.pop();
+            }
+	}
 
         _receiver.transfer(_amount);
     }
@@ -158,8 +162,8 @@ contract Steamer is Ownable {
         PIE.transfer(_receiver, _amount);
     }
 
-    function setRecipe(address _recipe) public onlyOwner {
-        RECIPE = IRecipe(_recipe);
+    function setRecipe(address payable _recipe) public onlyOwner {
+        RECIPE = SimpleUniRecipe(_recipe);
     }
 
     function saveToken(address _token) external onlyOwner {
