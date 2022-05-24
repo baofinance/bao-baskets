@@ -110,8 +110,7 @@ contract SimpleUniRecipe is Ownable {
      * @param _basket Basket token to mint
      * @param _mintAmount Target amount of basket tokens to mint
      */
-    function toBasket(address _basket, uint256 _mintAmount) external payable {
-        
+    function toBasket(address _basket, uint256 _mintAmount) external payable {        
 	// Wrap ETH
         WETH.deposit{value : msg.value}();
 
@@ -122,6 +121,7 @@ contract SimpleUniRecipe is Ownable {
             getPrice(_basket, _mintAmount),
             500
         );
+
         // Bake basket
         uint256 outputAmount = _bake(_basket, _mintAmount);
 
@@ -209,6 +209,7 @@ contract SimpleUniRecipe is Ownable {
      */
     function _bake(address _basket, uint256 _mintAmount) internal returns (uint256 outputAmount) {
         require(basketRegistry.inRegistry(_basket));
+        
         swapAndJoin(_basket, _mintAmount);
 
         outputAmount = IERC20(_basket).balanceOf(address(this));
