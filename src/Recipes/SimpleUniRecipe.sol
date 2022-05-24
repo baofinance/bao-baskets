@@ -110,7 +110,7 @@ contract SimpleUniRecipe is Ownable {
      * @param _basket Basket token to mint
      * @param _mintAmount Target amount of basket tokens to mint
      */
-    function toBasket(address _basket, uint256 _mintAmount) external payable {        
+    function toBasket(address _basket, uint256 _mintAmount) external payable {
         // Wrap ETH
         WETH.deposit{value : msg.value}();
 
