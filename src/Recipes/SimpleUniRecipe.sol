@@ -119,7 +119,7 @@ contract SimpleUniRecipe is Ownable {
             address(WETH),
             address(USDC),
             msg.value,
-	    500
+	        500
         );
         
         // Bake basket
@@ -252,7 +252,7 @@ contract SimpleUniRecipe is Ownable {
                 // Get underlying amount according to the exchange rate
                 lendingLogic = getLendingLogicFromWrapped(_token);
                 underlyingAmount = mulDivDown(_amount, lendingLogic.exchangeRate(_token), 1e18);
-		
+                
                 // Swap for the underlying asset on UniV3
                 // If the token is USDC, no need to swap
                 if (underlying != address(USDC)) {
