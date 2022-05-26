@@ -37,7 +37,7 @@ contract SimpleUniRecipe is Ownable {
 
     uniV3Router uniRouter;
     uniOracle oracle;
-    
+
     /**
      * Create a new StableUniRecipe.
      *
@@ -114,7 +114,7 @@ contract SimpleUniRecipe is Ownable {
         // Wrap ETH
         WETH.deposit{value : msg.value}();
         
-	// Form WETH -> USDC swap params
+        // Form WETH -> USDC swap params
         _swap_in_amount(
             address(WETH),
             address(USDC),
@@ -122,7 +122,7 @@ contract SimpleUniRecipe is Ownable {
 	    500
         );
         
-	// Bake basket
+        // Bake basket
         uint256 outputAmount = _bake(_basket, _mintAmount);
 
         // Send remaining USDC to msg.sender
@@ -164,7 +164,7 @@ contract SimpleUniRecipe is Ownable {
 
             _underlying = lendingRegistry.wrappedToUnderlying(_token);
             if (_underlying != address(0)) {
-                _amount = mulDivUp(
+                _amount = mulDivDown(
                     _amount,
                     getLendingLogicFromWrapped(_token).exchangeRateView(_token),
                     1e18
@@ -251,7 +251,7 @@ contract SimpleUniRecipe is Ownable {
             } else {
                 // Get underlying amount according to the exchange rate
                 lendingLogic = getLendingLogicFromWrapped(_token);
-                underlyingAmount = mulDivUp(_amount, lendingLogic.exchangeRate(_token), 1e18);
+                underlyingAmount = mulDivDown(_amount, lendingLogic.exchangeRate(_token), 1e18);
 		
                 // Swap for the underlying asset on UniV3
                 // If the token is USDC, no need to swap
@@ -270,10 +270,9 @@ contract SimpleUniRecipe is Ownable {
                     (bool success,) = targets[j].call{value : 0}(data[j]);
                     require(success, "CALL_FAILED");
                 }
-            }
-	
+            }    
             IERC20(_token).approve(_basket, _amount);
-	}
+        }
         basket.joinPool(_mintAmount);
     }
 
@@ -374,27 +373,6 @@ contract SimpleUniRecipe is Ownable {
      *
      * (x*y)/z
      */
-     function mulDivUp(
-        uint256 x,
-        uint256 y,
-        uint256 denominator
-     ) internal pure returns (uint256 z) {
-        assembly {
-            // Store x * y in z for now.
-            z := mul(x, y)
-
-            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
-            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
-                revert(0, 0)
-            }
-
-            // First, divide z - 1 by the denominator and add 1.
-            // We allow z - 1 to underflow if z is 0, because we multiply the
-            // end result by 0 if z is zero, ensuring we return 0 if z is zero.
-            z := mul(iszero(iszero(z)), add(div(sub(z, 1), denominator), 1))
-        }
-    }
-
     function mulDivDown(
         uint256 x,
         uint256 y,

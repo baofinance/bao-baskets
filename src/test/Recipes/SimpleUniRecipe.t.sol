@@ -46,7 +46,7 @@ contract SimpleUniRecipeTest is Test {
             mintPriceBuffered,
             _basketAmount
         );
-	
+        
         assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
         assertEq(mintPriceBuffered, initialBalance - USDC.balanceOf(address(this)));
     }
