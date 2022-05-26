@@ -29,7 +29,7 @@ contract SimpleUniRecipeTest is Test {
 
     function testMint(uint _basketAmount) public {
         testSuite.cheats().assume(_basketAmount >= 1e18 && _basketAmount <= 1e21);
-	//uint256 _basketAmount = 10e18;
+	    //uint256 _basketAmount = 10e18;
 
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
@@ -40,20 +40,20 @@ contract SimpleUniRecipeTest is Test {
         uint256 mintPrice = recipe.getPrice(address(basket), _basketAmount);
         uint256 mintPriceBuffered = mintPrice+1;
 
-	//Depositing a bit more then predicted
+	    //Depositing a bit more then predicted
         recipe.bake(
             address(basket),
             mintPriceBuffered,
             _basketAmount
         );
-        
+
         assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
         assertEq(mintPriceBuffered, initialBalance - USDC.balanceOf(address(this)));
     }
 
     function testMintEth(uint _basketAmount) public {
         testSuite.cheats().assume(_basketAmount >= 1e18 && _basketAmount <= 1e21);
-	//uint256 _basketAmount = 10e18;
+	    //uint256 _basketAmount = 10e18;
 
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
@@ -61,8 +61,8 @@ contract SimpleUniRecipeTest is Test {
         basket.approve(address(recipe), type(uint256).max);
 
         uint256 mintPrice = recipe.getPriceEth(address(basket), _basketAmount);
-	//increase mintprice by 5%
-	uint256 mintPriceBuffered = mintPrice * 105e16 / 1e18;
+        //increase mintprice by 5%
+        uint256 mintPriceBuffered = mintPrice * 105e16 / 1e18;
         testSuite.cheats().deal(address(this), mintPriceBuffered);
         uint256 initialBalance = address(this).balance;
 
@@ -70,7 +70,7 @@ contract SimpleUniRecipeTest is Test {
             address(basket),
             _basketAmount
         );
-	assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
+	    assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
         assertEq(mintPriceBuffered, initialBalance - address(this).balance);
     }
 
