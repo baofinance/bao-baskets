@@ -37,7 +37,7 @@ contract SimpleUniRecipe is Ownable {
 
     uniV3Router uniRouter;
     uniOracle oracle;
-
+    
     /**
      * Create a new StableUniRecipe.
      *
@@ -113,16 +113,16 @@ contract SimpleUniRecipe is Ownable {
     function toBasket(address _basket, uint256 _mintAmount) external payable {
         // Wrap ETH
         WETH.deposit{value : msg.value}();
-
-        // Form WETH -> USDC swap params
-        _swap(
+        
+	// Form WETH -> USDC swap params
+        _swap_in_amount(
             address(WETH),
             address(USDC),
-            getPrice(_basket, _mintAmount),
-            500
+            msg.value,
+	    500
         );
-
-        // Bake basket
+        
+	// Bake basket
         uint256 outputAmount = _bake(_basket, _mintAmount);
 
         // Send remaining USDC to msg.sender
@@ -164,7 +164,7 @@ contract SimpleUniRecipe is Ownable {
 
             _underlying = lendingRegistry.wrappedToUnderlying(_token);
             if (_underlying != address(0)) {
-                _amount = mulDivDown(
+                _amount = mulDivUp(
                     _amount,
                     getLendingLogicFromWrapped(_token).exchangeRateView(_token),
                     1e18
@@ -175,6 +175,7 @@ contract SimpleUniRecipe is Ownable {
             // If the token is USDC, we don't need to perform a swap before lending.
             _price += _token == address(USDC) ? _amount : _quoteExactOutput(address(USDC), _token, _amount, 500);
         }
+	//Considering potential rounding errors
         return _price;
     }
 
@@ -241,7 +242,7 @@ contract SimpleUniRecipe is Ownable {
             underlying = lendingRegistry.wrappedToUnderlying(_token);
 
             if (underlying == address(0) && _token != address(USDC)) {
-                _swap(
+                _swap_out_amount(
                     address(USDC),
                     _token,
                     _amount,
@@ -250,29 +251,29 @@ contract SimpleUniRecipe is Ownable {
             } else {
                 // Get underlying amount according to the exchange rate
                 lendingLogic = getLendingLogicFromWrapped(_token);
-                underlyingAmount = mulDivDown(_amount, lendingLogic.exchangeRate(_token), 1e18);
-
+                underlyingAmount = mulDivUp(_amount, lendingLogic.exchangeRate(_token), 1e18);
+		
                 // Swap for the underlying asset on UniV3
                 // If the token is USDC, no need to swap
                 if (underlying != address(USDC)) {
-                    _swap(
+                    _swap_out_amount(
                         address(USDC),
                         underlying,
-                        underlyingAmount,
+                        underlyingAmount.add(1),
                         500
                     );
                 }
 
                 // Execute lending transactions
-                (address[] memory targets, bytes[] memory data) = lendingLogic.lend(underlying, underlyingAmount, address(this));
+                (address[] memory targets, bytes[] memory data) = lendingLogic.lend(underlying, underlyingAmount.add(1), address(this));
                 for (uint256 j; j < targets.length; ++j) {
                     (bool success,) = targets[j].call{value : 0}(data[j]);
                     require(success, "CALL_FAILED");
                 }
             }
-
+	
             IERC20(_token).approve(_basket, _amount);
-        }
+	}
         basket.joinPool(_mintAmount);
     }
 
@@ -284,7 +285,7 @@ contract SimpleUniRecipe is Ownable {
      * @param _amountOut Exact amount of `_to` to receive
      * @param _fee UniV3 pool fee
      */
-    function _swap(
+    function _swap_out_amount(
         address _from,
         address _to,
         uint256 _amountOut,
@@ -298,6 +299,33 @@ contract SimpleUniRecipe is Ownable {
                 address(this),
                 _amountOut,
                 type(uint256).max,
+                0
+            )
+        );
+    }
+
+        /**
+     * Swap `_from` -> `_to` given an an amount of 'from' token to be swaped on UniV3
+     *
+     * @param _from Address of token to swap from
+     * @param _to Address of token to swap to
+     * @param _amountIn Exact amount of `_from` to sell
+     * @param _fee UniV3 pool fee
+     */
+    function _swap_in_amount(
+        address _from,
+        address _to,
+        uint256 _amountIn,
+        uint24 _fee
+    ) internal {
+        uniRouter.exactInputSingle(
+            uniV3Router.ExactInputSingleParams(
+                _from,
+                _to,
+                _fee,
+                address(this),
+                _amountIn,
+                0,
                 0
             )
         );
@@ -346,21 +374,42 @@ contract SimpleUniRecipe is Ownable {
      *
      * (x*y)/z
      */
+     function mulDivUp(
+        uint256 x,
+        uint256 y,
+        uint256 denominator
+     ) internal pure returns (uint256 z) {
+        assembly {
+            // Store x * y in z for now.
+            z := mul(x, y)
+
+            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+            if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
+                revert(0, 0)
+            }
+
+            // First, divide z - 1 by the denominator and add 1.
+            // We allow z - 1 to underflow if z is 0, because we multiply the
+            // end result by 0 if z is zero, ensuring we return 0 if z is zero.
+            z := mul(iszero(iszero(z)), add(div(sub(z, 1), denominator), 1))
+        }
+    }
+
     function mulDivDown(
         uint256 x,
         uint256 y,
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-        // Store x * y in z for now.
+            // Store x * y in z for now.
             z := mul(x, y)
 
-        // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
             if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
                 revert(0, 0)
             }
 
-        // Divide z by the denominator.
+            // Divide z by the denominator.
             z := div(z, denominator)
         }
     }

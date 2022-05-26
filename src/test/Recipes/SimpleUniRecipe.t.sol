@@ -27,8 +27,9 @@ contract SimpleUniRecipeTest is Test {
         testSuite.cheats().stopPrank();
     }
 
-    function testMint() public {
-        uint256 _basketAmount = 10e18;
+    function testMint(uint _basketAmount) public {
+        testSuite.cheats().assume(_basketAmount >= 1e18 && _basketAmount <= 1e21);
+	//uint256 _basketAmount = 10e18;
 
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
@@ -37,19 +38,22 @@ contract SimpleUniRecipeTest is Test {
 
         uint256 initialBalance = USDC.balanceOf(address(this));
         uint256 mintPrice = recipe.getPrice(address(basket), _basketAmount);
+        uint256 mintPriceBuffered = mintPrice+1;
 
+	//Depositing a bit more then predicted
         recipe.bake(
             address(basket),
-            mintPrice,
+            mintPriceBuffered,
             _basketAmount
         );
-
-        assertGe(basket.balanceOf(address(this)), _basketAmount);
-        assertEq(mintPrice, initialBalance - USDC.balanceOf(address(this)));
+	
+        assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
+        assertEq(mintPriceBuffered, initialBalance - USDC.balanceOf(address(this)));
     }
 
-    function testMintEth() public {
-        uint256 _basketAmount = 10e18;
+    function testMintEth(uint _basketAmount) public {
+        testSuite.cheats().assume(_basketAmount >= 1e18 && _basketAmount <= 1e21);
+	//uint256 _basketAmount = 10e18;
 
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
@@ -57,16 +61,17 @@ contract SimpleUniRecipeTest is Test {
         basket.approve(address(recipe), type(uint256).max);
 
         uint256 mintPrice = recipe.getPriceEth(address(basket), _basketAmount);
-        testSuite.cheats().deal(address(this), mintPrice);
+	//increase mintprice by 5%
+	uint256 mintPriceBuffered = mintPrice * 105e16 / 1e18;
+        testSuite.cheats().deal(address(this), mintPriceBuffered);
         uint256 initialBalance = address(this).balance;
 
-        recipe.toBasket{ value: mintPrice }(
+        recipe.toBasket{ value: mintPriceBuffered }(
             address(basket),
             _basketAmount
         );
-
-        assertGe(basket.balanceOf(address(this)), _basketAmount);
-        assertEq(mintPrice, initialBalance - address(this).balance);
+	assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
+        assertEq(mintPriceBuffered, initialBalance - address(this).balance);
     }
 
     function testRedeem() public {
@@ -79,7 +84,7 @@ contract SimpleUniRecipeTest is Test {
 
         recipe.bake(
             address(basket),
-            mintPrice,
+            mintPrice+1,
             10e18
         );
 
@@ -90,7 +95,24 @@ contract SimpleUniRecipeTest is Test {
             assertGt(_amounts[i], 0);
 
             uint256 balance = IERC20(_tokens[i]).balanceOf(address(this));
-            assertEq(balance, _amounts[i]);
+            assertApproxEq(balance, _amounts[i],1);
+        }
+    }
+
+    function assertApproxEq(
+        uint256 a,
+        uint256 b,
+        uint256 maxDelta
+    ) internal {
+        uint256 delta = a > b ? a - b : b - a;
+
+        if (delta > maxDelta) {
+            emit log("Error: a ~= b not satisfied [uint]");
+            emit log_named_uint("  Expected", b);
+            emit log_named_uint("    Actual", a);
+            emit log_named_uint(" Max Delta", maxDelta);
+            emit log_named_uint("     Delta", delta);
+            fail();
         }
     }
 
