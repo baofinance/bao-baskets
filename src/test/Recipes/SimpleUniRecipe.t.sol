@@ -7,53 +7,51 @@ import "./RecipeConfiguration.sol";
 
 contract SimpleUniRecipeTest is Test {
 
-    IERC20 public USDC;
+    IERC20 public DAI;
     BasketsTestSuite public testSuite;
     SimpleUniRecipe public uniRecipe;
 
     function setUp() public {
         testSuite = new BasketsTestSuite();
 
-        USDC = IERC20(testSuite.constants().USDC());
-        USDC.approve(address(testSuite.uniRecipe()), type(uint256).max);
+        DAI = IERC20(testSuite.constants().DAI());
+        DAI.approve(address(testSuite.uniRecipe()), type(uint256).max);
         uint256[] memory _amounts = new uint256[](1);
-        _amounts[0] = 1e11;
+        _amounts[0] = 1e24; // Get 1 million DAI
         address[] memory _tokens = new address[](1);
-        _tokens[0] = testSuite.constants().USDC();
+        _tokens[0] = address(DAI);
         testSuite.buyTokens(_amounts, _tokens);
 
         testSuite.cheats().startPrank(address(testSuite));
-        USDC.transfer(address(this), USDC.balanceOf(address(testSuite)));
+        DAI.transfer(address(this), DAI.balanceOf(address(testSuite)));
         testSuite.cheats().stopPrank();
     }
 
     function testMint(uint _basketAmount) public {
         testSuite.cheats().assume(_basketAmount >= 1e18 && _basketAmount <= 1e21);
-	    //uint256 _basketAmount = 10e18;
 
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
 
         basket.approve(address(recipe), type(uint256).max);
 
-        uint256 initialBalance = USDC.balanceOf(address(this));
+        uint256 initialBalance = DAI.balanceOf(address(this));
         uint256 mintPrice = recipe.getPrice(address(basket), _basketAmount);
-        uint256 mintPriceBuffered = mintPrice+1;
 
-	    //Depositing a bit more then predicted
         recipe.bake(
             address(basket),
-            mintPriceBuffered,
+            mintPrice,
             _basketAmount
         );
 
-        assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
-        assertEq(mintPriceBuffered, initialBalance - USDC.balanceOf(address(this)));
+        // Ensure that we received exactly `_basketAmount` basket tokens
+        assertEq(basket.balanceOf(address(this)), _basketAmount);
+        // Ensure that the recipe only used `mintPrice` DAI to mint `_basketAmount` baskets
+        assertEq(mintPrice, initialBalance - DAI.balanceOf(address(this)));
     }
 
     function testMintEth(uint _basketAmount) public {
         testSuite.cheats().assume(_basketAmount >= 1e18 && _basketAmount <= 1e21);
-	    //uint256 _basketAmount = 10e18;
 
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IERC20 basket = IERC20(testSuite.bSTBL());
@@ -61,41 +59,95 @@ contract SimpleUniRecipeTest is Test {
         basket.approve(address(recipe), type(uint256).max);
 
         uint256 mintPrice = recipe.getPriceEth(address(basket), _basketAmount);
-        //increase mintprice by 5%
-        uint256 mintPriceBuffered = mintPrice * 105e16 / 1e18;
-        testSuite.cheats().deal(address(this), mintPriceBuffered);
+        testSuite.cheats().deal(address(this), mintPrice);
         uint256 initialBalance = address(this).balance;
 
-        recipe.toBasket{ value: mintPriceBuffered }(
+        recipe.toBasket{ value: mintPrice }(
             address(basket),
             _basketAmount
         );
-	    assertApproxEq(basket.balanceOf(address(this)), _basketAmount,1);
-        assertEq(mintPriceBuffered, initialBalance - address(this).balance);
+
+        // Ensure that we received exactly `_basketAmount` basket tokens
+        assertEq(basket.balanceOf(address(this)), _basketAmount);
+        // Ensure that the recipe only used `mintPrice` ETH to mint `_basketAmount` baskets
+        assertEq(mintPrice, initialBalance - address(this).balance);
     }
 
-    function testRedeem() public {
+    function testMintRemaining() public {
+        uint _basketAmount = 1e19;
+
+        SimpleUniRecipe recipe = testSuite.uniRecipe();
+        IERC20 basket = IERC20(testSuite.bSTBL());
+
+        basket.approve(address(recipe), type(uint256).max);
+
+        uint256 initialBalance = DAI.balanceOf(address(this));
+        uint256 mintPrice = 1e21; // Send too much DAI
+        uint256 _realPrice = recipe.getPrice(address(basket), _basketAmount);
+
+        (uint256 used,) = recipe.bake(
+            address(basket),
+            mintPrice,
+            _basketAmount
+        );
+
+        // Ensure that we received exactly `_basketAmount` basket tokens
+        assertEq(basket.balanceOf(address(this)), _basketAmount);
+        // Ensure that the amount of the input token that was used is correct
+        assertEq(used, initialBalance - DAI.balanceOf(address(this)));
+        // Ensure that the used amount is less than `mintPrice`, where we intentionally sent too much.
+        assertLt(used, mintPrice);
+        // Ensure that the amount used is equal to the real price of `_basketAmount` basket tokens.
+        assertEq(_realPrice, initialBalance - DAI.balanceOf(address(this)));
+    }
+
+    function testMintEthRemaining() public {
+        uint _basketAmount = 1e19;
+
+        SimpleUniRecipe recipe = testSuite.uniRecipe();
+        IERC20 basket = IERC20(testSuite.bSTBL());
+
+        basket.approve(address(recipe), type(uint256).max);
+
+        uint256 mintPrice = 1e18; // Send too much ETH
+        testSuite.cheats().deal(address(this), mintPrice);
+        uint256 initialBalance = address(this).balance;
+
+        (uint256 used,) = recipe.toBasket{ value: mintPrice }(
+            address(basket),
+            _basketAmount
+        );
+
+        // Ensure that we received exactly `_basketAmount` basket tokens
+        assertEq(basket.balanceOf(address(this)), _basketAmount);
+        // Ensure that the amount of the input token that was used is correct
+        assertEq(used, initialBalance - address(this).balance);
+        // Ensure that the used amount is less than `mintPrice`, where we intentionally sent too much.
+        assertLt(used, mintPrice);
+    }
+
+    function testRedeem(uint _basketAmount) public {
+        testSuite.cheats().assume(_basketAmount >= 1e18 && _basketAmount <= 1e21);
+
         SimpleUniRecipe recipe = testSuite.uniRecipe();
         IExperiPie basket = IExperiPie(testSuite.bSTBL());
 
-        uint256 mintPrice = recipe.getPrice(address(basket), 10e18);
+        uint256 mintPrice = recipe.getPrice(address(basket), _basketAmount);
 
-        IERC20(testSuite.constants().USDC()).approve(address(recipe), type(uint256).max);
+        DAI.approve(address(recipe), type(uint256).max);
 
         recipe.bake(
             address(basket),
-            mintPrice+1,
-            10e18
+            mintPrice,
+            _basketAmount
         );
 
-        (address[] memory _tokens, uint256[] memory _amounts) = basket.calcTokensForAmountExit(10e18);
-        basket.exitPool(10e18);
+        (address[] memory _tokens, uint256[] memory _amounts) = basket.calcTokensForAmountExit(_basketAmount);
+        basket.exitPool(_basketAmount);
 
         for (uint8 i; i < _tokens.length; i++) {
             assertGt(_amounts[i], 0);
-
-            uint256 balance = IERC20(_tokens[i]).balanceOf(address(this));
-            assertApproxEq(balance, _amounts[i],1);
+            assertApproxEq(IERC20(_tokens[i]).balanceOf(address(this)), _amounts[i], 1); // 1 WEI delta threshold
         }
     }
 
