@@ -12,7 +12,6 @@ contract Constants is DSTest {
     address[] public bDEFI_BASKET_TOKENS;
     address[] public bSTBL_BASKET_TOKENS;
     address public WETH = 0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2;
-    address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
     //bDEFI
     address public CVX = 0x4e3FBD56CD56c3e72c1403e103b45Db9da5B9D2B;
     address public MKR = 0x9f8F72aA9304c8B593d555F12eF6589cC3A579A2;
@@ -25,17 +24,21 @@ contract Constants is DSTest {
     address public CRV = 0xD533a949740bb3306d119CC777fa900bA034cd52;
     address public FXS = 0x3432B6A60D23Ca0dFCa7761B7ab56459D9C964D0;
     address public UNI = 0x1f9840a85d5aF5bf1D1762F925BDADdC4201F984;
+    address public cUNI = 0x35A18000230DA775CAc24873d00Ff85BccdeD550;
     address public SUSHI = 0x6B3595068778DD592e39A122f4f5a5cF09C90fE2;
     address public xSUSHI = 0x8798249c2E607446EfB7Ad49eC89dD1865Ff4272;
     //bSTBL
     address public DAI = 0x6B175474E89094C44Da98b954EedeAC495271d0F;
     address public cDAI = 0x5d3a536E4D6DbD6114cc1Ead35777bAB948E3643;
+    address public aDAI = 0x028171bCA77440897B824Ca71D1c56caC55b68A3;
     address public FEI = 0x956F47F50A910163D8BF957Cf5846D573E7f87CA;
     address public aFEI = 0x683923dB55Fead99A79Fa01A27EeC3cB19679cC3;
     address public RAI = 0x03ab458634910AaD20eF5f1C8ee96F1D6ac54919;
     address public aRAI = 0xc9BC48c72154ef3e5425641a3c747242112a46AF;
     address public FRAX = 0x853d955aCEf822Db058eb8505911ED77F175b99e;
     address public aFRAX = 0xd4937682df3C8aEF4FE912A96A74121C0829E664;
+    address public USDC = 0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48;
+    address public aUSDC = 0xBcca60bB61934080951369a648Fb03DF4F96263C;
 
     //Token Rich List
     mapping(address => address) public tokenHolders;

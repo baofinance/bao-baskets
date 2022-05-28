@@ -1,23 +1,18 @@
 pragma solidity ^0.7.0;
 
-import "ds-test/test.sol";
+import "forge-std/Test.sol";
 import "../../Interfaces/IRecipe.sol";
 import {Cheats} from "../BasketsTestSuite.sol";
 
-contract RecipeConfigurator is DSTest {
+contract RecipeConfigurator is Test {
 
     IRecipe public recipe;
 
-    // Foundry Cheat Codes
-    Cheats public cheats;
-
     constructor (address _recipe, address _recipeOwner) {
         recipe = IRecipe(_recipe);
-        cheats = Cheats(0x7109709ECfa91a80626fF3989D68f67F5b1DD12D);
-        cheats.startPrank(_recipeOwner);
+        startHoax(_recipeOwner);
         setUni();
         setBalancer();
-        cheats.stopPrank();
     }
 
     function setUni() public {

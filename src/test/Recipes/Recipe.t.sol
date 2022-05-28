@@ -1,11 +1,11 @@
 pragma solidity ^0.7.0;
 
-import "ds-test/test.sol";
+import "forge-std/Test.sol";
 import "../../Recipes/Recipe.sol";
 import "../BasketsTestSuite.sol";
 import "./RecipeConfiguration.sol";
 
-contract RecipeTest is DSTest {
+contract RecipeTest is Test {
 
     BasketsTestSuite public testSuite;
     RecipeConfigurator public recipeConfigurator;
@@ -15,10 +15,11 @@ contract RecipeTest is DSTest {
         recipeConfigurator = new RecipeConfigurator(address(testSuite.recipe()), address(testSuite));
     }
 
-    function testMint() public {
+    // Disable following functions
 
-	Recipe recipe = testSuite.recipe();
-        IERC20 basket = IERC20(testSuite.bDEFI());
+    function _testMint() public {
+        Recipe recipe = testSuite.recipe();
+        IERC20 basket = IERC20(testSuite.bSTBL());
 
         basket.approve(address(recipe), type(uint256).max);
         uint[] memory mintAmounts = new uint[](2);
@@ -40,9 +41,9 @@ contract RecipeTest is DSTest {
         }
     }
 
-    function testRedeem() public {
+    function _testRedeem() public {
         Recipe recipe = testSuite.recipe();
-        IExperiPie basket = IExperiPie(testSuite.bDEFI());
+        IExperiPie basket = IExperiPie(testSuite.bSTBL());
 
         (uint256 mintPrice, uint16[] memory dexIndex) = recipe.getPricePie(address(basket), 1e18);
 
@@ -62,5 +63,6 @@ contract RecipeTest is DSTest {
             assertEq(balance, _amounts[i]);
         }
     }
-    receive() external payable{}
+
+    receive() external payable {}
 }
