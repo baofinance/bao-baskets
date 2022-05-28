@@ -130,7 +130,7 @@ contract BasketFacet is ReentryProtection, CallProtection, IBasketFacet {
             uint256 tokenAmount = balance(address(token)).mul(_amount.add(feeAmount)).div(totalSupply);
             require(tokenAmount != 0, "AMOUNT_TOO_SMALL");
             token.safeTransferFrom(msg.sender, address(this), tokenAmount);
-        }
+	    }
 
         // If there is any fee that should go to the beneficiary mint it
         if(
@@ -143,7 +143,7 @@ contract BasketFacet is ReentryProtection, CallProtection, IBasketFacet {
                 LibERC20.mint(bs.feeBeneficiary, feeBeneficiaryShare);
             }
         }
-
+        
         LibERC20.mint(msg.sender, _amount);
         emit PoolJoined(msg.sender, _amount);
     }

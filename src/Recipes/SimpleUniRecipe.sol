@@ -26,7 +26,7 @@ contract SimpleUniRecipe is Ownable {
     // CONSTANTS
     // -------------------------------
 
-    IERC20 constant USDC = IERC20(0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48);
+    IERC20 constant DAI = IERC20(0x6B175474E89094C44Da98b954EedeAC495271d0F);
     IWETH constant WETH = IWETH(0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2);
     ILendingRegistry immutable lendingRegistry;
     IPieRegistry immutable basketRegistry;
@@ -60,8 +60,8 @@ contract SimpleUniRecipe is Ownable {
         uniRouter = uniV3Router(_uniV3Router);
         oracle = uniOracle(_uniOracle);
 
-        // Approve max USDC spending on Curve Exchange
-        USDC.approve(address(uniRouter), type(uint256).max);
+        // Approve max DAI spending on Curve Exchange
+        DAI.approve(address(uniRouter), type(uint256).max);
         // Approve max WETH spending on Uni Router
         WETH.approve(address(uniRouter), type(uint256).max);
     }
@@ -75,9 +75,9 @@ contract SimpleUniRecipe is Ownable {
      * Mints `_mintAmount` basket tokens with as little of `_maxInput` as possible.
      *
      * @param _basket Address of basket token to mint
-     * @param _maxInput Max USDC to use to mint _mintAmount basket tokens
+     * @param _maxInput Max DAI to use to mint _mintAmount basket tokens
      * @param _mintAmount Target amount of basket tokens to mint
-     * @return inputAmountUsed Amount of USDC used to mint the basket token
+     * @return inputAmountUsed Amount of DAI used to mint the basket token
      * @return outputAmount Amount of basket tokens minted
      */
     function bake(
@@ -85,16 +85,16 @@ contract SimpleUniRecipe is Ownable {
         uint256 _maxInput,
         uint256 _mintAmount
     ) external returns (uint256 inputAmountUsed, uint256 outputAmount) {
-        // Transfer USDC to the Recipe
-        USDC.safeTransferFrom(msg.sender, address(this), _maxInput);
+        // Transfer DAI to the Recipe
+        DAI.safeTransferFrom(msg.sender, address(this), _maxInput);
 
         // Bake _mintAmount basket tokens
         outputAmount = _bake(_basket, _mintAmount);
 
-        // Transfer remaining USDC to msg.sender
-        uint256 remainingInputBalance = USDC.balanceOf(address(this));
+        // Transfer remaining DAI to msg.sender
+        uint256 remainingInputBalance = DAI.balanceOf(address(this));
         if (remainingInputBalance > 0) {
-            USDC.transfer(msg.sender, remainingInputBalance);
+            DAI.safeTransfer(msg.sender, remainingInputBalance);
         }
         inputAmountUsed = _maxInput - remainingInputBalance;
 
@@ -104,31 +104,45 @@ contract SimpleUniRecipe is Ownable {
 
     /**
      * Bake a basket with ETH.
-     * Wraps the ETH that was sent, swaps it for USDC on UniV3, and continues the baking
-     * process as normal
+     *
+     * Wraps the ETH that was sent, swaps it for DAI on UniV3, and continues the baking
+     * process as normal.
      *
      * @param _basket Basket token to mint
      * @param _mintAmount Target amount of basket tokens to mint
      */
-    function toBasket(address _basket, uint256 _mintAmount) external payable {
+    function toBasket(
+        address _basket,
+        uint256 _mintAmount
+    ) external payable returns (uint256 inputAmountUsed, uint256 outputAmount) {
         // Wrap ETH
         WETH.deposit{value : msg.value}();
 
-        // Form WETH -> USDC swap params
-        _swap(
+        // WETH -> DAI swap
+        _swap_in_amount(
             address(WETH),
-            address(USDC),
-            getPrice(_basket, _mintAmount),
+            address(DAI),
+            msg.value,
             500
         );
 
         // Bake basket
-        uint256 outputAmount = _bake(_basket, _mintAmount);
+        outputAmount = _bake(_basket, _mintAmount);
 
-        // Send remaining USDC to msg.sender
-        uint256 usdcBalance = USDC.balanceOf(address(this));
-        if (usdcBalance > 0) {
-            USDC.safeTransfer(msg.sender, usdcBalance);
+        // Send remaining funds back to msg.sender
+        uint256 daiBalance = DAI.balanceOf(address(this));
+        if (daiBalance > 0) {
+            // Swap remaining DAI back to WETH and transfer to msg.sender
+            uint256 remainingEth = _swap_in_amount(
+                address(DAI),
+                address(WETH),
+                daiBalance,
+                500
+            );
+            inputAmountUsed = msg.value - remainingEth;
+
+            WETH.withdraw(remainingEth);
+            msg.sender.transfer(remainingEth);
         }
 
         // Transfer minted baskets to msg.sender
@@ -136,11 +150,11 @@ contract SimpleUniRecipe is Ownable {
     }
 
     /**
-     * Get the price of `_amount` basket tokens in USDC
+     * Get the price of `_amount` basket tokens in DAI
      *
      * @param _basket Basket token to get the price of
      * @param _amount Amount of basket tokens to get price of
-     * @return _price Price of `_amount` basket tokens in USDC
+     * @return _price Price of `_amount` basket tokens in DAI
      */
     function getPrice(address _basket, uint256 _amount) public returns (uint256 _price) {
         // Check that _basket is a valid basket
@@ -153,7 +167,7 @@ contract SimpleUniRecipe is Ownable {
         uint256 _amount;
         for (uint256 i; i < tokens.length; ++i) {
             _token = tokens[i];
-            _amount = amounts[i];
+            _amount = amounts[i].add(1);
 
             // If the amount equals zero, revert.
             assembly {
@@ -172,8 +186,8 @@ contract SimpleUniRecipe is Ownable {
                 _token = _underlying;
             }
 
-            // If the token is USDC, we don't need to perform a swap before lending.
-            _price += _token == address(USDC) ? _amount : _quoteExactOutput(address(USDC), _token, _amount, 500);
+            // If the token is DAI, we don't need to perform a swap before lending.
+            _price += _token == address(DAI) ? _amount : _quoteExactOutput(address(DAI), _token, _amount, 500);
         }
         return _price;
     }
@@ -188,7 +202,7 @@ contract SimpleUniRecipe is Ownable {
     function getPriceEth(address _basket, uint256 _amount) external returns (uint256 _price) {
         _price = _quoteExactOutput(
             address(WETH),
-            address(USDC),
+            address(DAI),
             getPrice(_basket, _amount),
             500
         );
@@ -234,15 +248,15 @@ contract SimpleUniRecipe is Ownable {
 
         for (uint256 i; i < tokens.length; ++i) {
             _token = tokens[i];
-            _amount = amounts[i];
+            _amount = amounts[i].add(1);
 
             // If the token is registered in the lending registry, swap to
             // its underlying token and lend it.
             underlying = lendingRegistry.wrappedToUnderlying(_token);
 
-            if (underlying == address(0) && _token != address(USDC)) {
-                _swap(
-                    address(USDC),
+            if (underlying == address(0) && _token != address(DAI)) {
+                _swap_out_amount(
+                    address(DAI),
                     _token,
                     _amount,
                     500
@@ -253,10 +267,10 @@ contract SimpleUniRecipe is Ownable {
                 underlyingAmount = mulDivDown(_amount, lendingLogic.exchangeRate(_token), 1e18);
 
                 // Swap for the underlying asset on UniV3
-                // If the token is USDC, no need to swap
-                if (underlying != address(USDC)) {
-                    _swap(
-                        address(USDC),
+                // If the token is DAI, no need to swap
+                if (underlying != address(DAI)) {
+                    _swap_out_amount(
+                        address(DAI),
                         underlying,
                         underlyingAmount,
                         500
@@ -270,7 +284,6 @@ contract SimpleUniRecipe is Ownable {
                     require(success, "CALL_FAILED");
                 }
             }
-
             IERC20(_token).approve(_basket, _amount);
         }
         basket.joinPool(_mintAmount);
@@ -284,7 +297,7 @@ contract SimpleUniRecipe is Ownable {
      * @param _amountOut Exact amount of `_to` to receive
      * @param _fee UniV3 pool fee
      */
-    function _swap(
+    function _swap_out_amount(
         address _from,
         address _to,
         uint256 _amountOut,
@@ -298,6 +311,33 @@ contract SimpleUniRecipe is Ownable {
                 address(this),
                 _amountOut,
                 type(uint256).max,
+                0
+            )
+        );
+    }
+
+    /**
+     * Swap `_from` -> `_to` given an an amount of 'from' token to be swaped on UniV3
+     *
+     * @param _from Address of token to swap from
+     * @param _to Address of token to swap to
+     * @param _amountIn Exact amount of `_from` to sell
+     * @param _fee UniV3 pool fee
+     */
+    function _swap_in_amount(
+        address _from,
+        address _to,
+        uint256 _amountIn,
+        uint24 _fee
+    ) internal returns (uint256) {
+        return uniRouter.exactInputSingle(
+            uniV3Router.ExactInputSingleParams(
+                _from,
+                _to,
+                _fee,
+                address(this),
+                _amountIn,
+                0,
                 0
             )
         );
@@ -352,15 +392,15 @@ contract SimpleUniRecipe is Ownable {
         uint256 denominator
     ) internal pure returns (uint256 z) {
         assembly {
-        // Store x * y in z for now.
+            // Store x * y in z for now.
             z := mul(x, y)
 
-        // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
+            // Equivalent to require(denominator != 0 && (x == 0 || (x * y) / x == y))
             if iszero(and(iszero(iszero(denominator)), or(iszero(x), eq(div(z, x), y)))) {
                 revert(0, 0)
             }
 
-        // Divide z by the denominator.
+            // Divide z by the denominator.
             z := div(z, denominator)
         }
     }
@@ -382,9 +422,9 @@ contract SimpleUniRecipe is Ownable {
         WETH.approve(_newRouter, 0);
         WETH.approve(_newRouter, type(uint256).max);
 
-        // Re-approve USDC
-        USDC.approve(_newRouter, 0);
-        USDC.approve(_newRouter, type(uint256).max);
+        // Re-approve DAI
+        DAI.approve(_newRouter, 0);
+        DAI.approve(_newRouter, type(uint256).max);
     }
 
     /**
