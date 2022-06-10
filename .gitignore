@@ -6,12 +6,19 @@ yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
 
+# Mac
+.DS_Store
+
 .idea
 node_modules
 .env
 coverage
 coverage.json
 typechain
+
+# Forge files
+out/
+cache/
 
 #Hardhat files
 cache

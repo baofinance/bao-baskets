@@ -1,0 +1,4 @@
+[default]
+optimizer = true
+optimizer_runs = 100000
+gas_reports = ["*"]

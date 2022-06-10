@@ -1,0 +1,3 @@
+forge-std=lib/forge-std/src
+@openzeppelin=lib/openzeppelin-contracts/contracts
+v2-periphery=lib/v2-periphery/contracts
